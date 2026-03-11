@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hummingbird Technologies — Master Project Timeline</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2333;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --accent: #58a6ff;
+    --accent2: #3fb950;
+    --accent3: #d29922;
+    --accent4: #f85149;
+    --accent5: #bc8cff;
+    --accent6: #39d353;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 0;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, #0d1117 0%, #1a1f3a 50%, #0d1117 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 40px;
+    text-align: center;
+  }
+
+  .hero h1 {
+    font-size: 2.8em;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--accent5));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+
+  .hero .subtitle {
+    font-size: 1.2em;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+  }
+
+  .hero .stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 32px;
+    min-width: 160px;
+  }
+
+  .stat-card .value {
+    font-size: 2em;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .stat-card .label {
+    font-size: 0.85em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 40px;
+  }
+
+  section {
+    margin-bottom: 60px;
+  }
+
+  h2 {
+    font-size: 1.8em;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  h2 .badge {
+    font-size: 0.45em;
+    background: var(--accent);
+    color: #000;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    vertical-align: middle;
+  }
+
+  h3 {
+    font-size: 1.2em;
+    color: var(--accent);
+    margin: 24px 0 12px;
+  }
+
+  .section-desc {
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    font-size: 1.05em;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .card-header h3 {
+    margin: 0;
+    font-size: 1.15em;
+  }
+
+  .phase-tag {
+    font-size: 0.75em;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .tag-planning { background: rgba(88, 166, 255, 0.15); color: var(--accent); }
+  .tag-active { background: rgba(63, 185, 80, 0.15); color: var(--accent2); }
+  .tag-upcoming { background: rgba(210, 153, 34, 0.15); color: var(--accent3); }
+  .tag-future { background: rgba(188, 140, 255, 0.15); color: var(--accent5); }
+  .tag-critical { background: rgba(248, 81, 73, 0.15); color: var(--accent4); }
+
+  .mermaid-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    overflow-x: auto;
+    margin: 16px 0;
+  }
+
+  .timeline-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
+    margin: 16px 0;
+  }
+
+  .phase-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    position: relative;
+    border-left: 4px solid var(--accent);
+    transition: transform 0.2s, border-color 0.2s;
+  }
+
+  .phase-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent2);
+  }
+
+  .phase-card.phase-hw { border-left-color: var(--accent3); }
+  .phase-card.phase-sw { border-left-color: var(--accent5); }
+  .phase-card.phase-test { border-left-color: var(--accent2); }
+  .phase-card.phase-integration { border-left-color: var(--accent4); }
+
+  .phase-card h4 {
+    font-size: 1.05em;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  .phase-card .hours {
+    font-size: 0.85em;
+    color: var(--accent3);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .phase-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .phase-card li {
+    font-size: 0.88em;
+    color: var(--text-muted);
+    padding: 3px 0;
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .phase-card li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.92em;
+  }
+
+  th, td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    letter-spacing: 0.05em;
+    background: var(--surface2);
+  }
+
+  tr:hover td { background: rgba(88, 166, 255, 0.04); }
+
+  .milestone-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .milestone-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot-done { background: var(--accent2); }
+  .dot-active { background: var(--accent3); }
+  .dot-upcoming { background: var(--border); }
+
+  .milestone-content { flex: 1; }
+  .milestone-content .name { font-weight: 600; }
+  .milestone-content .desc { font-size: 0.88em; color: var(--text-muted); }
+  .milestone-week {
+    font-size: 0.85em;
+    color: var(--accent);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .arch-diagram {
+    display: grid;
+    grid-template-rows: auto auto auto;
+    gap: 12px;
+    max-width: 800px;
+    margin: 20px auto;
+  }
+
+  .arch-layer {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .arch-layer h4 { margin-bottom: 8px; }
+
+  .arch-layer.jetson { border-color: var(--accent2); }
+  .arch-layer.fpga { border-color: var(--accent3); }
+  .arch-layer.fc { border-color: var(--accent4); }
+
+  .arch-arrow {
+    text-align: center;
+    font-size: 1.4em;
+    color: var(--text-muted);
+  }
+
+  .latency-bar {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+    gap: 12px;
+  }
+
+  .latency-bar .label {
+    width: 200px;
+    font-size: 0.88em;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .latency-bar .bar-track {
+    flex: 1;
+    background: var(--surface2);
+    border-radius: 6px;
+    height: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .latency-bar .bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    font-size: 0.8em;
+    font-weight: 600;
+    color: #000;
+    min-width: 60px;
+  }
+
+  .risk-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+
+  .risk-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    border-left: 3px solid;
+  }
+
+  .risk-card.risk-high { border-left-color: var(--accent4); }
+  .risk-card.risk-medium { border-left-color: var(--accent3); }
+  .risk-card.risk-low { border-left-color: var(--accent2); }
+
+  .risk-card h5 { margin-bottom: 6px; font-size: 0.95em; }
+  .risk-card p { font-size: 0.85em; color: var(--text-muted); margin: 0; }
+
+  .cost-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .cost-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .cost-item .amount {
+    font-size: 1.6em;
+    font-weight: 700;
+    color: var(--accent2);
+  }
+
+  .cost-item .desc {
+    font-size: 0.85em;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  @media (max-width: 768px) {
+    .hero { padding: 32px 20px; }
+    .hero h1 { font-size: 1.8em; }
+    .container { padding: 20px; }
+    .two-col { grid-template-columns: 1fr; }
+    .hero .stats { gap: 16px; }
+    .stat-card { min-width: 120px; padding: 16px; }
+    .latency-bar .label { width: 140px; }
+  }
+
+  footer {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    font-size: 0.88em;
+  }
+
+  /* Mermaid theme overrides */
+  .mermaid { font-family: inherit; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>🐦 Hummingbird Technologies</h1>
+  <div class="subtitle">P1 Prototype — Master Project Timeline & Architecture</div>
+  <div class="stats">
+    <div class="stat-card">
+      <div class="value">138-173</div>
+      <div class="label">Total Hours</div>
+    </div>
+    <div class="stat-card">
+      <div class="value">9-12</div>
+      <div class="label">Weeks</div>
+    </div>
+    <div class="stat-card">
+      <div class="value">$5,790</div>
+      <div class="label">Per Drone BOM</div>
+    </div>
+    <div class="stat-card">
+      <div class="value">&lt;50ms</div>
+      <div class="label">Sense-to-Act</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ===== SECTION: MASTER GANTT ===== -->
+<section>
+  <h2>📅 Master Gantt Chart <span class="badge">Full Timeline</span></h2>
+  <p class="section-desc">All phases mapped against calendar weeks. Hardware and software tracks run in parallel where possible.</p>
+
+  <div class="mermaid-container">
+    <pre class="mermaid">
+gantt
+    title Hummingbird P1 — Master Build Timeline
+    dateFormat YYYY-MM-DD
+    axisFormat %b %d
+
+    section 🔧 Hardware Track
+    CAD Finalization & Print Prep       :hw0, 2026-03-10, 7d
+    Component Sourcing (Tier 1 order)   :hw1, 2026-03-10, 3d
+    Component Shipping (Lead Time)      :crit, hw1ship, 2026-03-13, 21d
+    3D Printing                         :hw2a, after hw0, 7d
+    Mechanical Assembly                 :hw2b, after hw2a, 5d
+    Electronics Assembly & Wiring       :crit, hw3, after hw2b, 14d
+    System Integration                  :hw5, after hw3, 5d
+
+    section 🖥️ Software Track
+    Gazebo + PX4 SITL + ROS2 Setup      :sw1, 2026-03-10, 14d
+    Aerostack2 Fork & Integration       :sw1b, after sw1, 7d
+    ArduPilot Firmware Config           :sw2, after hw3, 10d
+    TensorRT Inference Pipeline         :sw3, after sw1, 14d
+    Swarm Protocol Design               :sw4, after sw1b, 21d
+    PREEMPT_RT Kernel Setup             :sw5, after sw2, 5d
+
+    section 🔌 FPGA Track
+    CrossLink-NX Eval Board Setup       :fpga1, 2026-03-17, 7d
+    FPGA Sensor Bridge Firmware         :fpga2, after fpga1, 21d
+    Daughter Board Schematic (KiCad)    :fpga3, after fpga1, 14d
+    Daughter Board PCB Fab              :fpga4, after fpga3, 14d
+    Daughter Board Assembly & Test      :fpga5, after fpga4, 7d
+
+    section ✅ Testing
+    Ground Testing & Validation         :crit, test1, after hw5, 10d
+    Tethered Hover                      :crit, test2, after test1, 3d
+    First Free Flight                   :crit, milestone, test3, after test2, 2d
+    PID Tuning & Flight Testing         :test4, after test3, 14d
+    Endurance Validation                :test5, after test4, 5d
+    Full P1 Validation Complete         :milestone, after test5, 0d
+
+    section 🤝 Nest Integration (Tejash)
+    Nest Docking Design                 :nest1, 2026-03-10, 28d
+    Robotic Arm Prototype               :nest2, after nest1, 28d
+    Interface Spec Freeze               :milestone, 2026-03-17, 0d
+    Stationary Capture Test             :nest3, after test4, 14d
+    Full Cycle Demo                     :milestone, after nest3, 0d
+    </pre>
+  </div>
+</section>
+
+<!-- ===== SECTION: PHASE BREAKDOWN ===== -->
+<section>
+  <h2>🏗️ Phase Breakdown <span class="badge">9 Phases</span></h2>
+  <p class="section-desc">Each phase with estimated hours, key tasks, and track classification.</p>
+
+  <div class="timeline-grid">
+    <div class="phase-card phase-hw">
+      <h4>Phase 0 — CAD Finalization</h4>
+      <div class="hours">📐 14 hours · ~5 days</div>
+      <ul>
+        <li>Complete unified body CAD</li>
+        <li>Payload bay internal mounts</li>
+        <li>Sensor & antenna mount features</li>
+        <li>4-piece split geometry</li>
+        <li>Export STLs, print settings profile</li>
+      </ul>
+    </div>
+
+    <div class="phase-card phase-hw">
+      <h4>Phase 1 — Component Sourcing</h4>
+      <div class="hours">📦 7.5 hours + 1-4 wk shipping</div>
+      <ul>
+        <li>Tier 1: Doodle Labs, ARK PAB, RTK GPS, ARKV6X</li>
+        <li>Tier 2: ESCs, motors, radios, sensors</li>
+        <li>Tier 3: Cameras, props, batteries, wire</li>
+        <li>NEW: CrossLink-NX Eval Board ($132)</li>
+      </ul>
+    </div>
+
+    <div class="phase-card phase-hw">
+      <h4>Phase 2 — Print & Assembly</h4>
+      <div class="hours">🖨️ 12-16 hours · 5-7 days</div>
+      <ul>
+        <li>Print 4 body pieces (LW-PLA)</li>
+        <li>Post-processing & dry fit</li>
+        <li>Heat-set inserts & bonding</li>
+        <li>Motor & electronics test fit</li>
+      </ul>
+    </div>
+
+    <div class="phase-card phase-hw">
+      <h4>Phase 3 — Electronics & Wiring</h4>
+      <div class="hours">⚡ 24-26 hours · 8-9 days</div>
+      <ul>
+        <li>Mount ARK PAB + Jetson + FC</li>
+        <li>Wire 8 motors to 2× ESCs</li>
+        <li>Power distribution & BEC</li>
+        <li>All sensors, radios, cameras</li>
+        <li>Continuity check & first power-on</li>
+      </ul>
+    </div>
+
+    <div class="phase-card phase-sw">
+      <h4>Phase 4 — Firmware & Software</h4>
+      <div class="hours">💻 22-24 hours · 7-8 days</div>
+      <ul>
+        <li>Flash ArduPilot / PX4 on ARKV6X</li>
+        <li>Coaxial quad motor mixing (custom)</li>
+        <li>Jetson: JetPack + ROS2 + TensorRT</li>
+        <li>ROS2-PX4 bridge, sensor validation</li>
+        <li>Radio configuration (3-radio stack)</li>
+      </ul>
+    </div>
+
+    <div class="phase-card phase-integration">
+      <h4>Phase 5 — System Integration</h4>
+      <div class="hours">🔗 8-9 hours · 3 days</div>
+      <ul>
+        <li>Full system power-on (all subsystems)</li>
+        <li>End-to-end telemetry verification</li>
+        <li>CG check & weight measurement</li>
+        <li>Multi-radio interference test</li>
+      </ul>
+    </div>
+
+    <div class="phase-card phase-test">
+      <h4>Phase 6 — Ground Testing</h4>
+      <div class="hours">🧪 12-13 hours · 4-5 days</div>
+      <ul>
+        <li>Motor spin tests (no props → props)</li>
+        <li>Thrust measurement on test stand</li>
+        <li>Accelerometer & compass calibration</li>
+        <li>Tethered hover (CRITICAL GATE)</li>
+      </ul>
+    </div>
+
+    <div class="phase-card phase-test">
+      <h4>Phase 7 — Flight Testing</h4>
+      <div class="hours">🚁 22-24 hours · 7-8 days</div>
+      <ul>
+        <li>First free hover</li>
+        <li>PID tuning (rate → attitude)</li>
+        <li>Position hold, altitude hold</li>
+        <li>Autonomous waypoint mission</li>
+        <li>Endurance & failsafe tests</li>
+      </ul>
+    </div>
+
+    <div class="phase-card phase-integration">
+      <h4>Phase 8 — Debug & Optimize</h4>
+      <div class="hours">🔄 16-36 hours · variable</div>
+      <ul>
+        <li>Structural repairs / reprints</li>
+        <li>ESC/motor troubleshooting</li>
+        <li>Vibration reduction</li>
+        <li>PID refinement after fixes</li>
+        <li>Documentation updates</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION: PARALLEL TRACKS ===== -->
+<section>
+  <h2>🔀 Parallel Development Tracks <span class="badge">3 Tracks</span></h2>
+  <p class="section-desc">Hardware build, software stack, and FPGA development run concurrently to compress the schedule.</p>
+
+  <div class="mermaid-container">
+    <pre class="mermaid">
+flowchart LR
+    subgraph HW["🔧 Hardware Track"]
+        direction TB
+        CAD[CAD Complete] --> PRINT[3D Print]
+        PRINT --> ASSEMBLY[Mechanical Assembly]
+        ASSEMBLY --> ELECTRONICS[Electronics & Wiring]
+        ELECTRONICS --> INTEGRATE[System Integration]
+    end
+
+    subgraph SW["🖥️ Software Track"]
+        direction TB
+        SIM[Gazebo + PX4 SITL] --> AERO[Aerostack2 Fork]
+        AERO --> SWARM[Swarm Protocol]
+        SIM --> TENSOR[TensorRT Pipeline]
+        TENSOR --> SLAM[SLAM Integration]
+    end
+
+    subgraph FPGA["⚡ FPGA Track"]
+        direction TB
+        EVAL[CrossLink-NX Eval] --> FW[Sensor Bridge FW]
+        EVAL --> SCH[Daughter Board Schematic]
+        SCH --> PCB[PCB Fab & Assembly]
+        FW --> VALID[Latency Validation]
+    end
+
+    INTEGRATE --> TEST[✅ Ground & Flight Test]
+    SWARM --> TEST
+    VALID --> TEST
+    TEST --> PRODUCTION["🏭 Production Board Design"]
+
+    style HW fill:#1a2332,stroke:#d29922,color:#e6edf3
+    style SW fill:#1a2332,stroke:#bc8cff,color:#e6edf3
+    style FPGA fill:#1a2332,stroke:#58a6ff,color:#e6edf3
+    style TEST fill:#1a2332,stroke:#3fb950,color:#e6edf3
+    style PRODUCTION fill:#1a2332,stroke:#f85149,color:#e6edf3
+    </pre>
+  </div>
+</section>
+
+<!-- ===== SECTION: COMPUTE ARCHITECTURE ===== -->
+<section>
+  <h2>🧠 Compute Architecture <span class="badge">Low Latency</span></h2>
+  <p class="section-desc">Three-tier compute stack: GPU for AI, FPGA for deterministic sensor processing, MCU for real-time flight control.</p>
+
+  <div class="mermaid-container">
+    <pre class="mermaid">
+flowchart TB
+    CAM["📷 Cameras (4× CSI)"] --> JETSON
+    LIDAR["📡 LiDAR (SF45/B + SF30/D)"] --> FPGA
+    IMU["🔄 IMU"] --> FPGA
+
+    subgraph JETSON["JETSON ORIN NX — 100 TOPS (157 in SUPER mode)"]
+        direction LR
+        RT["TensorRT\n< 10ms/frame"]
+        ROS["ROS2 + Iceoryx\nZero-Copy DDS"]
+        MISSION["Swarm Mgmt\nMission Planning"]
+        SHARED["Shared Memory (Iceoryx)"]
+        RT --- SHARED
+        ROS --- SHARED
+        MISSION --- SHARED
+    end
+
+    subgraph FPGA["FPGA — CrossLink-NX"]
+        direction LR
+        FILTER["LiDAR Filter"]
+        FUSE["IMU Fusion (EKF)"]
+        DETECT["Obstacle Detect\nTrigger"]
+        WATCH["Hardware\nWatchdog"]
+    end
+
+    subgraph FC["ARKV6X — STM32H7"]
+        direction LR
+        PX4["PX4 @ 400Hz+"]
+        MOTOR["Motor Control"]
+        PX4 --- MOTOR
+    end
+
+    FPGA -->|"SPI / Processed Results"| JETSON
+    FPGA -->|"⚡ Emergency Direct\n< 5ms"| FC
+    JETSON -->|"DDS-uORB Bridge"| FC
+    FC -->|"DShot"| MOTORS["🔄 8× Motors"]
+
+    style JETSON fill:#1a2e1a,stroke:#3fb950,color:#e6edf3
+    style FPGA fill:#2e2a1a,stroke:#d29922,color:#e6edf3
+    style FC fill:#2e1a1a,stroke:#f85149,color:#e6edf3
+    </pre>
+  </div>
+
+  <h3>Latency Budget — Sense to Act</h3>
+  <div class="card">
+    <div class="latency-bar">
+      <div class="label">Sensor Acquisition</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 33%; background: linear-gradient(90deg, #58a6ff, #3fb950);">5-10ms</div>
+      </div>
+    </div>
+    <div class="latency-bar">
+      <div class="label">FPGA Preprocessing</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 3%; background: var(--accent3); min-width: 60px;">&lt;1ms</div>
+      </div>
+    </div>
+    <div class="latency-bar">
+      <div class="label">Data to Jetson</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 2%; background: var(--accent5); min-width: 60px;">&lt;0.5ms</div>
+      </div>
+    </div>
+    <div class="latency-bar">
+      <div class="label">AI Inference (TensorRT)</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 33%; background: linear-gradient(90deg, #3fb950, #58a6ff);">5-10ms</div>
+      </div>
+    </div>
+    <div class="latency-bar">
+      <div class="label">Decision / Planning</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 17%; background: var(--accent5);">2-5ms</div>
+      </div>
+    </div>
+    <div class="latency-bar">
+      <div class="label">Command to FC</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 3%; background: var(--accent4); min-width: 60px;">&lt;1ms</div>
+      </div>
+    </div>
+    <div class="latency-bar">
+      <div class="label">FC to Motors</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 8%; background: var(--accent2); min-width: 60px;">2.5ms</div>
+      </div>
+    </div>
+    <div class="latency-bar" style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border);">
+      <div class="label" style="font-weight: 700; color: var(--accent);">Total Sense-to-Act</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 90%; background: linear-gradient(90deg, var(--accent), var(--accent2)); font-size: 1em;">~20-30ms (0.4-0.6m at 20 m/s)</div>
+      </div>
+    </div>
+    <div class="latency-bar">
+      <div class="label" style="font-weight: 700; color: var(--accent4);">Emergency Path (FPGA→FC)</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 15%; background: var(--accent4);">&lt;5ms</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION: SOFTWARE STACK ===== -->
+<section>
+  <h2>💻 Software Stack <span class="badge">Architecture</span></h2>
+  <p class="section-desc">Swarm framework built on ROS2, forking Aerostack2 for per-drone autonomy.</p>
+
+  <div class="mermaid-container">
+    <pre class="mermaid">
+flowchart TB
+    subgraph CLOUD["☁️ Ground Control Station"]
+        GCS["Skybrush-inspired GCS\n(TypeScript/React)"]
+        MONITOR["Fleet Telemetry\n& Monitoring"]
+    end
+
+    subgraph NEST["🏠 Nest (Ground System)"]
+        CHARGE["Battery & Charging\nManagement"]
+        LAUNCH["Launch & Capture\nSequencing"]
+        ARM["Robotic Arm\nControl (ROS2)"]
+    end
+
+    subgraph SWARM["🐝 Swarm Layer"]
+        TASK["Task Allocation\nAlgorithm"]
+        COVERAGE["Coverage\nOptimization"]
+        DECONF["Deconfliction\n(Inter-drone)"]
+        PROTOCOL["Custom Binary\nSwarm Protocol"]
+    end
+
+    subgraph DRONE["🚁 Per-Drone (Aerostack2 Fork)"]
+        NAV["Navigation &\nPath Planning"]
+        PERCEPT["Perception\n(TensorRT)"]
+        LOCALIZE["SLAM / VIO\nLocalization"]
+        OBSTACLE["Obstacle\nAvoidance"]
+    end
+
+    subgraph FLIGHT["✈️ Flight Control"]
+        PX4["PX4 Autopilot\n(ARKV6X)"]
+    end
+
+    GCS <-->|"Doodle Labs Mesh"| SWARM
+    NEST <-->|"900MHz + Mesh"| SWARM
+    SWARM <-->|"Custom UDP Protocol"| DRONE
+    DRONE -->|"ROS2 DDS"| FLIGHT
+
+    style CLOUD fill:#1a2332,stroke:#58a6ff,color:#e6edf3
+    style NEST fill:#1a2332,stroke:#d29922,color:#e6edf3
+    style SWARM fill:#1a2332,stroke:#bc8cff,color:#e6edf3
+    style DRONE fill:#1a2332,stroke:#3fb950,color:#e6edf3
+    style FLIGHT fill:#1a2332,stroke:#f85149,color:#e6edf3
+    </pre>
+  </div>
+
+  <h3>Software Development Phases</h3>
+  <div class="mermaid-container">
+    <pre class="mermaid">
+gantt
+    title Software Development Timeline
+    dateFormat YYYY-MM-DD
+    axisFormat %b %d
+
+    section Simulation
+    Gazebo + PX4 SITL Setup             :sw1, 2026-03-10, 7d
+    ROS2 Humble + Iceoryx Config        :sw2, 2026-03-10, 5d
+    Aerostack2 Fork & Customize         :sw3, after sw1, 7d
+    Multi-Drone Sim (10-30 drones)      :sw4, after sw3, 14d
+
+    section Per-Drone Intelligence
+    TensorRT Inference Pipeline         :ai1, after sw2, 14d
+    Obstacle Avoidance Module           :ai2, after ai1, 10d
+    Visual-Inertial SLAM                :ai3, after ai1, 14d
+    LiDAR-Assisted Localization         :ai4, after ai3, 7d
+
+    section Swarm Layer
+    Swarm Message Types Definition      :s1, after sw3, 5d
+    Custom Binary Protocol (UDP)        :s2, after s1, 10d
+    Task Allocation Algorithm           :s3, after s2, 14d
+    Coverage Optimization               :s4, after s3, 10d
+    Deconfliction Logic                 :s5, after s3, 10d
+
+    section Nest Integration
+    Battery Rotation Model              :n1, after sw4, 10d
+    Launch/Capture Sequencing           :n2, after n1, 10d
+    Continuous Ops Simulation           :n3, after n2, 7d
+    </pre>
+  </div>
+</section>
+
+<!-- ===== SECTION: BOARD STRATEGY ===== -->
+<section>
+  <h2>🔌 Board Strategy <span class="badge">PCB Design</span></h2>
+  <p class="section-desc">Daughter board for P1 prototype, full custom board for production fleet.</p>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-header">
+        <h3>P1 Prototype — Daughter Board</h3>
+        <span class="phase-tag tag-active">Active</span>
+      </div>
+      <ul style="list-style: none; padding: 0;">
+        <li style="padding: 6px 0;">✅ CrossLink-NX FPGA on eval/custom mini-board</li>
+        <li style="padding: 6px 0;">✅ Connects to ARK Jetson PAB via SPI/GPIO</li>
+        <li style="padding: 6px 0;">✅ Handles LiDAR + IMU preprocessing only</li>
+        <li style="padding: 6px 0;">✅ Cameras stay on Jetson CSI (direct)</li>
+        <li style="padding: 6px 0;">✅ Emergency trigger line to FC</li>
+        <li style="padding: 6px 0;">📐 ~50×50mm, 4-layer PCB</li>
+        <li style="padding: 6px 0;">💰 ~$150-200 total (eval board + fab)</li>
+        <li style="padding: 6px 0;">🔧 Tool: KiCad (open-source)</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3>Production — Custom Integrated Board</h3>
+        <span class="phase-tag tag-future">Future</span>
+      </div>
+      <ul style="list-style: none; padding: 0;">
+        <li style="padding: 6px 0;">🎯 Single board: Jetson + FPGA + all I/O</li>
+        <li style="padding: 6px 0;">🎯 PCIe between FPGA ↔ Jetson (8 Gbps/lane)</li>
+        <li style="padding: 6px 0;">🎯 MIPI CSI cameras through FPGA ISP pipeline</li>
+        <li style="padding: 6px 0;">🎯 Optimal signal routing, minimal weight</li>
+        <li style="padding: 6px 0;">🎯 Multi-rail power regulation (battery input)</li>
+        <li style="padding: 6px 0;">🔮 Consider Kria K26 to replace Jetson</li>
+        <li style="padding: 6px 0;">💰 $500-2K development + fab runs</li>
+        <li style="padding: 6px 0;">👤 May need specialist review (signal integrity)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION: KEY MILESTONES ===== -->
+<section>
+  <h2>🏁 Key Milestones <span class="badge">12 Gates</span></h2>
+  <p class="section-desc">Critical checkpoints from design through validation.</p>
+
+  <div class="card">
+    <div class="milestone-row">
+      <div class="milestone-dot dot-active"></div>
+      <div class="milestone-content">
+        <div class="name">M1: CAD Complete</div>
+        <div class="desc">All STLs exported, print-ready, mount points verified</div>
+      </div>
+      <div class="milestone-week">Week 1</div>
+    </div>
+    <div class="milestone-row">
+      <div class="milestone-dot dot-active"></div>
+      <div class="milestone-content">
+        <div class="name">M2: Components Ordered</div>
+        <div class="desc">All BOM items ordered, tracking numbers received</div>
+      </div>
+      <div class="milestone-week">Week 1</div>
+    </div>
+    <div class="milestone-row">
+      <div class="milestone-dot dot-upcoming"></div>
+      <div class="milestone-content">
+        <div class="name">M3: Frame Printed & Assembled</div>
+        <div class="desc">4 pieces bonded, all mounts verified with test-fit</div>
+      </div>
+      <div class="milestone-week">Week 2-3</div>
+    </div>
+    <div class="milestone-row">
+      <div class="milestone-dot dot-upcoming"></div>
+      <div class="milestone-content">
+        <div class="name">M4: Electronics Installed</div>
+        <div class="desc">All boards mounted, wired, passing continuity check</div>
+      </div>
+      <div class="milestone-week">Week 4-5</div>
+    </div>
+    <div class="milestone-row">
+      <div class="milestone-dot dot-upcoming"></div>
+      <div class="milestone-content">
+        <div class="name">M5: First Power-On</div>
+        <div class="desc">All systems boot, no smoke, telemetry to GCS</div>
+      </div>
+      <div class="milestone-week">Week 5</div>
+    </div>
+    <div class="milestone-row">
+      <div class="milestone-dot dot-upcoming"></div>
+      <div class="milestone-content">
+        <div class="name">M6: Firmware Configured</div>
+        <div class="desc">PX4/ArduPilot + Jetson configured, sensors reporting</div>
+      </div>
+      <div class="milestone-week">Week 5-6</div>
+    </div>
+    <div class="milestone-row">
+      <div class="milestone-dot dot-upcoming"></div>
+      <div class="milestone-content">
+        <div class="name">M7: Tethered Hover ⭐</div>
+        <div class="desc">Stable hover on tether, clean IMU logs — CRITICAL GATE</div>
+      </div>
+      <div class="milestone-week">Week 6-7</div>
+    </div>
+    <div class="milestone-row">
+      <div class="milestone-dot dot-upcoming"></div>
+      <div class="milestone-content">
+        <div class="name">M8: First Free Flight 🚁</div>
+        <div class="desc">30s+ stable free hover — the moment of truth</div>
+      </div>
+      <div class="milestone-week">Week 7</div>
+    </div>
+    <div class="milestone-row">
+      <div class="milestone-dot dot-upcoming"></div>
+      <div class="milestone-content">
+        <div class="name">M9: Position Hold</div>
+        <div class="desc">GPS/optical flow hold within 1m</div>
+      </div>
+      <div class="milestone-week">Week 7-8</div>
+    </div>
+    <div class="milestone-row">
+      <div class="milestone-dot dot-upcoming"></div>
+      <div class="milestone-content">
+        <div class="name">M10: Autonomous Mission</div>
+        <div class="desc">Waypoint mission + RTL completed successfully</div>
+      </div>
+      <div class="milestone-week">Week 8-9</div>
+    </div>
+    <div class="milestone-row">
+      <div class="milestone-dot dot-upcoming"></div>
+      <div class="milestone-content">
+        <div class="name">M11: Endurance Validated</div>
+        <div class="desc">Measured flight time within 15% of prediction</div>
+      </div>
+      <div class="milestone-week">Week 9</div>
+    </div>
+    <div class="milestone-row" style="border-bottom: none;">
+      <div class="milestone-dot dot-upcoming"></div>
+      <div class="milestone-content">
+        <div class="name">M12: P1 Drone Validated ✅</div>
+        <div class="desc">All DV criteria met, documented, ready for Nest integration</div>
+      </div>
+      <div class="milestone-week">Week 9-10</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION: NEST INTEGRATION ===== -->
+<section>
+  <h2>🤝 Nest Integration Timeline <span class="badge">Tejash</span></h2>
+  <p class="section-desc">Joint milestones between drone (Marin) and Nest ground system (Tejash).</p>
+
+  <div class="mermaid-container">
+    <pre class="mermaid">
+flowchart LR
+    IM1["IM-1\nInterface Spec\nFreeze"] --> IM2["IM-2\nDrone Flight\nDemo"]
+    IM1 --> IM3["IM-3\nCapture\nComm Test"]
+    IM2 --> IM4["IM-4\nStationary\nCapture"]
+    IM3 --> IM4
+    IM4 --> IM5["IM-5\nCharge\nCycle Test"]
+    IM5 --> IM6["IM-6\nFull Cycle\nDemo 🎉"]
+
+    style IM1 fill:#2e2a1a,stroke:#d29922,color:#e6edf3
+    style IM2 fill:#1a2e1a,stroke:#3fb950,color:#e6edf3
+    style IM3 fill:#1a2332,stroke:#58a6ff,color:#e6edf3
+    style IM4 fill:#2e1a2e,stroke:#bc8cff,color:#e6edf3
+    style IM5 fill:#2e2a1a,stroke:#d29922,color:#e6edf3
+    style IM6 fill:#1a2e1a,stroke:#3fb950,color:#e6edf3
+    </pre>
+  </div>
+</section>
+
+<!-- ===== SECTION: COST BREAKDOWN ===== -->
+<section>
+  <h2>💰 Cost Summary <span class="badge">Per Drone</span></h2>
+
+  <div class="cost-summary">
+    <div class="cost-item">
+      <div class="amount">$1,450</div>
+      <div class="desc">Doodle Labs Mesh Radio</div>
+    </div>
+    <div class="cost-item">
+      <div class="amount">$700</div>
+      <div class="desc">ARK Jetson PAB Carrier (<a href="https://arkelectron.com/product/ark-jetson-pab-carrier-arkv6x-bundle/" style="color: var(--accent);">standalone, from bundle pricing</a>)</div>
+    </div>
+    <div class="cost-item">
+      <div class="amount">$615</div>
+      <div class="desc">ARK RTK GPS</div>
+    </div>
+    <div class="cost-item">
+      <div class="amount">$599</div>
+      <div class="desc">Jetson Orin NX 16GB</div>
+    </div>
+    <div class="cost-item">
+      <div class="amount">$437</div>
+      <div class="desc">2× <a href="https://arkelectron.com/product/ark-4in1-esc-cons/" style="color: var(--accent);">ARK 4IN1 ESC</a> ($218.50 ea)</div>
+    </div>
+    <div class="cost-item">
+      <div class="amount">$400</div>
+      <div class="desc">ARKV6X Flight Controller</div>
+    </div>
+    <div class="cost-item">
+      <div class="amount">$350</div>
+      <div class="desc">Intel RealSense D435i ⚠️ <span style="color: var(--accent4); font-size: 0.8em;">EOL — <a href="https://www.therobotreport.com/intel-issues-end-of-life-notice-realsense-lidar/" style="color: var(--accent4);">Intel announced End of Life</a>. Consider alternatives: <a href="https://docs.luxonis.com/hardware/platform/comparison/vs-realsense/" style="color: var(--accent3);">Luxonis OAK-D Pro</a>, Orbbec Femto. Supply chain risk for production.</span></div>
+    </div>
+    <div class="cost-item">
+      <div class="amount">$328</div>
+      <div class="desc">8× T-Motor F60 Pro IV</div>
+    </div>
+    <div class="cost-item">
+      <div class="amount">$279</div>
+      <div class="desc">LightWare SF20/C</div>
+    </div>
+    <div class="cost-item">
+      <div class="amount">$250</div>
+      <div class="desc">Sierra Wireless EM9291</div>
+    </div>
+    <div class="cost-item">
+      <div class="amount">$250</div>
+      <div class="desc"><a href="https://arkelectron.com/product/ark-flow/" style="color: var(--accent);">ARK Flow</a></div>
+    </div>
+    <div class="cost-item">
+      <div class="amount">$132</div>
+      <div class="desc">CrossLink-NX FPGA (NEW)</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 20px; text-align: center;">
+    <div style="font-size: 2.2em; font-weight: 700; color: var(--accent);">~$5,790</div>
+    <div style="color: var(--text-muted);">Total per drone (NDAA-compliant + FPGA addition)</div>
+    <div style="color: var(--text-muted); font-size: 0.88em; margin-top: 4px;">Excludes batteries ($120), props ($16), wiring/fasteners ($85), filament ($40) — total with consumables: ~$6,051</div>
+  </div>
+</section>
+
+<!-- ===== SECTION: RISK REGISTER ===== -->
+<section>
+  <h2>⚠️ Risk Register <span class="badge">Top 10</span></h2>
+
+  <div class="risk-grid">
+    <div class="risk-card risk-high">
+      <h5>R1: Coaxial Quad PID Tuning</h5>
+      <p>Non-standard frame type. No ArduPilot presets. May require 10+ tuning flights. Mitigation: Use autotune, consult ArduPilot community.</p>
+    </div>
+    <div class="risk-card risk-medium">
+      <h5>R2: Doodle Labs Lead Time</h5>
+      <p>2-4 week shipping. Single most expensive component. Mitigation: Order immediately, test without it initially.</p>
+    </div>
+    <div class="risk-card risk-medium">
+      <h5>R3: ARK PAB Documentation Gaps</h5>
+      <p>Relatively new product, limited docs. Mitigation: Contact ARK support directly, check Discord.</p>
+    </div>
+    <div class="risk-card risk-medium">
+      <h5>R4: LW-PLA Frame Strength</h5>
+      <p>Brittle under impact. Mitigation: Spare parts, reinforce with CF-PETG, fly over soft surfaces.</p>
+    </div>
+    <div class="risk-card risk-medium">
+      <h5>R5: Motor Mount Misalignment</h5>
+      <p>Causes vibration → bad IMU → loss of control. Mitigation: Precision assembly, vibration dampeners.</p>
+    </div>
+    <div class="risk-card risk-medium">
+      <h5>R6: Weight Exceeds Target</h5>
+      <p>Reduces endurance and T/W ratio. Mitigation: Weigh at Phase 5, remove non-essential sensors initially.</p>
+    </div>
+    <div class="risk-card risk-medium">
+      <h5>R7: RF Interference (4 Radio Stack)</h5>
+      <p>2.4GHz + 900MHz + LTE + GPS may conflict. Mitigation: Antenna separation, test incrementally.</p>
+    </div>
+    <div class="risk-card risk-high">
+      <h5>R8: Hard Crash Destroys Prototype</h5>
+      <p>Weeks to rebuild. Mitigation: Tethered testing first, conservative flying, spare parts.</p>
+    </div>
+    <div class="risk-card risk-medium">
+      <h5>R9: FPGA Dev Complexity</h5>
+      <p>VHDL/Verilog learning curve. Mitigation: Start with eval board, iterate on sensor bridge firmware.</p>
+    </div>
+    <div class="risk-card risk-low">
+      <h5>R10: Simulation-to-Real Gap</h5>
+      <p>Gazebo sim may not capture all real-world dynamics. Mitigation: Early hardware testing, validate assumptions.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION: HOUR SUMMARY ===== -->
+<section>
+  <h2>⏱️ Hour Estimate Summary</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Phase</th>
+        <th>Description</th>
+        <th>Hours (Est.)</th>
+        <th>Calendar Days (~3h/day)</th>
+        <th>Track</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>0</td>
+        <td>CAD Finalization & Print Prep</td>
+        <td>14</td>
+        <td>5</td>
+        <td><span class="phase-tag tag-active" style="font-size: 0.7em;">Hardware</span></td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>Component Sourcing</td>
+        <td>7.5 + wait</td>
+        <td>3 + 1-4 wk shipping</td>
+        <td><span class="phase-tag tag-active" style="font-size: 0.7em;">Hardware</span></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>3D Printing & Mechanical Assembly</td>
+        <td>12-16</td>
+        <td>5-7</td>
+        <td><span class="phase-tag tag-active" style="font-size: 0.7em;">Hardware</span></td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Electronics Assembly & Wiring</td>
+        <td>24-26</td>
+        <td>8-9</td>
+        <td><span class="phase-tag tag-active" style="font-size: 0.7em;">Hardware</span></td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Software & Firmware Setup</td>
+        <td>22-24</td>
+        <td>7-8</td>
+        <td><span class="phase-tag tag-upcoming" style="font-size: 0.7em;">Software</span></td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>System Integration</td>
+        <td>8-9</td>
+        <td>3</td>
+        <td><span class="phase-tag tag-critical" style="font-size: 0.7em;">Integration</span></td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>Ground Testing & Validation</td>
+        <td>12-13</td>
+        <td>4-5</td>
+        <td><span class="phase-tag tag-planning" style="font-size: 0.7em;">Testing</span></td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td>Flight Testing & DV</td>
+        <td>22-24</td>
+        <td>7-8</td>
+        <td><span class="phase-tag tag-planning" style="font-size: 0.7em;">Testing</span></td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td>Iterative Debug & Optimization</td>
+        <td>16-36</td>
+        <td>5-12</td>
+        <td><span class="phase-tag tag-future" style="font-size: 0.7em;">Ongoing</span></td>
+      </tr>
+      <tr style="font-weight: 700; background: var(--surface2);">
+        <td></td>
+        <td>TOTAL</td>
+        <td>138-173</td>
+        <td>47-57 working days</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+</div>
+
+<footer>
+  <p>🐦 Hummingbird Technologies — P1 Master Timeline</p>
+  <p>Generated 2026-03-04 · Autonomous Drone Swarm Platform</p>
+  <p style="margin-top: 8px; font-size: 0.8em;">Source: P1_PROJECT_PLAN.md · compute-architecture-v1.md · TODO.md</p>
+  <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border); text-align: left; max-width: 800px; margin-left: auto; margin-right: auto;">
+    <p style="font-weight: 600; color: var(--accent3);">📋 Changelog</p>
+    <p><strong>2026-03-11</strong> — Source error corrections:</p>
+    <ul style="text-align: left; font-size: 0.85em; color: var(--text-muted);">
+      <li>ARK Jetson PAB Carrier: $800 → $700 (verified from bundle pricing: $1,100 − ARKV6X $400)</li>
+      <li>Jetson Orin NX TOPS: clarified 100 TOPS standard, 157 TOPS requires SUPER mode (JetPack 6.2)</li>
+      <li>Per-drone BOM total: reconciled hero stat and breakdown — now $5,790 (main components)</li>
+      <li>Intel RealSense D435i: added ⚠️ EOL warning and alternative recommendations (Luxonis OAK-D Pro, Orbbec Femto)</li>
+      <li>Added source links for ARK 4IN1 ESC ($218.50 ea) and ARK Flow ($250)</li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      darkMode: true,
+      background: '#161b22',
+      primaryColor: '#1a2e3a',
+      primaryTextColor: '#e6edf3',
+      primaryBorderColor: '#30363d',
+      lineColor: '#58a6ff',
+      secondaryColor: '#1a2332',
+      tertiaryColor: '#1c2333',
+      fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif',
+      fontSize: '13px',
+      gridColor: '#30363d',
+      todayLineColor: '#f85149',
+      taskBorderColor: '#30363d',
+      taskBkgColor: '#1a2e3a',
+      activeTaskBkgColor: '#1a3a2e',
+      activeTaskBorderColor: '#3fb950',
+      doneTaskBkgColor: '#2a1a3a',
+      doneTaskBorderColor: '#bc8cff',
+      critBkgColor: '#3a2a1a',
+      critBorderColor: '#d29922',
+      sectionBkgColor: '#161b22',
+      sectionBkgColor2: '#1c2333',
+      altSectionBkgColor: '#161b22',
+      taskTextColor: '#e6edf3',
+      taskTextOutsideColor: '#e6edf3',
+      taskTextClickableColor: '#58a6ff',
+      sectionBorderColor: '#30363d',
+    },
+    gantt: {
+      titleTopMargin: 25,
+      barHeight: 24,
+      barGap: 6,
+      topPadding: 50,
+      leftPadding: 150,
+      gridLineStartPadding: 35,
+      fontSize: 12,
+      sectionFontSize: 13,
+      numberSectionStyles: 4,
+      axisFormat: '%b %d',
+      useMaxWidth: true,
+    },
+    flowchart: {
+      useMaxWidth: true,
+      htmlLabels: true,
+      curve: 'basis',
+      padding: 15,
+    }
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hummingbird Technologies — Nest Platform: Mechanical & Electronics Architecture</title>
+<style>
+:root{--navy:#1a1a2e;--dark:#2c3e50;--mid:#34495e;--accent:#2980b9;--green:#27ae60;--light:#ecf0f1;--warn:#e67e22;--purple:#8e44ad;--bg:#fafbfc;--divider:#e0e4e8}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Arial,sans-serif;font-size:15px;line-height:1.65;color:#333;max-width:920px;margin:0 auto;padding:40px 30px;background:var(--bg)}
+
+/* Title block */
+.title-block{text-align:center;margin:40px 0 50px;padding:40px 20px 30px;border-bottom:3px solid var(--accent);position:relative}
+.title-block::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:60px;height:4px;background:var(--navy);border-radius:2px}
+.title-block h1{font-size:2.4em;color:var(--navy);margin-bottom:10px;letter-spacing:-0.5px}
+.title-block .subtitle{font-size:1.25em;color:#555;margin-bottom:8px}
+.title-block .date{font-size:1.05em;color:#888;margin-bottom:20px}
+.title-block .confidential{color:#cc0000;font-weight:bold;letter-spacing:2px;font-size:0.85em}
+
+/* Headings */
+h1{font-size:1.7em;color:var(--navy);border-bottom:3px solid var(--accent);padding-bottom:6px;margin:50px 0 16px}
+h2{font-size:1.35em;color:var(--dark);margin:30px 0 12px}
+h3{font-size:1.1em;color:var(--mid);margin:20px 0 10px}
+h4{font-size:1em;color:var(--mid);margin:16px 0 8px;font-style:italic}
+p{margin-bottom:12px}ul,ol{margin:8px 0 16px 28px}li{margin-bottom:5px}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;margin:14px 0 18px;font-size:14px;border-radius:4px;overflow:hidden}
+th{background:var(--dark);color:#fff;padding:8px 12px;text-align:left;font-weight:600}
+td{padding:7px 12px;border:1px solid #d5d9dd}tr:nth-child(even) td{background:#f4f6f8}
+.highlight-row td{background:#d5e8d4!important;font-weight:600}
+.subtotal-row td{background:#e8e8e8!important;font-weight:600}
+.warn-row td{background:#ffeaa7!important}
+
+/* Note boxes */
+.note{background:#eaf4fc;border-left:4px solid var(--accent);padding:12px 16px;margin:14px 0;font-size:14px;border-radius:0 4px 4px 0}
+.note strong{color:var(--accent)}
+.warn-note{background:#fef9e7;border-left:4px solid var(--warn);padding:12px 16px;margin:14px 0;font-size:14px;border-radius:0 4px 4px 0}
+.warn-note strong{color:var(--warn)}
+
+/* Flow box */
+.flow-box{background:#f4f6f7;border:1px solid #ddd;border-radius:6px;padding:16px 20px;margin:14px 0;font-size:14px}
+.flow-box p{margin-bottom:6px}.flow-box .arrow{color:var(--accent);font-weight:bold}
+
+/* Version badges — now only prototype phase badges remain */
+.pv{display:inline-block;background:var(--purple);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-left:4px;vertical-align:middle}
+
+/* TOC */
+.toc{background:#fff;border:1px solid var(--divider);border-radius:8px;padding:24px 30px;margin:20px 0 40px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.toc h2{margin:0 0 14px;color:var(--navy);border:none;font-size:1.3em}
+.toc ul{list-style:none;margin:0;padding:0}
+.toc>ul>li{margin-bottom:6px}.toc>ul>li>a{font-weight:600;font-size:15px}
+.toc ul ul{margin:4px 0 4px 20px}.toc ul ul li{margin-bottom:3px}
+.toc ul ul li a{font-weight:400;font-size:14px;color:#555}
+
+/* Changelog */
+.changelog{background:#fdf6ec;border:1px solid #e8d5b7;border-radius:8px;padding:20px 24px;margin:20px 0}
+.changelog h3{color:var(--warn);margin-top:14px;margin-bottom:6px}.changelog h3:first-child{margin-top:0}
+.changelog ul{margin:4px 0 10px 24px;font-size:14px}.changelog li{margin-bottom:3px}
+
+/* Roadmap cards */
+.rc{border:2px solid #ddd;border-radius:8px;padding:18px 22px;margin:12px 0;background:#fff}
+.rc.p1{border-color:var(--green)}.rc.p2{border-color:var(--accent)}.rc.p3{border-color:var(--purple)}.rc.fu{border-color:#bbb}.rc.ga{border-color:var(--warn)}
+.rc h3{margin-top:0}
+.rc .pl{display:inline-block;color:#fff;font-size:12px;font-weight:700;padding:2px 10px;border-radius:4px;margin-bottom:8px}
+.rc.p1 .pl{background:var(--green)}.rc.p2 .pl{background:var(--accent)}.rc.p3 .pl{background:var(--purple)}.rc.fu .pl{background:#999}.rc.ga .pl{background:var(--warn)}
+
+/* Spec grid */
+.spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0}
+.spec-card{background:#fff;border:1px solid var(--divider);border-radius:6px;padding:14px 18px;box-shadow:0 1px 2px rgba(0,0,0,0.04)}
+.spec-card h4{margin:0 0 8px;color:var(--navy);font-style:normal}
+.spec-card .val{font-size:1.4em;font-weight:700;color:var(--accent)}
+.spec-card .unit{font-size:.85em;color:#666;margin-left:4px}
+.market-bar{height:24px;border-radius:4px;margin:4px 0}
+
+/* Tier boxes */
+.tier-box{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0}
+.tier-card{border:2px solid #ddd;border-radius:8px;padding:16px 20px;background:#fff}
+.tier-card.primary{border-color:var(--accent);background:#f0f7ff}
+.tier-card.secondary{border-color:var(--green);background:#f0fff4}
+.tier-card h3{margin-top:0}
+
+/* Financial summary */
+.fin-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:14px 0}
+.fin-card{background:#fff;border:1px solid var(--divider);border-radius:6px;padding:14px 18px;text-align:center;box-shadow:0 1px 2px rgba(0,0,0,0.04)}
+.fin-card h4{margin:0 0 6px;color:var(--navy);font-style:normal;font-size:.9em}
+.fin-card .val{font-size:1.5em;font-weight:700;color:var(--accent)}
+.fin-card .sub{font-size:.8em;color:#666;margin-top:4px}
+.fin-card.green .val{color:var(--green)}
+.fin-card.warn .val{color:var(--warn)}
+.fin-card.purple .val{color:var(--purple)}
+.phase-cost{border-left:4px solid var(--accent);padding:12px 16px;margin:10px 0;background:#fff}
+.phase-cost h4{margin:0 0 6px;color:var(--navy);font-style:normal}
+.phase-cost .total{font-size:1.3em;font-weight:700;color:var(--accent)}
+
+/* Use case scenario cards */
+.scenario{background:#fff;border:1px solid var(--divider);border-left:5px solid var(--accent);border-radius:0 8px 8px 0;padding:20px 24px;margin:18px 0;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.scenario.fire{border-left-color:var(--warn)}
+.scenario h3{margin:0 0 10px;color:var(--navy)}
+.scenario .tag{display:inline-block;background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:3px;margin-bottom:10px}
+.scenario.fire .tag{background:var(--warn)}
+
+/* Back to TOC link */
+.back-toc{text-align:right;margin:10px 0 0;font-size:13px}
+.back-toc a{color:#888;text-decoration:none}.back-toc a:hover{color:var(--accent);text-decoration:underline}
+
+/* Document navigation bar */
+.doc-nav{display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:var(--navy);border-radius:6px;margin-bottom:10px}
+.doc-nav a{color:#fff;text-decoration:none;font-size:13px;font-weight:500;transition:color 0.2s}
+.doc-nav a:hover{color:#00d4ff;text-decoration:none}
+.doc-nav .nav-left{display:flex;align-items:center;gap:8px}
+.doc-nav .nav-left img{height:28px;width:auto}
+.doc-nav .nav-right a{opacity:0.75}.doc-nav .nav-right a:hover{opacity:1}
+.title-logo{height:80px;width:auto;margin-bottom:16px}
+
+@media print{body{font-size:12px;padding:20px;background:#fff}h1{page-break-before:always}table{page-break-inside:avoid}.back-toc{display:none}.doc-nav{display:none}}
+
+/* Source citation styles */
+.cite{font-size:11px;color:#1a73e8;vertical-align:super;text-decoration:none;font-weight:600;cursor:pointer;padding:0 1px}
+.cite:hover{text-decoration:underline}
+
+/* Risk assessment styles */
+.risk-high{background:#fdecea;border-left:5px solid #d32f2f;padding:18px 22px;margin:16px 0;border-radius:0 6px 6px 0}
+.risk-high h3{color:#b71c1c;margin-top:0}
+.risk-mod{background:#fff8e1;border-left:5px solid #f9a825;padding:18px 22px;margin:16px 0;border-radius:0 6px 6px 0}
+.risk-mod h3{color:#e65100;margin-top:0}
+.risk-low{background:#e8f5e9;border-left:5px solid #2e7d32;padding:18px 22px;margin:16px 0;border-radius:0 6px 6px 0}
+.risk-low h3{color:#1b5e20;margin-top:0}
+.risk-tag{display:inline-block;color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:3px;margin-bottom:8px}
+.risk-tag.high{background:#d32f2f}
+.risk-tag.mod{background:#f9a825;color:#333}
+.risk-tag.low{background:#2e7d32}
+.mitigation-box{background:#fff;border:1px solid var(--divider);border-radius:6px;padding:14px 18px;margin:10px 0 14px;box-shadow:0 1px 2px rgba(0,0,0,0.04)}
+.mitigation-box h4{margin:0 0 8px;color:var(--navy);font-style:normal}
+.cost-impact{font-size:14px;background:#f4f6f7;border:1px solid #ddd;border-radius:4px;padding:10px 14px;margin:8px 0}
+#sources-section{margin-top:40px}
+#sources-section ol{padding-left:24px;font-size:13px;line-height:1.8}
+#sources-section li{margin-bottom:6px;color:#444}
+#sources-section a{color:#1a73e8;word-break:break-all}
+</style>
+</head>
+<body>
+
+<div class="doc-nav">
+<div class="nav-left">
+<a href="Nest_Document_Index.html"><img src="logo/logo-icon.png" alt="Hummingbird Technologies"> &larr; Document Suite Index</a>
+</div>
+<div class="nav-right">
+<a href="https://hummingbirdtech.ai" target="_blank">hummingbirdtech.ai &rarr;</a>
+</div>
+</div>
+
+<div class="title-block">
+<img src="logo/logo-icon.png" alt="" class="title-logo">
+<h1>Hummingbird Technologies</h1>
+<div class="subtitle">Nest Platform &mdash; Mechanical &amp; Electronics Architecture</div>
+<div class="date">February 2026</div>
+<div class="confidential">CONFIDENTIAL</div>
+</div>
+
+
+<div class="toc" id="toc">
+<h2>Table of Contents</h2>
+<ul>
+<li><a href="#exec">Executive Overview</a></li>
+<li><a href="#s5">1. Prototype &amp; Development Roadmap</a></li>
+<li><a href="#s6">2. Mechanical Architecture</a><ul>
+  <li><a href="#s6-1">2.1 Nest Containerized Platform</a></li>
+  <li><a href="#s6-2">2.2 Hummingbird Drone Design</a></li>
+  <li><a href="#s6-3">2.3 Robotic Retrieval System</a></li>
+  <li><a href="#s6-4">2.4 Launch Mechanism</a></li>
+  <li><a href="#s6-5">2.5 Electromagnetic Capture &amp; Proximity Landing</a></li>
+  <li><a href="#s6-6">2.6 Charging System</a></li></ul></li>
+<li><a href="#s7">3. Electronics Architecture</a><ul>
+  <li><a href="#s7-1">3.1 Dual-Computer Architecture</a></li>
+  <li><a href="#s7-2">3.2 Communication Systems</a></li>
+  <li><a href="#s7-3">3.3 RTK GPS Navigation</a></li>
+  <li><a href="#s7-3b">3.4 GPS-Denied &amp; Degraded Navigation</a></li>
+  <li><a href="#s7-4">3.5 Proximity Guidance Sensor Stack</a></li></ul></li>
+<li><a href="#s8">4. Software Architecture</a><ul>
+  <li><a href="#s8-1">4.1 Distributed Manager Architecture</a></li>
+  <li><a href="#s8-2">4.2 Drone Flight Controllers</a></li>
+  <li><a href="#s8-3">4.3 Autonomous Swarm Coordination</a></li>
+  <li><a href="#s8-3b">4.3.1 Swarm Operations in Denied Environments</a></li>
+  <li><a href="#s8-4">4.4 Proximity Landing Protocol</a></li>
+  <li><a href="#s8-5">4.5 Mission Planning Interface</a></li>
+  <li><a href="#s8-6">4.6 Post-Mission Processing</a></li></ul></li>
+<li><a href="#s10">5. Next Steps</a></li>
+<li><a href="#sources-section">Sources &amp; References</a></li>
+<li><a href="#clog">Change Log</a></li>
+</ul>
+</div>
+
+<!-- ==================== EXECUTIVE OVERVIEW (Systems-Focused) ==================== -->
+<h1 id="exec">Executive Overview</h1>
+
+<p><strong>Hummingbird Technologies</strong> is developing the <strong>Hummingbird Nest</strong> &mdash; the world's first containerized autonomous drone swarm platform. The Nest deploys, manages, and recovers a fleet of 20–30 AI-powered <strong>Hummingbird</strong> drones from a self-contained modular container, enabling persistent aerial coverage for defense, law enforcement, emergency response, and municipal services.</p>
+
+<p>The Hummingbird Nest Platform is a <strong>containerized, modular system</strong> capable of deploying, coordinating, and retrieving up to 30 configurable autonomous drones in coordinated swarm missions. The container houses vertical cassette-style drone storage, autonomous retrieval via six-axis robotic arm, and a game-like mission control interface powered by a ROS-based distributed control architecture. The Nest container can be deployed on a variety of platforms &mdash; including pickup truck beds, flatbed vehicles, maritime vessels, or stationary installations &mdash; and accepts external power or can be paired with a power module (solar, generator) for self-sufficient operation. For law enforcement and rapid-response applications, the preferred deployment configuration mounts the container on a plug-in hybrid electric vehicle (PHEV) with 7+ kW power export capability. The entire system is operable by <strong>a single operator</strong>.</p>
+
+<p>The platform provides seven kilowatts of total system power for drone charging, computation, and mechanical operations. Each drone features a compact ducted coaxial quad-rotor propulsion system <a class="cite" href="#src-20">[20]</a> within a standardized cassette form factor, delivering approximately 23–30 minutes of flight endurance per charge cycle. The system maintains <strong>100% continuous swarm uptime</strong> through intelligent drone rotation—automatically cycling fresh drones out to replace those returning for recharge, ensuring uninterrupted mission coverage.</p>
+
+<p>System coordination is managed by three specialized software modules: a <strong>Mission Manager</strong> tracking objectives and progress, a <strong>Swarm Manager</strong> handling drone rotation and health monitoring, and a <strong>Ground Manager</strong> orchestrating physical launch, retrieval, and charging operations. The coordinated airspace management model is inspired by Air Traffic Control principles.</p>
+
+<h2>Systems-Level Technical Highlights</h2>
+<ul>
+  <li><strong>Containerized modular platform:</strong> Self-contained unit deployable on trucks, flatbeds, maritime vessels, or stationary installations; multiple Nest containers are stackable and combinable for larger configurations</li>
+  <li><strong>Single-operator system:</strong> One person operates the entire platform including mission planning, swarm management, and drone recovery &mdash; no piloting skill required</li>
+  <li>30 drones per container, stored in vertical cassette slots per drone</li>
+  <li>Ducted coaxial quad-rotor propulsion: four ducts with pusher-puller counter-rotating props per duct (8 motors total per drone), fully enclosed within cassette form factor</li>
+  <li>~23–30 minute flight endurance per drone (6S high-density LiPo, 230 Wh/kg); chemistry-agnostic battery bay designed for upgrade path to 300+ Wh/kg</li>
+  <li>100% continuous swarm coverage through automated drone rotation—Swarm Manager proactively cycles fresh drones before returning units reach depletion</li>
+  <li><strong>Flexible power:</strong> Accepts external power (preferred), PHEV power export, or paired power modules (solar, diesel/gas generator) for self-sufficient operation</li>
+  <li><strong>Dormant-to-active readiness:</strong> System can remain in pre-positioned dormant state with automated battery maintenance cycling, then activate remotely on command for immediate operations</li>
+  <li><strong>Day/night and all-weather operations:</strong> Operational in standard weather conditions (moderate wind, light rain, light snow, normal temperature ranges); swarm supports mixed sensor payloads including visual, low-light, IR, and thermal cameras for 24/7 capability</li>
+  <li>Three-module distributed control: Mission Manager, Swarm Manager, and Ground Manager as coordinated ROS nodes</li>
+  <li><strong>Operator-on-the-loop and operator-in-the-loop:</strong> Autonomous swarm mission execution (operator-on-the-loop) with seamless transition to direct manual control of any individual drone (operator-in-the-loop) and back</li>
+  <li>Dual-computer architecture per drone: Pixhawk 6X flight safety + NVIDIA Jetson Orin Nano 67 TOPS AI</li>
+  <li>Dual communication system: LTE cellular and mesh Wi-Fi networking with automatic fallback</li>
+  <li>Six-axis robotic arm with electromagnetic end effector for magnetic retrieval and automated charging</li>
+  <li>Soft-docking magnetic coupling system enabling rapid capture without precision alignment</li>
+  <li>RTK GPS centimeter-level navigation with GPS-denied capability via INS, visual-inertial odometry, and depth SLAM; cooperative swarm localization for enhanced positioning in degraded environments</li>
+  <li>Quad-channel communications for continuous link integrity; full DDIL (denied, degraded, intermittent, limited) resilience</li>
+  <li><strong>Standardized payload bays:</strong> Modular center-mounted payload bay per drone with standardized interfaces; configurable payloads up to ~1 kg per primary drone (expandable with battery upgrades)</li>
+  <li><strong>Open architecture (MOSA-aligned):</strong> Built on open standards &mdash; ROS 2, MAVLink, DDS, WebRTC, MQTT, REST APIs &mdash; with published interfaces for external C2 integration including TAK (Team Awareness Kit) compatibility</li>
+</ul>
+
+<div class="back-toc"><a href="#toc">↑ Table of Contents</a></div>
+
+
+<!-- ==================== PROTOTYPE ROADMAP ==================== -->
+<h1 id="s5">1. Prototype &amp; Development Roadmap</h1>
+
+<p>Development progresses through three prototype phases (P1, P2, P3), each building on proven capabilities from the previous. After P3 validation with customer pilots, the system enters <strong>General Availability (GA)</strong>—the first production release for customer delivery. Feature tags throughout this document reference the prototype phase in which each capability is targeted.</p>
+
+<h3>Milestone Terminology</h3>
+<table>
+<tr><th>Milestone</th><th>Meaning</th><th>Timing</th></tr>
+<tr><td><span class="pv">P1</span></td><td>Prototype 1 — Core Flight &amp; Ground Systems</td><td>Months 1–12</td></tr>
+<tr><td><span class="pv">P2</span></td><td>Prototype 2 — Swarm Intelligence &amp; Advanced Capture</td><td>Months 12–24</td></tr>
+<tr><td><span class="pv">P3</span></td><td>Prototype 3 — Full Operational System &amp; Customer Pilots</td><td>Months 24–36</td></tr>
+<tr><td><span class="pv">GA</span></td><td>General Availability — First Production Release for Customer Delivery</td><td>~Month 36+</td></tr>
+<tr><td><span class="pv">Future</span></td><td>Post-GA advanced capabilities and expansion features</td><td>Post-GA</td></tr>
+</table>
+
+<div class="rc p1" id="pp1">
+<div class="pl">P1 — Core Flight &amp; Ground Systems</div>
+<h3>P1: Prove the Fundamentals</h3>
+<p><strong>Goal:</strong> Single-drone and small-swarm ops with stationary vehicle, automated launch/capture, basic missions.</p>
+<ul>
+<li><a href="#s6-2">Cassette drone</a> with <a href="#s6-2p">ducted coaxial propulsion</a>, <a href="#s7-1px">Pixhawk 6X</a>, <a href="#s7-1jt">Jetson Orin Nano</a></li>
+<li>PHEV with 7 kW, cassette rack, robotic arm</li>
+<li>All four <a href="#s7-2">comm channels</a>: LTE, mesh, 900 MHz, IR LEDs</li>
+<li><a href="#s7-3">RTK GPS</a> with vehicle base station</li>
+<li><a href="#s8-1">Three-manager architecture</a> running as ROS nodes</li>
+<li><a href="#s6-5">Stationary vehicle capture</a> (hover, ground-guided, electromagnetic)</li>
+<li>Basic <a href="#s8-5">mission interface</a> with map and telemetry</li>
+<li>1-5 drones initially; scale to 10+ for rotation testing</li>
+<li>Basic onboard <a href="#s7-1jt">AI obstacle avoidance</a></li>
+</ul>
+<p><strong>Key milestone:</strong> Autonomous flight from cassette → mission → return → automated capture → recharge → re-launch</p>
+</div>
+
+<div class="rc p2" id="pp2">
+<div class="pl">P2 — Swarm Intelligence &amp; Advanced Capture</div>
+<h3>P2: Scale and Harden</h3>
+<p><strong>Goal:</strong> Full 30-drone swarm with continuous rotation, moving vehicle capture, advanced AI.</p>
+<ul>
+<li>30 drones with <a href="#s8-3">continuous rotation</a> at scale</li>
+<li><a href="#s6-5">Moving vehicle capture</a>: velocity matching + tilt compensation</li>
+<li>LiDAR added to <a href="#s7-4">proximity sensors</a></li>
+<li>Advanced AI: terrain classification, object tracking, autonomous avoidance</li>
+<li>Multi-drone formations: search grids, perimeters, convoys</li>
+<li>Comms hardening at 30-drone scale</li>
+<li>Full <a href="#s8-5">game-like interface</a> with capture viz and rotation dashboards</li>
+<li><a href="#s8-6">Automated video analysis</a> pipeline</li>
+</ul>
+<p><strong>Key milestone:</strong> 30-drone continuous mission, zero downtime; successful moving-vehicle capture</p>
+</div>
+
+<div class="rc p3" id="pp3">
+<div class="pl">P3 — Full Operational System</div>
+<h3>P3: Field-Ready Platform</h3>
+<p><strong>Goal:</strong> Hardened system for customer pilot programs; final validation before General Availability.</p>
+<ul>
+<li>Weather-sealed storage; all-weather operations; environmental testing</li>
+<li>FAA waiver package and operational procedures</li>
+<li><a href="#s6-2b">Semi-solid state battery</a> integration if available (300 Wh/kg)</li>
+<li>Extended-duration testing (24+ hours continuous); MTBF targets</li>
+<li>Operator training curriculum</li>
+<li>Multi-vehicle coordination</li>
+<li>Encrypted comms, secure boot, tamper detection</li>
+</ul>
+<p><strong>Key milestone:</strong> Customer pilot deployment; 72-hour operational test; regulatory approval</p>
+</div>
+
+<div class="rc ga" id="ppga">
+<div class="pl">GA — General Availability (First Production Release)</div>
+<h3>GA: Production &amp; Customer Delivery</h3>
+<p><strong>Goal:</strong> First commercially available, customer-deliverable production units.</p>
+<ul>
+<li>Production-intent hardware with qualified manufacturing processes</li>
+<li>Full regulatory compliance package and operational certification</li>
+<li>Customer onboarding, training, and support infrastructure</li>
+<li>SaaS platform for fleet management, analytics, and updates</li>
+<li>Warranty, maintenance, and field service capability</li>
+<li>DaaS service offering operational</li>
+</ul>
+<p><strong>Key milestone:</strong> First paid system deliveries; recurring SaaS revenue; DaaS operations launched</p>
+</div>
+
+<div class="rc fu" id="ppf">
+<div class="pl">FUTURE — Advanced Capabilities</div>
+<h3>Beyond GA</h3>
+<ul>
+<li>Onboard small language models for autonomous assessment</li>
+<li>Payload delivery operations</li>
+<li>Multi-vehicle swarm networks</li>
+<li>Beyond visual line-of-sight (BVLOS) with satellite fallback</li>
+<li>AI-generated mission plans from high-level intent</li>
+<li>Counter-UAS integration</li>
+<li>Solid-state batteries (400+ Wh/kg, 45+ min endurance)</li>
+<li>Ground robot integration (air-ground coordination)</li>
+<li>Autonomous vehicle platform relocation</li>
+</ul>
+</div>
+
+<h3>Feature-to-Prototype Map</h3>
+<table>
+<tr><th>Feature</th><th>Phase</th><th>Section</th></tr>
+<tr><td>Ducted coaxial propulsion</td><td><span class="pv">P1</span></td><td><a href="#s6-2p">2.2</a></td></tr>
+<tr><td>Pixhawk 6X + Jetson Orin Nano</td><td><span class="pv">P1</span></td><td><a href="#s7-1">3.1</a></td></tr>
+<tr><td>LTE + mesh + 900 MHz + IR LEDs</td><td><span class="pv">P1</span></td><td><a href="#s7-2">3.2</a></td></tr>
+<tr><td>RTK GPS with base station</td><td><span class="pv">P1</span></td><td><a href="#s7-3">3.3</a></td></tr>
+<tr><td>Three-manager architecture</td><td><span class="pv">P1</span></td><td><a href="#s8-1">4.1</a></td></tr>
+<tr><td>Stationary vehicle capture</td><td><span class="pv">P1</span></td><td><a href="#s6-5">2.5</a></td></tr>
+<tr><td>Basic AI obstacle avoidance</td><td><span class="pv">P1</span></td><td><a href="#s7-1jt">3.1.2</a></td></tr>
+<tr><td>30-drone continuous rotation</td><td><span class="pv">P2</span></td><td><a href="#s8-3">4.3</a></td></tr>
+<tr><td>Moving vehicle capture</td><td><span class="pv">P2</span></td><td><a href="#s6-5">2.5</a></td></tr>
+<tr><td>Vehicle-mounted LiDAR</td><td><span class="pv">P2</span></td><td><a href="#s7-4">3.4</a></td></tr>
+<tr><td>Advanced AI perception</td><td><span class="pv">P2</span></td><td><a href="#s7-1jt">3.1.2</a></td></tr>
+<tr><td>Post-mission video analysis</td><td><span class="pv">P2</span></td><td><a href="#s8-6">4.6</a></td></tr>
+<tr><td>Semi-solid state battery</td><td><span class="pv">P3</span></td><td><a href="#s6-2b">2.2</a></td></tr>
+<tr><td>FAA waivers / regulatory</td><td><span class="pv">P3</span></td><td><a href="#ppga">GA</a></td></tr>
+<tr><td>Multi-vehicle coordination</td><td><span class="pv">P3</span></td><td><a href="#pp3">P3</a></td></tr>
+<tr><td>Production release &amp; customer delivery</td><td><span class="pv">GA</span></td><td><a href="#ppga">GA</a></td></tr>
+<tr><td>Onboard language models</td><td><span class="pv">Future</span></td><td><a href="#ppf">Future</a></td></tr>
+</table>
+
+<div class="back-toc"><a href="#toc">↑ Table of Contents</a></div>
+
+
+<!-- ==================== MECHANICAL ARCHITECTURE ==================== -->
+<h1 id="s6">2. Mechanical Architecture</h1>
+
+<h2 id="s6-1">2.1 Nest Containerized Platform</h2>
+<p>The Hummingbird Nest is fundamentally a <strong>self-contained, containerized autonomous drone system</strong>. The container houses all drone storage, launch/recovery mechanisms, charging infrastructure, robotic retrieval, computation, and communications in a single modular unit. The container is designed to be deployed on a variety of host platforms depending on operational requirements.</p>
+
+<h3>Container System Requirements:</h3>
+<ul>
+<li><strong>Self-contained unit:</strong> All drone storage (30 cassette slots), robotic arm, launch mechanism, charging system, onboard computers (Mission Manager, Swarm Manager, Ground Manager), and power management housed within a single containerized enclosure</li>
+<li><strong>Drone storage:</strong> 30 drones in vertical cassette format distributed across front and side mounting areas (~10 per side)</li>
+<li><strong>Modular and stackable:</strong> Individual Nest containers are smaller than a standard 20-foot ISO container; multiple units can be combined side-by-side to fill a standard container footprint for logistics and transport</li>
+<li><strong>Standard power interface:</strong> Accepts external power input (preferred) with standard connectors; minimum 7 kW continuous power for drone charging, computation, and mechanical operations</li>
+<li><strong>Arm mounting:</strong> Six-axis robotic retrieval arm and integrated launch system with coordinated motor control</li>
+<li><strong>Environmental protection:</strong> Ruggedized enclosure for outdoor deployment in standard weather conditions</li>
+</ul>
+
+<h3>Deployment Configurations:</h3>
+<table>
+<tr><th>Platform</th><th>Description</th><th>Power Source</th></tr>
+<tr><td><strong>PHEV Truck (Primary Prototype)</strong></td><td>Container mounted in pickup bed; ideal for law enforcement rapid response with silent electric approach</td><td>PHEV power export (7+ kW)</td></tr>
+<tr><td><strong>Flatbed / Utility Vehicle</strong></td><td>Container secured on flatbed for transport and field deployment</td><td>Vehicle power export or paired generator</td></tr>
+<tr><td><strong>Stationary / Pre-Positioned</strong></td><td>Container placed at fixed location (rooftop, FOB, facility perimeter) for persistent dormant-to-active operations</td><td>Shore power, solar, or generator</td></tr>
+<tr><td><strong>Maritime Vessel</strong></td><td>Container mounted on ship deck or boat platform</td><td>Ship power</td></tr>
+<tr><td><strong>Air Transport</strong></td><td>Container transported via cargo aircraft for rapid deployment to remote locations</td><td>Paired generator or local power on arrival</td></tr>
+</table>
+
+<h3>Power Flexibility:</h3>
+<ul>
+<li><strong>External power (preferred):</strong> Shore power, ship power, or facility power via standard interfaces &mdash; no additional hardware required</li>
+<li><strong>PHEV power export:</strong> For vehicle-mounted configurations; 7+ kW continuous output enables silent electric operation and quick gas refills for extended deployments</li>
+<li><strong>Solar power module:</strong> Paired solar array for off-grid stationary deployments</li>
+<li><strong>Generator module:</strong> Diesel or gas generator for fully self-sufficient field operations</li>
+</ul>
+
+<h3>Dormant State &amp; Remote Activation:</h3>
+<p>The Nest container is designed to operate in a <strong>pre-positioned dormant state</strong> for extended periods (days, weeks, or longer). During dormant mode, the system automatically manages battery cycling &mdash; periodically charging and discharging drone batteries to maintain optimal cell health and readiness. Upon receiving a remote activation command via the secure communication link, the system powers up to full operational status and is ready to launch drones without any on-site personnel. The entire system can be operated fully remotely from a ground control station.</p>
+
+<div class="note"><strong>Platform flexibility:</strong> The containerized architecture is inherently platform-agnostic. The same Nest container that mounts on a pickup truck for a police department can be placed on a naval vessel, pre-positioned on a building rooftop, or transported by cargo aircraft to a disaster zone. The only variable is the power source, which is addressed through the standard power interface and optional power modules.</div>
+
+<!-- CASSETTE DRONES -->
+<h2 id="s6-2">2.2 Hummingbird Drone Design</h2>
+<p>Drones are engineered with a standardized cassette form factor that enables mechanical and electrical integration with the vehicle system. The cassette design is inspired by VHS/DVD cartridge storage for intuitive spatial organization and efficient retrieval. <strong>The entire drone—including propulsion, electronics, battery, payload, and communications—is fully integrated within the cassette envelope with no folding or deployment mechanisms required.</strong></p>
+
+<h3>Form Factor Specifications:</h3>
+<ul>
+  <li><strong>Standardized form factor:</strong> 12' × 12' square face, approximately 4' thick per drone (scout); 18' × 18' × 5' (primary)</li>
+  <li><strong>Fully integrated design:</strong> All propulsion, electronics, battery, payload, and communication systems contained within the cassette envelope—no folding arms or external appendages</li>
+  <li><strong>Vertical slot mounting:</strong> VHS-style vertical cassette slots along front and left/right sides of the vehicle bed</li>
+  <li><strong>Slot distribution:</strong> ~10 slots on front, 10 on left side, 10 on right side (total 30)</li>
+  <li><strong>Standardized connectors:</strong> Mechanical connectors for robotic arm retrieval with soft-docking electromagnetic compatibility</li>
+  <li><strong>Charging contacts:</strong> Integrated electrical contacts for automated charging distributed across 7 kW system power</li>
+  <li><strong>Magnetic grasping points:</strong> Secure electromagnetic coupling with soft-docking tolerances</li>
+  <li><strong>Onboard flight controller:</strong> Each drone runs its own autonomous flight controller for real-time decision-making</li>
+  <li><strong>Modular center-mounted payload bay:</strong> Interchangeable sensors and tools selected based on mission type</li>
+</ul>
+
+<h3 id="s6-2p">Propulsion System</h3>
+<p>Each drone uses a <strong>ducted coaxial quad-rotor</strong> configuration optimized for the compact cassette form factor. Four ducted fan units are positioned at the corners of the airframe, with a central cross-shaped zone reserved for electronics, battery, and modular payload.</p>
+
+<ul>
+  <li><strong>Configuration:</strong> 4 ducted fan units in corner-mounted arrangement within square envelope</li>
+  <li><strong>Rotor type:</strong> Coaxial pusher-puller (counter-rotating) propeller pairs per duct—8 brushless motors total per drone</li>
+  <li><strong>Propeller diameter (primary):</strong> 6 inches (152 mm) per duct</li>
+  <li><strong>Duct outer diameter (primary):</strong> ~7 inches, pushed to corners of the 18' airframe</li>
+  <li><strong>Center payload zone (primary):</strong> ~6'-wide cross-shaped area between the four corner ducts, housing flight controller, battery, comms, GPS, sensors, and modular payload bay</li>
+  <li><strong>Motor class:</strong> 2207-class brushless motors (22 mm stator, 7 mm height), 6S compatible, 1400–1600 KV, ~30 g each</li>
+</ul>
+
+<div class="note">
+  <strong>Ducted coaxial advantages:</strong> The ducted design provides ~15–25% thrust augmentation at hover vs. open props, improved safety with fully enclosed rotors (critical for operations near people), reduced acoustic signature, and propeller protection during cassette operations. The coaxial counter-rotating configuration eliminates torque reaction, doubles thrust density per duct footprint, and provides single-motor-failure redundancy per duct.
+</div>
+
+<h3>Propulsion Performance</h3>
+<table>
+  <tr><th>Parameter</th><th>Specification</th></tr>
+  <tr><td>Max thrust per duct (primary, coaxial ducted)</td><td>~1,200–1,600 g (est. 1,400 g nominal)</td></tr>
+  <tr><td>Total max thrust (primary, 4 ducts)</td><td>~5,600 g (5.6 kg)</td></tr>
+  <tr><td>Motor count per drone</td><td>8 (2 per duct × 4 ducts)</td></tr>
+  <tr><td>Motor weight (per motor, primary)</td><td>~30 g (2207 class)</td></tr>
+  <tr><td>System efficiency at hover (primary)</td><td>~6.0 g/W</td></tr>
+  <tr><td>Hover power (primary, motors only)</td><td>~483 W (at ~2,901 g AUW)</td></tr>
+</table>
+
+<h3 id="s6-2e">Power &amp; Endurance</h3>
+<table>
+  <tr><th>Parameter</th><th>HB-18 Primary</th><th>HB-12 Scout</th></tr>
+  <tr><td>Battery chemistry (baseline)</td><td colspan="2">6S LiPo (22.2V nominal)</td></tr>
+  <tr><td>Battery energy density (baseline)</td><td colspan="2">230 Wh/kg (high-density cells, e.g. Molicel P42A class) <a class="cite" href="#src-molicel">[M1]</a></td></tr>
+  <tr><td>Battery weight</td><td>~1,043 g</td><td>~779 g</td></tr>
+  <tr><td>Battery capacity</td><td>~240 Wh</td><td>~179 Wh</td></tr>
+  <tr><td>Usable capacity (80% depth of discharge)</td><td>~192 Wh</td><td>~143 Wh</td></tr>
+  <tr><td>Flight endurance (hover)</td><td>~23 minutes</td><td>~29 minutes</td></tr>
+  <tr><td>Thrust-to-weight ratio</td><td>1.93:1</td><td>1.89:1</td></tr>
+</table>
+
+<h3 id="s6-2w">Weight Budget</h3>
+<table>
+  <tr><th>Component</th><th>Weight (g)</th></tr>
+  <tr><td>Frame + duct structures (carbon fiber, 18')</td><td>220</td></tr>
+  <tr><td>Motors (8× 2207-class)</td><td>240</td></tr>
+  <tr><td>ESCs (8× 35A)</td><td>80</td></tr>
+  <tr><td>Flight controller</td><td>15</td></tr>
+  <tr><td>Wiring, connectors, Ethernet</td><td>45</td></tr>
+  <tr><td>LTE communication module</td><td>20</td></tr>
+  <tr><td>Mesh Wi-Fi module</td><td>15</td></tr>
+  <tr><td>RTK GPS module</td><td>15</td></tr>
+  <tr><td>Sensors (barometer, etc.)</td><td>10</td></tr>
+  <tr><td>Payload (multi-sensor package)</td><td>1,000</td></tr>
+  <tr><td>Electromagnetic docking hardware</td><td>45</td></tr>
+  <tr><td>Miscellaneous (antenna, IR LEDs, fasteners)</td><td>38</td></tr>
+  <tr class="subtotal-row"><td><strong>Dry Weight Subtotal (Primary 18')</strong></td><td><strong>~1,858</strong></td></tr>
+  <tr><td>Battery (6S high-density LiPo, 240 Wh)</td><td>1,043</td></tr>
+  <tr class="highlight-row"><td><strong>All-Up Weight (AUW, Primary)</strong></td><td><strong>~2,901</strong></td></tr>
+</table>
+
+<h3 id="s6-2b">Battery Upgrade Path</h3>
+<p>The battery bay and power electronics are designed to be <strong>chemistry-agnostic</strong>: same 6S voltage (22.2V nominal), same physical form factor, same charge interface. Higher-density cells can be substituted directly for performance gains:</p>
+
+<table>
+  <tr><th>Battery Type</th><th>Density</th><th>Batt Weight</th><th>AUW</th><th>T/W Ratio</th><th>Endurance</th></tr>
+  <tr class="warn-row"><td>Standard 6S LiPo</td><td>200 Wh/kg</td><td>1,200 g</td><td>3,058 g</td><td>1.83:1 ⚠️</td><td>30 min</td></tr>
+  <tr class="highlight-row"><td>High-density 6S LiPo ★</td><td>230 Wh/kg</td><td>1,043 g</td><td>2,901 g</td><td>1.93:1 ✓</td><td>~23 min</td></tr>
+  <tr><td>Semi-solid state 6S</td><td>300 Wh/kg</td><td>800 g</td><td>2,658 g</td><td>2.11:1 ✓</td><td>~28 min</td></tr>
+</table>
+
+<div class="note">
+  <strong>★ Baseline design selection.</strong> With a future semi-solid state battery upgrade (300 Wh/kg), the surplus weight budget yields ~28 min endurance with 1 kg payload, or 30+ min with lighter payloads — with no system changes required.
+</div>
+
+
+<h3 id="s6-2t">2.2.5 Two-Tier Drone System</h3>
+<p>The platform supports two interchangeable cassette form factors optimized for different mission profiles. Both tiers share identical electronics architecture, communication systems, and software interfaces — only the airframe, propulsion, battery, and payload capacity differ.</p>
+
+<div class="tier-box">
+<div class="tier-card primary">
+<h3>🟦 Hummingbird-18 (HB-18) Primary</h3>
+<ul>
+<li><strong>Cassette:</strong> 18' × 18' × 5'</li>
+<li><strong>Props:</strong> 6' ducted coaxial (2207 motors)</li>
+<li><strong>Max thrust:</strong> 5,600 g</li>
+<li><strong>AUW:</strong> ~2,901 g</li>
+<li><strong>Payload:</strong> up to 1 kg</li>
+<li><strong>Endurance:</strong> ~23 min hover</li>
+<li><strong>T/W:</strong> 1.93:1</li>
+<li><strong>Vehicle capacity:</strong> ~16–20 drones</li>
+<li><strong>Use cases:</strong> Multi-sensor surveillance, thermal+visual+LiDAR packages, heavy inspection payloads</li>
+</ul>
+</div>
+<div class="tier-card secondary">
+<h3>🟩 Hummingbird-12 (HB-12) Scout</h3>
+<ul>
+<li><strong>Cassette:</strong> 12' × 12' × 4'</li>
+<li><strong>Props:</strong> 4' ducted coaxial (1507 motors)</li>
+<li><strong>Max thrust:</strong> 2,600 g</li>
+<li><strong>AUW:</strong> ~1,375 g</li>
+<li><strong>Payload:</strong> up to 80 g</li>
+<li><strong>Endurance:</strong> ~29 min hover</li>
+<li><strong>T/W:</strong> 1.89:1</li>
+<li><strong>Vehicle capacity:</strong> ~30 drones</li>
+<li><strong>Use cases:</strong> High-density swarm coverage, lightweight cameras, perimeter patrol, rapid area scan</li>
+</ul>
+</div>
+</div>
+
+<div class="note"><strong>Mixed fleet operations:</strong> The vehicle cassette rack can be configured for all-primary, all-scout, or mixed configurations. A mixed fleet might carry 10 primary drones for heavy sensor work plus 12 scout drones for perimeter coverage — all managed by the same <a href="#s8-1">three-manager architecture</a>. The <a href="#s8-1sm">Swarm Manager</a> treats both tiers as resources in a unified fleet, assigning missions based on payload requirements and endurance needs.</div>
+
+<h3 id="s6-perf">2.2.6 Performance Specifications Summary</h3>
+
+<div class="spec-grid">
+<div class="spec-card"><h4>Primary Drone Dimensions</h4><span class="val">18' × 18' × 5'</span><span class="unit">(457 × 457 × 127 mm)</span></div>
+<div class="spec-card"><h4>Scout Drone Dimensions</h4><span class="val">12' × 12' × 4'</span><span class="unit">(305 × 305 × 102 mm)</span></div>
+<div class="spec-card"><h4>Max Payload (Primary)</h4><span class="val">1,000 g</span><span class="unit">(2.2 lb)</span></div>
+<div class="spec-card"><h4>Flight Endurance (Primary)</h4><span class="val">~23 min</span><span class="unit">hover w/ 1 kg payload</span></div>
+<div class="spec-card"><h4>Max Speed (est.)</h4><span class="val">~55 km/h</span><span class="unit">(~34 mph, GPS mode)</span></div>
+<div class="spec-card"><h4>Operating Altitude</h4><span class="val">400 ft AGL</span><span class="unit">(FAA limit; capable higher)</span></div>
+</div>
+
+<table>
+<tr><th>Specification</th><th>HB-18 Primary</th><th>HB-12 Scout</th></tr>
+<tr><td>Cassette form factor</td><td>18' × 18' × 5'</td><td>12' × 12' × 4'</td></tr>
+<tr><td>All-up weight (AUW)</td><td>~2,901 g (6.4 lb)</td><td>~1,375 g (3.0 lb)</td></tr>
+<tr><td>Dry weight (no battery/payload)</td><td>~858 g</td><td>~516 g</td></tr>
+<tr><td>Max payload capacity</td><td>1,000 g (2.2 lb)</td><td>80 g (2.8 oz)</td></tr>
+<tr><td>Battery voltage</td><td>6S (22.2 V nominal)</td><td>6S (22.2 V nominal)</td></tr>
+<tr><td>Battery capacity</td><td>~240 Wh (1,043 g)</td><td>~179 Wh (779 g)</td></tr>
+<tr><td>Battery chemistry</td><td colspan="2">High-density LiPo 230 Wh/kg (baseline); chemistry-agnostic upgrade path</td></tr>
+<tr><td>Total system power (hover)</td><td>~495 W</td><td>~299 W</td></tr>
+<tr><td>Flight endurance (hover)</td><td>~23 min</td><td>~29 min</td></tr>
+<tr><td>Max thrust</td><td>5,600 g (5.6 kg)</td><td>2,600 g (2.6 kg)</td></tr>
+<tr><td>Thrust-to-weight ratio</td><td>1.93:1</td><td>1.89:1</td></tr>
+<tr><td>Propulsion</td><td>4× ducted coaxial, 6' props, 2207 motors</td><td>4× ducted coaxial, 4' props, 1507 motors</td></tr>
+<tr><td>Motor count</td><td colspan="2">8 per drone (2 per duct × 4 ducts)</td></tr>
+<tr><td>Flight controller</td><td colspan="2">Pixhawk 6X (STM32H753, triple-redundant IMU)</td></tr>
+<tr><td>Companion computer</td><td colspan="2">NVIDIA Jetson Orin Nano 8 GB (67 TOPS AI)</td></tr>
+<tr><td>Navigation</td><td colspan="2">RTK GPS (centimeter-level); GPS-based heading; <a href="#s7-3b">GPS-denied capable</a> via INS + VIO + depth SLAM with condition-adaptive fusion; <a href="#s7-3b-coop">cooperative swarm localization</a></td></tr>
+<tr><td>Communications</td><td colspan="2">LTE + mesh Wi-Fi + 900 MHz proximity + IR LED (4 channels)</td></tr>
+<tr><td>Capture method</td><td colspan="2">Electromagnetic soft-docking, ~2' self-centering, ground-guided</td></tr>
+<tr><td>Max speed (est.)</td><td>~55 km/h (34 mph)</td><td>~65 km/h (40 mph)</td></tr>
+<tr><td>Max wind resistance (est.)</td><td>~35 km/h</td><td>~25 km/h</td></tr>
+<tr><td>Operating temperature (target)</td><td colspan="2">-10°C to +45°C</td></tr>
+<tr><td>IP rating (target)</td><td colspan="2">IP43 (rain-resistant; P3 goal: IP54)</td></tr>
+<tr><td>Noise level (est.)</td><td>~68 dBA @ 1m</td><td>~60 dBA @ 1m</td></tr>
+<tr><td>Vehicle capacity</td><td>16–20 drones</td><td>~30 drones</td></tr>
+</table>
+
+<h4>Vehicle Platform Specifications</h4>
+<table>
+<tr><th>Specification</th><th>Value</th></tr>
+<tr><td>Vehicle</td><td>Plug-in hybrid electric vehicle (PHEV) with 7+ kW power export</td></tr>
+<tr><td>System power output</td><td>7 kW continuous</td></tr>
+<tr><td>Drone capacity (primary)</td><td>16–20 × 18' cassettes</td></tr>
+<tr><td>Drone capacity (scout)</td><td>~30 × 12' cassettes</td></tr>
+<tr><td>Drone capacity (mixed)</td><td>Configurable; e.g. 10 primary + 12 scout</td></tr>
+<tr><td>Storage format</td><td>Vertical cassette slots (front + left + right)</td></tr>
+<tr><td>Retrieval system</td><td>6-axis robotic arm, 3.5–4 ft reach, electromagnetic end effector</td></tr>
+<tr><td>Capture tolerance</td><td>~2' self-centering in mating plane</td></tr>
+<tr><td>RTK base station</td><td>Vehicle-mounted; centimeter corrections to all drones</td></tr>
+<tr><td>Proximity sensors</td><td>IR camera (P1) + optional LiDAR (P2)</td></tr>
+<tr><td>Continuous coverage</td><td>100% uptime via automated drone rotation</td></tr>
+<tr><td>Deployment time</td><td>~5 min from arrival to first drone airborne (target)</td></tr>
+<tr><td>Recharge time</td><td>~45–60 min per drone (fast charge within 7 kW budget)</td></tr>
+</table>
+
+<h2 id="s6-3">2.3 Robotic Retrieval System</h2>
+<p>A six-axis robotic arm with an electromagnetic end effector handles all drone launch and retrieval operations. The arm is dimensioned to reach all 30 cassette slots and extend beyond the vehicle perimeter for external drone capture and repositioning.</p>
+
+<h3>Technical Specifications:</h3>
+<ul>
+  <li><strong>Robotic arm:</strong> Six-axis (6-DOF) industrial-grade arm with coordinated motor control</li>
+  <li><strong>Reach distance:</strong> 3.5–4 feet maximum, enabling access to all internal cassette slots and external drone capture</li>
+  <li><strong>End effector:</strong> Electromagnet-based coupling system for secure drone grasping and soft-docking insertion</li>
+  <li><strong>Electromagnetic coupling:</strong> Soft-docking design requiring no precision alignment; magnetic attraction provides centering force</li>
+  <li><strong>Magnetic contact points:</strong> TBD based on load testing and grip force requirements; likely multiple points for redundancy</li>
+  <li><strong>Load capacity:</strong> Sized for repeated launch/retrieval cycles over extended operations with thermal management</li>
+  <li><strong>Control system:</strong> Coordinated with Ground Manager for sequenced launch and retrieval</li>
+  <li><strong>Mechanical locking:</strong> Prevents unintended drone ejection during vehicle transit and maneuvers</li>
+</ul>
+
+<h2 id="s6-4">2.4 Launch Mechanism</h2>
+<p>Drones are extracted from storage slots and positioned for autonomous takeoff. The launch process leverages the drone's onboard flight controller and propulsion systems, with the robotic arm serving as the positioning mechanism. The Ground Manager coordinates the launch sequence based on Swarm Manager requests.</p>
+
+<h3>Launch Sequence:</h3>
+<ol>
+  <li>Ground Manager receives launch request from Swarm Manager with specific drone ID and slot location</li>
+  <li>Robotic arm retrieves selected drone from vertical cassette slot using electromagnetic coupling</li>
+  <li>Arm positions drone in external launch area or hover-ready position above vehicle</li>
+  <li>Electromagnetic coupling is de-energized, releasing magnetic attachment</li>
+  <li>Drone autonomously activates flight controller and ducted coaxial propulsion based on flight plan from Swarm Manager</li>
+  <li>Drone takes flight following mission instructions; arm retracts to neutral for next operation</li>
+</ol>
+
+<h2 id="s6-5">2.5 Electromagnetic Capture &amp; Proximity Landing</h2>
+<p>Precision landing is offloaded to the ground station. The <a href="#s8-1gm">Ground Manager</a> uses <a href="#s7-4">multi-sensor fusion</a> to guide drones from the vehicle's reference frame.</p>
+<h3>Magnetic Coupling</h3>
+<ul>
+<li><strong>Drone:</strong> Permanent magnets in docking surface</li>
+<li><strong>Arm:</strong> Electromagnet end effector (energized for coupling)</li>
+<li><strong>Self-centering:</strong> ~2" radius in mating plane</li>
+</ul>
+<h3>Capture Dynamics</h3>
+<ul>
+<li><strong>X-axis:</strong> Vehicle travel direction; <strong>YZ-plane:</strong> Arm holds fixed capture point</li>
+<li><strong>Tilt compensation:</strong> 6-axis arm tilts end effector to match drone attitude</li>
+<li><strong>Envelope:</strong> ~5-6 ft from vehicle; Ground Manager assumes authority via <a href="#s7-2-900">900 MHz</a></li>
+</ul>
+<h3 id="cap-seq">Capture Sequence <span class="pv">P1: Stationary</span> <span class="pv">P2: Moving</span></h3>
+<ol>
+<li><a href="#s8-1sm">Swarm Manager</a> recalls drone; autonomous RTK GPS return</li>
+<li>Enters ~5-6 ft envelope; <a href="#s7-2-900">900 MHz link</a> established</li>
+<li><a href="#s7-4">IR camera</a> acquires <a href="#s7-2ir">IR LED</a> signature</li>
+<li><strong>Handoff:</strong> Ground Manager assumes guidance via 900 MHz to Pixhawk</li>
+<li><strong>Ground-guided:</strong> Fuses RTK + camera; position/velocity commands</li>
+<li><strong>Fine alignment:</strong> Camera primary at <2 ft; arm tilts to match attitude</li>
+<li><strong>EM capture:</strong> Electromagnet energized within 2" tolerance; self-centers</li>
+<li><strong>Motors off:</strong> Ground Manager commands shutdown via 900 MHz</li>
+<li><strong>Arm retracts;</strong> inserts to slot; charging begins</li>
+</ol>
+<div class="warn-note"><strong>Staging:</strong> <a href="#pp1">P1</a> = stationary capture. <a href="#pp2">P2</a> = moving vehicle capture with velocity matching + tilt compensation.</div>
+
+<h2 id="s6-6">2.6 Charging System</h2>
+<p>Rapid charging occurs automatically during drone storage in cassette slots. The 7 kW power system is distributed intelligently across all 30 charging slots, computation, and mechanical operations.</p>
+
+<h3>Charging Architecture:</h3>
+<ul>
+  <li><strong>Power source:</strong> PHEV power export output (7 kW total system power)</li>
+  <li><strong>Battery interface:</strong> 6S LiPo compatible charging contacts (22.2V nominal); chemistry-agnostic upgrade path</li>
+  <li><strong>Intelligent distribution:</strong> Power management allocates 7 kW across charging slots, computation, and robotic arm based on real-time demand</li>
+  <li><strong>Automatic charging:</strong> Begins immediately upon drone insertion into cassette slot with managed charge rate</li>
+  <li><strong>Charging management:</strong> Monitors and optimizes charging across all simultaneous operations, preventing overload</li>
+  <li><strong>Thermal management:</strong> Thermal monitoring and load balancing to prevent overheating during extended operations</li>
+  <li><strong>Power budget redundancy:</strong> Gracefully handles simultaneous computation, charging, and arm operations within 7 kW budget</li>
+</ul>
+
+<div class="back-toc"><a href="#toc">↑ Table of Contents</a></div>
+
+
+<!-- ==================== ELECTRONICS ARCHITECTURE ==================== -->
+<h1 id="s7">3. Electronics Architecture</h1>
+<p>Each drone carries a dual-computer system connected via Ethernet, plus four independent communication channels. The Pixhawk owns safety-critical flight; the Jetson handles AI, ROS, and communications.</p>
+
+<h2 id="s7-1">3.1 Dual-Computer Architecture</h2>
+<p>Two onboard computers connected via high-speed Ethernet in a clear hierarchy: Pixhawk owns flight safety, Jetson handles intelligence and comms.</p>
+
+<h3 id="s7-1px">3.1.1 Flight Controller — Pixhawk 6X (Mini Baseboard) <span class="pv">P1</span></h3>
+<table>
+<tr><th>Parameter</th><th>Spec</th></tr>
+<tr><td>Hardware</td><td>Holybro Pixhawk 6X, FMU + Mini Baseboard <a class="cite" href="#src-pixhawk">[P1]</a></td></tr>
+<tr><td>Processor</td><td>STM32H753, Cortex-M7 @ 480 MHz</td></tr>
+<tr><td>Firmware</td><td>ArduPilot with custom coaxial quad motor mixing</td></tr>
+<tr><td>IMU</td><td>3× ICM-45686 with BalancedGyro™ (Rev 8+), triple redundant, isolated buses, vibration damped <a class="cite" href="#src-pixhawk">[P1]</a></td></tr>
+<tr><td>Barometer</td><td>Dual redundant, separate buses</td></tr>
+<tr><td>Weight</td><td>~50 g (23 g FMU + 26.5 g baseboard)</td></tr>
+<tr><td>Power</td><td>~2 W (engineering estimate; no manufacturer spec published)</td></tr>
+<tr><td>Jetson link</td><td>Native Ethernet (MAVLink 2.0 / UDP)</td></tr>
+</table>
+<h4>Pixhawk Responsibilities:</h4>
+<ul>
+<li><strong>Motor control:</strong> 8 ESCs with custom coaxial mixing (roll/pitch/yaw/throttle)</li>
+<li><strong>Navigation:</strong> Triple-IMU fusion + <a href="#s7-3">RTK GPS</a>; GPS heading (no magnetic compass needed)</li>
+<li><strong>Safety autonomy:</strong> Obstacle avoidance, emergency landing — no Jetson/ground dependency</li>
+<li><strong>Capture mode:</strong> Direct commands from Ground Manager via <a href="#s7-2-900">900 MHz</a></li>
+<li><strong>Telemetry:</strong> IMU, attitude, GPS, battery, motors → Jetson via MAVLink/Ethernet</li>
+<li><strong>Watchdog:</strong> Monitors Jetson heartbeat; safe return if companion fails</li>
+</ul>
+
+<h3 id="s7-1jt">3.1.2 Companion Computer — Jetson Orin Nano 8 GB <span class="pv">P1</span></h3>
+<table>
+<tr><th>Parameter</th><th>Spec</th></tr>
+<tr><td>Hardware</td><td>NVIDIA Jetson Orin Nano 8 GB SOM + minimal carrier</td></tr>
+<tr><td>GPU</td><td>Ampere, 1024 CUDA cores and 32 Tensor Cores <a class="cite" href="#src-jetson">[J1]</a></td></tr>
+<tr><td>CPU</td><td>6-core Arm Cortex-A78AE</td></tr>
+<tr><td>AI perf</td><td>Up to 67 TOPS (25 W Super Mode, JetPack 6.2+); typ. 40 TOPS @ 15 W <a class="cite" href="#src-jetson">[J1]</a></td></tr>
+<tr><td>Memory</td><td>8 GB LPDDR5</td></tr>
+<tr><td>SOM size</td><td>69.6 x 45 mm (SO-DIMM)</td></tr>
+<tr><td>Power</td><td>7 / 15 W (native); 25 W Super Mode (JetPack 6.2+) <a class="cite" href="#src-jetson">[J1]</a>; flight avg ~7-10 W</td></tr>
+<tr><td>Weight</td><td>~50 g (SOM + carrier)</td></tr>
+<tr><td>Stack</td><td>JetPack SDK, ROS 2, CUDA, TensorRT</td></tr>
+</table>
+<h4>Jetson Responsibilities:</h4>
+<ul>
+<li><strong>ROS node:</strong> Drone-side comm with <a href="#s8-1sm">Swarm Manager</a></li>
+<li><strong>Comms gateway:</strong> Manages LTE + mesh; routes to/from Pixhawk</li>
+<li><strong>AI inference:</strong> Obstacle avoidance, object detection, terrain classification</li>
+<li><strong>Video:</strong> Camera encoding, compression, selective transmission</li>
+<li><strong>Payload:</strong> Camera/sensor via USB or MIPI CSI</li>
+<li><strong>Watchdog:</strong> Monitors Pixhawk; alerts Swarm Manager on failure</li>
+</ul>
+
+<h3 id="s7-1if">3.1.3 Pixhawk ↔ Jetson Interface</h3>
+<div class="flow-box">
+<p><strong>Physical:</strong> Ethernet (native on both)</p>
+<p><strong>Protocol:</strong> MAVLink 2.0 over UDP</p>
+<p><strong>Jetson → Pixhawk:</strong> Waypoints, mode commands, AI avoidance vectors</p>
+<p><strong>Pixhawk → Jetson:</strong> IMU/attitude, GPS, battery, motor telemetry, heartbeat</p>
+<p><strong>Failsafe:</strong> Lost Jetson → Pixhawk safe mode. Lost Pixhawk → Jetson alerts Swarm Manager.</p>
+</div>
+
+<h3 id="s7-1pw">3.1.4 Compute Power Impact</h3>
+<table>
+<tr><th>Parameter</th><th>No Compute</th><th>With Compute</th><th>Delta</th></tr>
+<tr><td>Motor hover</td><td>287 W</td><td>287 W</td><td>—</td></tr>
+<tr><td>Pixhawk</td><td>—</td><td>~2 W</td><td>+2 W</td></tr>
+<tr><td>Jetson</td><td>—</td><td>~10 W</td><td>+10 W</td></tr>
+<tr><td><strong>Total</strong></td><td><strong>287 W</strong></td><td><strong>~299 W</strong></td><td><strong>+12 W (4.2%)</strong></td></tr>
+<tr><td><strong>Endurance</strong></td><td><strong>~29.9 min</strong></td><td><strong>~28.7 min</strong></td><td><strong>-1.2 min</strong></td></tr>
+</table>
+<div class="note"><strong>Conclusion:</strong> 4.2% power overhead for 67 TOPS AI, centimeter RTK, and quad-channel comms. Excellent tradeoff. (Table values shown for HB-12 Scout configuration: 179 Wh battery, 143 Wh usable at 80% DoD.)</div>
+
+<h2 id="s7-2">3.2 Communication Systems</h2>
+<p>Four independent channels with shared access layer for cross-validation.</p>
+
+<h3 id="s7-2lte">3.2.1 LTE Cellular <span class="pv">P1</span></h3>
+<ul>
+<li><strong>Role:</strong> Long-range primary data link to <a href="#s8-1sm">Swarm Manager</a></li>
+<li><strong>Primary user:</strong> <a href="#s7-1jt">Jetson</a></li>
+<li><strong>Data:</strong> Command/telemetry, waypoints, video backhaul, AI results</li>
+<li><strong>Failover:</strong> Falls back to mesh Wi-Fi</li>
+</ul>
+
+<h3 id="s7-2mesh">3.2.2 Mesh Wi-Fi <span class="pv">P1</span></h3>
+<ul>
+<li><strong>Role:</strong> Drone-to-drone and drone-to-vehicle mesh; redundant command path</li>
+<li><strong>Primary user:</strong> <a href="#s7-1jt">Jetson</a></li>
+<li><strong>Self-healing:</strong> Auto-reroutes on link drop</li>
+</ul>
+
+<h3 id="s7-2-900">3.2.3 900 MHz Proximity Link <span class="pv">P1</span></h3>
+<ul>
+<li><strong>Role:</strong> Dedicated short-range link for <a href="#s6-5">launch/capture operations</a></li>
+<li><strong>Primary user:</strong> <a href="#s7-1px">Pixhawk</a> (direct positioning commands from Ground Manager)</li>
+<li><strong>Interface:</strong> Serial (UART) to Pixhawk; MAVLink protocol</li>
+<li><strong>Activation:</strong> Drone enters ~5-6 ft proximity envelope</li>
+<li><strong>Latency:</strong> Single-digit milliseconds for real-time capture guidance</li>
+</ul>
+<div class="note"><strong>Design rationale:</strong> The 900 MHz "tractor beam" protocol connects directly to the Pixhawk, bypassing the Jetson for minimal latency. The Ground Manager guides the drone from its own reference frame where it knows the arm and slot positions.</div>
+
+<h3 id="s7-2ir">3.2.4 IR LED Signaling <span class="pv">P1</span></h3>
+<ul>
+<li><strong>Role:</strong> Visual ID, orientation, and tracking for <a href="#s7-4">vehicle camera</a> during capture</li>
+<li><strong>Functions:</strong> Unique blink pattern per drone ID; LED positions indicate heading/attitude; blink encodes status; known frequency enables temporal filtering vs background noise</li>
+<li><strong>Weight:</strong> ~5 g (LEDs + driver)</li>
+</ul>
+
+<h3 id="s7-2sh">3.2.5 Shared Communication Layer</h3>
+<table>
+<tr><th>Channel</th><th>Primary</th><th>Secondary</th><th>Cross-Validation</th></tr>
+<tr><td>LTE</td><td>Jetson</td><td>Pixhawk (read)</td><td>Confirms Jetson-Swarm Manager link</td></tr>
+<tr><td>Mesh Wi-Fi</td><td>Jetson</td><td>Pixhawk (read)</td><td>Validates mesh connectivity</td></tr>
+<tr><td>900 MHz</td><td>Pixhawk</td><td>Jetson (read)</td><td>Monitors capture guidance</td></tr>
+<tr><td>IR LEDs</td><td>Pixhawk (driver)</td><td>Jetson (config)</td><td>Jetson updates blink patterns</td></tr>
+</table>
+<p>Both computers watchdog each other. Neither is blind if the other fails.</p>
+
+<h2 id="s7-3">3.3 RTK GPS Navigation</h2>
+<ul>
+<li><strong>Drone-side:</strong> RTK GPS receiver connected to <a href="#s7-1px">Pixhawk</a> (lowest latency); position relayed to Jetson via MAVLink</li>
+<li><strong>Vehicle-side:</strong> Base station broadcasting corrections to all drones</li>
+<li><strong>Accuracy:</strong> Centimeter-level with RTK fix</li>
+<li><strong>Heading:</strong> GPS-based heading eliminates magnetic compass dependency (critical near electromagnetic hardware)</li>
+<li><strong>Capture role:</strong> Coarse positioning for <a href="#s6-5">proximity capture</a>; <a href="#s7-4">IR camera</a> provides fine guidance</li>
+</ul>
+
+<h2 id="s7-3b">3.4 GPS-Denied &amp; Degraded Navigation</h2>
+
+<p>While <a href="#s7-3">RTK GPS</a> provides centimeter-level positioning under nominal conditions, the Hummingbird platform is designed to maintain full navigational capability when GPS is degraded, denied, or actively spoofed. This is critical for operations in urban canyons, near structures, in electromagnetically contested environments, or in areas subject to intentional GPS jamming.</p>
+
+<h3>Multi-Modal Navigation Stack</h3>
+<p>When GPS quality degrades, the system transitions to a multi-layered navigation approach that fuses multiple independent positioning sources. All navigation processing runs onboard the drone's main computer (<a href="#s7-1jt">Jetson Orin Nano</a>), ensuring full autonomy with no dependency on ground station or cloud connectivity.</p>
+
+<table>
+<tr><th>Navigation Source</th><th>Method</th><th>Strengths</th><th>Limitations</th></tr>
+<tr><td><strong>RTK GPS</strong></td><td>Satellite positioning with RTK corrections</td><td>Centimeter accuracy, absolute position, global reference</td><td>Vulnerable to jamming, spoofing, urban canyon multipath</td></tr>
+<tr><td><strong>Inertial Navigation System (INS)</strong></td><td>Triple-redundant IMU integration (accelerometer + gyroscope)</td><td>Immune to external interference, continuous output, no line-of-sight requirements</td><td>Drift accumulates over time without correction</td></tr>
+<tr><td><strong>Visual-Inertial Odometry (VIO)</strong></td><td>Camera-based motion estimation fused with IMU data</td><td>High accuracy in feature-rich environments, drift-bounded</td><td>Degraded in low light, smoke, fog, or featureless terrain</td></tr>
+<tr><td><strong>Depth SLAM</strong></td><td>Simultaneous Localization and Mapping using depth sensors (stereo vision, LiDAR)</td><td>3D environment mapping, robust in GPS-denied indoor/urban environments</td><td>Computational cost, requires sufficient geometric features</td></tr>
+</table>
+
+<h3>Condition-Adaptive Sensor Fusion</h3>
+<p>The navigation system employs a <strong>condition-adaptive fusion architecture</strong> rather than a fixed priority hierarchy. Each navigation source continuously reports health metrics (signal quality, confidence, drift rate, feature density), and the fusion algorithm dynamically adjusts the weighting of each source based on real-time conditions:</p>
+
+<ul>
+<li><strong>Nominal GPS:</strong> RTK GPS is primary with high weighting; INS/VIO/SLAM provide cross-validation and smooth short-duration GPS dropouts</li>
+<li><strong>Degraded GPS:</strong> GPS weighting is reduced proportionally based on reported signal quality metrics; VIO and SLAM weighting increases to compensate</li>
+<li><strong>Denied GPS (jamming detected):</strong> GPS is fully excluded from the fusion; INS provides short-term continuity while VIO and depth SLAM assume primary positioning role</li>
+<li><strong>Spoofing detected:</strong> GPS module-level spoofing detection triggers full GPS rejection; system falls back to INS/VIO/SLAM stack with no GPS influence on position estimate</li>
+<li><strong>Visual degradation (smoke, low light, featureless):</strong> VIO weighting reduced; INS and depth SLAM (which functions independently of visible light) increase in priority</li>
+</ul>
+
+<div class="note"><strong>GPS integrity monitoring:</strong> The RTK GPS module itself provides signal integrity metrics and spoofing detection indicators. When anomalies are detected (position jumps, carrier-phase inconsistencies, unexpected signal strength patterns), the module flags the condition and the fusion algorithm responds proportionally &mdash; from reducing GPS weighting to fully discarding GPS output. This prevents spoofed GPS signals from corrupting the navigation solution.</div>
+
+<h3>Onboard Processing</h3>
+<p>All sensor fusion and navigation processing runs entirely on the drone's <a href="#s7-1jt">main computer (Jetson Orin Nano)</a>. The 67 TOPS AI compute capacity handles simultaneous VIO feature tracking, SLAM map construction, and INS integration at rates sufficient for real-time flight control. No ground station, cloud, or external processing is required for GPS-denied navigation &mdash; each drone maintains fully self-contained positioning capability.</p>
+
+<h3 id="s7-3b-coop">Cooperative Localization (Swarm-Enhanced Positioning)</h3>
+<p>When operating as a swarm in GPS-denied environments, drones can improve their individual position estimates through <strong>cooperative localization</strong>. Each drone shares its position estimate and associated error covariance matrix over the <a href="#s7-2mesh">WiFi mesh network</a>. By combining multiple drones' independent estimates and their inter-drone measurements, the swarm achieves better collective positioning accuracy than any individual drone alone.</p>
+
+<ul>
+<li><strong>Shared error matrices:</strong> Each drone broadcasts its position estimate and error covariance; neighboring drones incorporate these into their own fusion, reducing overall position uncertainty</li>
+<li><strong>RF-based relative ranging:</strong> WiFi signal strength measurements between drone mesh modules provide relative distance estimates between swarm members, adding an additional constraint to the cooperative position solution</li>
+<li><strong>Potential additional RF ranging:</strong> Other onboard radio frequencies may also contribute relative distance measurements for further ranging redundancy</li>
+</ul>
+
+<div class="note"><strong>Graceful individual fallback:</strong> If environmental conditions become so severe that even the inter-drone WiFi mesh cannot be maintained, each drone reverts to fully independent navigation using its own INS/VIO/SLAM stack and continues its assigned mission autonomously. See <a href="#s8-3b">Section 4.3.1: Swarm Operations in Denied Environments</a> for details on swarm behavior under these conditions.</div>
+
+<h2 id="s7-4">3.5 Proximity Guidance Sensor Stack (Vehicle-Side)</h2>
+<table>
+<tr><th>Sensor</th><th>Role</th><th>Range</th><th>Phase</th></tr>
+<tr><td><a href="#s7-3">RTK GPS</a> differential</td><td>Coarse relative position</td><td>Unlimited</td><td><span class="pv">P1</span></td></tr>
+<tr><td>IR/Visual camera</td><td>Primary fine guidance; tracks <a href="#s7-2ir">IR LEDs</a></td><td>~5-6 ft</td><td><span class="pv">P1</span></td></tr>
+<tr><td>LiDAR</td><td>Precision 3D range; low-visibility</td><td>~5-6 ft</td><td><span class="pv">P2</span></td></tr>
+</table>
+<div class="note"><strong>Fusion strategy:</strong> RTK gets drone into envelope. IR camera provides sub-cm fine guidance by tracking IR LED signature. Ground Manager fuses both and commands drone via <a href="#s7-2-900">900 MHz</a>. LiDAR staged for <a href="#pp2">P2</a>.</div>
+
+<div class="back-toc"><a href="#toc">↑ Table of Contents</a></div>
+
+
+<!-- ==================== SOFTWARE ARCHITECTURE ==================== -->
+<h1 id="s8">4. Software Architecture</h1>
+<p>ROS distributed node architecture with three manager modules and per-drone autonomous flight controllers.</p>
+
+<h2 id="s8-1">4.1 Distributed Manager Architecture</h2>
+
+<h3 id="s8-1mm">4.1.1 Mission Manager (Strategic) <span class="pv">P1</span></h3>
+<p>Owns mission objectives; translates operator intent into directives for <a href="#s8-1sm">Swarm Manager</a>.</p>
+<ul>
+<li>Receives missions from <a href="#s8-5">game-like interface</a></li>
+<li>Tracks progress, completion criteria, mission state</li>
+<li>Issues high-level directives (e.g., "maintain coverage over zone A")</li>
+<li>Handles abort, priority changes, objective updates</li>
+<li>Triggers <a href="#s8-6">post-mission processing</a></li>
+</ul>
+
+<h3 id="s8-1sm">4.1.2 Swarm Manager (Tactical) <span class="pv">P1</span></h3>
+<p>Owns active fleet composition; maintains <a href="#s8-3">continuous coverage</a>.</p>
+<ul>
+<li>Translates directives into drone assignments, waypoints, formations</li>
+<li>Proactive drone rotation: monitors battery, sensors, comms, performance</li>
+<li>Flexible rotation: send first (critical) / recall first (non-urgent) / simultaneous</li>
+<li>Manages inter-drone coordination and collective behavior</li>
+<li>Multi-trigger recall: battery, sensor, comms, mechanical anomaly</li>
+<li>Coordinates with <a href="#s8-1gm">Ground Manager</a> for launch/retrieval</li>
+</ul>
+
+<h3 id="s8-1gm">4.1.3 Ground Manager (Physical) <span class="pv">P1</span></h3>
+<p>Manages all physical operations at the vehicle.</p>
+<ul>
+<li>Robotic arm sequencing for launch and retrieval</li>
+<li>Cassette inventory: slots, charge states, configs, maintenance</li>
+<li>7 kW power distribution with load balancing</li>
+<li>Pre-flight checks and readiness reporting</li>
+<li><strong>Proximity capture authority:</strong> Guides returning drones via <a href="#s7-2-900">900 MHz</a> using <a href="#s7-4">sensor fusion</a></li>
+<li><strong>Arm attitude control:</strong> Tilts end effector to match drone pitch/roll</li>
+</ul>
+
+<h3>Manager Communication Flow</h3>
+<div class="flow-box">
+<p><strong>Operator</strong> <span class="arrow">→</span> <strong>Mission Mgr:</strong> "Patrol perimeter with thermal"</p>
+<p><strong>Mission Mgr</strong> <span class="arrow">→</span> <strong>Swarm Mgr:</strong> "Continuous coverage zone A, thermal sensors"</p>
+<p><strong>Swarm Mgr</strong> <span class="arrow">→</span> <strong>Ground Mgr:</strong> "Launch drone 14 (slot B3); recover drone 7 (slot A5)"</p>
+<p><strong>Ground Mgr</strong> <span class="arrow">→</span> <strong>Arm:</strong> Execute sequence</p>
+<p><strong>Swarm Mgr</strong> <span class="arrow">→</span> <strong>Drone 14</strong> (LTE/mesh → Jetson → Pixhawk): "Fly waypoints, thermal scan"</p>
+<p><strong>Ground Mgr</strong> <span class="arrow">→</span> <strong>Drone 7</strong> (900 MHz → Pixhawk): "Hold for capture"</p>
+<p style="font-style:italic;margin-top:10px">All managers: real-time bidirectional status via ROS pub/sub.</p>
+</div>
+
+<h2 id="s8-2">4.2 Drone Flight Controllers</h2>
+<p><a href="#s7-1px">Pixhawk 6X</a> runs autonomous "pilot" role under <a href="#s8-1sm">Swarm Manager</a> coordination.</p>
+<ul>
+<li>Executes waypoints with onboard sensor feedback</li>
+<li>Autonomous obstacle avoidance (no ground approval needed); <a href="#s7-1jt">Jetson AI</a> provides enhanced vectors</li>
+<li>Independent safety decisions: hazards, comms loss, emergency landing</li>
+<li><strong>Capture mode:</strong> Direct commands from Ground Manager via <a href="#s7-2-900">900 MHz</a></li>
+<li><strong>Dual watchdog:</strong> Monitors Jetson; safe mode on failure</li>
+</ul>
+
+<h2 id="s8-3">4.3 Autonomous Swarm Coordination</h2>
+<h3>Continuous Coverage Model</h3>
+<p>100% swarm uptime despite ~23–29 min individual endurance:</p>
+<ul>
+<li><strong>Proactive replacement:</strong> Fresh drone launched <em>before</em> active drone's battery is critical</li>
+<li><strong>Flexible rotation:</strong> Replacement before, after, or simultaneous with return</li>
+<li><strong>Multi-trigger recall:</strong> Battery, sensors, comms, mechanical</li>
+<li><strong>Seamless handoff:</strong> Replacement assumes returning drone's role</li>
+<li><strong>Overlapping transit:</strong> Simultaneous outbound/inbound operations</li>
+</ul>
+
+<h3 id="s8-3b">4.3.1 Swarm Operations in Denied Environments</h3>
+
+<p>The swarm coordination model extends to GPS-denied and communication-denied operating environments. The system employs a graceful degradation strategy that maintains maximum mission capability at each level of environmental challenge.</p>
+
+<h4>GPS-Denied Swarm Operations</h4>
+<p>When GPS is unavailable across the operating area, the swarm continues coordinated operations using the <a href="#s7-3b">multi-modal navigation stack</a> on each drone. Swarm-level capabilities in GPS-denied conditions:</p>
+<ul>
+<li><strong>Cooperative localization:</strong> Drones share position estimates and error covariance matrices over the <a href="#s7-2mesh">mesh network</a>, mutually refining each other's position accuracy. The combined position solution from multiple drones is more accurate than any individual estimate</li>
+<li><strong>RF-based relative positioning:</strong> WiFi signal strength and potentially other RF measurements between drones provide inter-drone distance estimates, enabling relative formation maintenance even without absolute positioning</li>
+<li><strong>Coordinated missions continue:</strong> Swarm Manager directives (formations, coverage zones, rotation schedules) remain in effect using the GPS-denied navigation solutions. Mission integrity is maintained</li>
+</ul>
+
+<h4>Communication-Denied Operations</h4>
+<p>When the communication link between drones and the Nest is lost, drone behavior is <strong>mission-dependent</strong>. Each mission profile includes predefined behavior for communication loss scenarios:</p>
+<ul>
+<li><strong>Autonomous mission completion:</strong> For missions such as reconnaissance, where full objectives can be achieved without real-time operator input, drones continue executing the pre-loaded mission plan, capture all data (video, sensor readings, telemetry) to onboard storage, and return to base upon mission completion or when battery thresholds are reached</li>
+<li><strong>Partial mission continuation:</strong> For missions where some objectives can be completed autonomously but others require operator acknowledgment or input, drones complete achievable objectives and defer others pending communication restoration</li>
+<li><strong>Return to home:</strong> For missions requiring continuous operator input or where no achievable autonomous objectives remain, drones return to the Nest after a configurable timeout period</li>
+</ul>
+
+<h4>Store-and-Forward Data Model</h4>
+<p>When communications are unavailable, all mission data (video recordings, sensor captures, telemetry logs) is stored onboard the drone's local storage. Upon return to the Nest or restoration of the communication link, data is automatically transferred for processing, viewing, and archival. When communications are available throughout a mission, all data streams in real time to the ground station and any connected remote viewers.</p>
+
+<h4>Degradation Hierarchy</h4>
+<table>
+<tr><th>Condition</th><th>Swarm Behavior</th><th>Navigation</th><th>Data Handling</th></tr>
+<tr><td>Full GPS + Full Comms</td><td>Full swarm coordination, real-time rotation</td><td>RTK GPS primary</td><td>Real-time streaming</td></tr>
+<tr><td>Degraded/Denied GPS + Full Comms</td><td>Full swarm coordination with cooperative localization</td><td>INS/VIO/SLAM + cooperative</td><td>Real-time streaming</td></tr>
+<tr><td>Full GPS + Degraded Comms</td><td>Swarm maintains mesh; drones with link share with others</td><td>RTK GPS primary</td><td>Buffered + forwarded via mesh</td></tr>
+<tr><td>Degraded GPS + Degraded Comms</td><td>Swarm mesh maintained; cooperative localization active</td><td>INS/VIO/SLAM + cooperative</td><td>Store-and-forward</td></tr>
+<tr><td>Denied GPS + Denied Comms (total)</td><td>Individual autonomous operation per pre-loaded mission</td><td>INS/VIO/SLAM (individual)</td><td>Store-and-forward on return</td></tr>
+</table>
+
+<div class="note"><strong>Mission plan as contract:</strong> The pre-loaded mission plan serves as the drone's operating contract when communications are lost. The mission plan cannot be updated mid-flight without a communication link. If communication is available, missions can be dynamically adjusted in real time by the operator or Swarm Manager.</div>
+
+<h2 id="s8-4">4.4 Proximity Landing Protocol</h2>
+<p>Authority handoff from <a href="#s8-1sm">Swarm Manager</a> to <a href="#s8-1gm">Ground Manager</a> during <a href="#s6-5">capture</a>:</p>
+<ol>
+<li>Swarm Manager recalls drone via LTE/mesh</li>
+<li>Drone navigates toward vehicle (Swarm Manager guidance)</li>
+<li>Enters envelope; <a href="#s7-2-900">900 MHz</a> link established</li>
+<li><strong>Authority transfer:</strong> Swarm Manager hands off; Ground Manager acknowledges and takes guidance</li>
+<li>Ground Manager commands Pixhawk directly via 900 MHz; Swarm Manager monitors only</li>
+<li>Capture completes; Ground Manager sends "complete" to Swarm Manager</li>
+<li>Fleet inventory updated; charging begins</li>
+</ol>
+
+<h2 id="s8-5">4.5 Mission Planning Interface</h2>
+<p>The Nest's native interface is a <strong>TAK-class situational awareness and command platform</strong> &mdash; operators familiar with ATAK, WinTAK, iTAK, or WebTAK will find the interface immediately recognizable. The map-centric common operating picture, blue force tracking, collaborative overlays, real-time video streaming, and multi-platform access mirror the TAK design philosophy used by over 500,000 military and public safety operators. The interface additionally draws design inspiration from strategy games (Civilization, Age of Empires, Factorio) for intuitive swarm orchestration.</p>
+
+<h3>TAK-Class Core Capabilities</h3>
+<ul>
+<li>Map-centric common operating picture (COP) with online and offline mapping</li>
+<li>Real-time blue force tracking of all drones, the Nest container, and operator positions</li>
+<li>Collaborative mapping with mission zone overlays, coverage cone visualization, and geospatial markup</li>
+<li>Live video streaming from any drone in the swarm; multi-viewer access</li>
+<li>Multi-platform: tablet, laptop, desktop, phone (PWA); remote access via LTE/cloud</li>
+<li>Mobile client mode: view-only access for responding units (e.g., fire apparatus en route)</li>
+<li>Cursor on Target (CoT) protocol integration for full TAK ecosystem interoperability &mdash; drone positions, sensor data, and mission information published to TAK Servers and visible on all TAK clients (ATAK, WinTAK, iTAK, WebTAK, TAKX)</li>
+</ul>
+
+<h3>Hummingbird-Specific Capabilities (Beyond Standard TAK)</h3>
+<ul>
+<li>Click-to-command swarm orchestration with mission type context menu</li>
+<li>Area selection tools: draw polygons, rectangles, or freeform boundaries for coverage zones</li>
+<li>Automated coverage analysis: system identifies optimal drone positions for selected area</li>
+<li>Sensor fusion overlay: multi-drone thermal, visual, and environmental data composited into unified geographic display</li>
+<li>Real-time telemetry per drone: position, battery, signal, altitude, speed</li>
+<li>Drone rotation lifecycle dashboard: active, returning, in capture sequence, charging, queued for relaunch</li>
+<li>Multi-tier manual control: seamless transition between autonomous swarm (operator-on-the-loop) and direct stick control of any individual drone (operator-in-the-loop)</li>
+<li>Live <a href="#s6-5">capture monitoring</a> with camera feed of robotic arm operations</li>
+<li>Swarm health management: aggregate fleet metrics (battery distribution, link quality, sensor health, rotation efficiency)</li>
+</ul>
+
+<div class="note"><strong>TAK integration detail:</strong> The full TAK ecosystem integration architecture &mdash; including CoT protocol implementation, TAK Server connectivity, bidirectional data exchange, and the general C2 API layer &mdash; is detailed in the <em>Software &amp; Cloud Architecture</em> document, <a href="Nest_SW_Cloud_Architecture.html#s1-4">Section 1.4: TAK-Native Interface &amp; C2 Integration</a>.</div>
+
+<h2 id="s8-6">4.6 Post-Mission Processing</h2>
+<ul>
+<li>Automatic activity detection and video analysis</li>
+<li>Anomaly alerts and intelligent highlight extraction</li>
+<li>Cloud-based photogrammetric 3D reconstruction from multi-drone imagery</li>
+<li>Raw data + processed results archived with mission metadata</li>
+<li>Post-mission dashboard for operator review</li>
+</ul>
+
+<div class="back-toc"><a href="#toc">↑ Table of Contents</a></div>
+
+
+<!-- ==================== NEXT STEPS ==================== -->
+<h1 id="s10">5. Next Steps</h1>
+<p>Priority areas for <a href="#pp1">Prototype 1 (P1)</a> development:</p>
+<ul>
+<li><strong>ArduPilot motor mixing:</strong> Custom coaxial quad table for <a href="#s7-1px">Pixhawk 6X</a>; 8-motor roll/pitch/yaw/throttle mapping</li>
+<li><strong>Jetson carrier board:</strong> Minimal custom carrier for <a href="#s7-1jt">Orin Nano SOM</a>; Ethernet, USB, power regulation</li>
+<li><strong>ROS node architecture:</strong> Pub/sub topics and service interfaces for <a href="#s8-1">three managers</a></li>
+<li><strong>900 MHz radio selection:</strong> Module for <a href="#s7-2-900">proximity link</a>; MAVLink serial integration</li>
+<li><strong>IR camera + tracking:</strong> Vehicle camera for <a href="#s7-4">proximity guidance</a>; IR LED tracking algorithm</li>
+<li><strong>RTK GPS selection:</strong> Rover and base station hardware; correction protocol</li>
+<li><strong>Propulsion validation:</strong> Bench test ducted coaxial; thrust/efficiency/acoustic characterization</li>
+<li><strong>Cassette structural design:</strong> Carbon fiber frame with ducts; center bay layout for dual computers</li>
+<li><strong>Battery pack:</strong> Cell selection for 6S 230 Wh/kg; BMS; charge profile</li>
+<li><strong>Electromagnetic coupling:</strong> Magnet placement; end effector spec; 2' self-centering force characterization</li>
+<li><strong>Robotic arm:</strong> Load capacity, reach, control electronics, attitude tracking</li>
+<li><strong><a href="#s8-4">Landing protocol</a>:</strong> Authority handoff state machine; guidance control loop</li>
+<li><strong>Power management:</strong> 7 kW distribution across 30 slots + compute + arm</li>
+<li><strong>Interface prototype:</strong> Basic map view, drone status, mission command</li>
+<li><strong>Safety analysis:</strong> FMEA for dual-computer failsafe; emergency protocols</li>
+</ul>
+
+<div class="back-toc"><a href="#toc">↑ Table of Contents</a></div>
+
+
+<!-- ==================== SOURCES ==================== -->
+<h1 id="sources-section">Sources &amp; References</h1>
+<p style="font-size:13px;color:#666;margin-bottom:16px"><em>Sources are cited inline throughout this document using bracketed reference numbers. All data verified as of February 2026; specifications, valuations, and technical data are subject to change.</em></p>
+
+<ol style="font-size:13px;line-height:2;padding-left:24px;color:#444">
+
+<li id="src-20"><strong>Pereira, J.L. (2008).</strong> "Hover and Wind-Tunnel Testing of Shrouded Rotors for Improved Micro Air Vehicle Design." PhD Dissertation, University of Maryland. Experimental results showed shrouded rotors produced up to 94% more thrust than open rotors at the same power consumption. <a href="https://apps.dtic.mil/sti/tr/pdf/ADA595716.pdf" target="_blank">DTIC: ADA595716</a>; also cited in <a href="https://www.sciencedirect.com/science/article/abs/pii/S1270963821004478" target="_blank">ScienceDirect</a> and <a href="https://en.wikipedia.org/wiki/Ducted_fan" target="_blank">Wikipedia: Ducted fan</a></li>
+
+<li id="src-pixhawk"><strong>Holybro.</strong> Pixhawk 6X Technical Specification. STM32H753 Cortex-M7 @ 480 MHz, 2MB flash, 1MB RAM. 3× ICM-45686 IMU with BalancedGyro™ technology (Rev 8+), dual barometer, native Ethernet. FMU 23g + Mini Baseboard 26.5g. <a href="https://docs.holybro.com/autopilot/pixhawk-6x/technical-specification" target="_blank">Holybro Docs</a></li>
+
+<li id="src-jetson"><strong>NVIDIA.</strong> Jetson Orin Nano Developer Kit Datasheet. 1024 CUDA cores (Ampere), 32 Tensor Cores, 6-core Arm Cortex-A78AE, 8GB LPDDR5, 69.6 × 45 mm SO-DIMM. Native power modes: 7W / 15W (up to 40 TOPS); 25W "Super Mode" with JetPack 6.2+ (up to 67 TOPS). <a href="https://developer.nvidia.com/embedded/jetson-orin-nano" target="_blank">NVIDIA Jetson Orin Nano</a>; <a href="https://developer.nvidia.com/blog/nvidia-jetpack-6-2-brings-super-mode-to-nvidia-jetson-orin-nano-and-jetson-orin-nx-modules/" target="_blank">JetPack 6.2 Super Mode announcement</a></li>
+
+<li id="src-molicel"><strong>Molicel.</strong> INR21700-P42A Datasheet (V4). 4200 mAh, 45A continuous discharge, 230 Wh/kg gravimetric energy density. <a href="https://www.molicel.com/wp-content/uploads/INR21700P42A-V4-80092.pdf" target="_blank">Molicel P42A Datasheet (PDF)</a></li>
+
+<li id="src-ardupilot"><strong>ArduPilot / Holybro.</strong> Pixhawk 6X supported in ArduPilot 4.2.3 stable release and later. <a href="https://ardupilot.org/plane/docs/common-holybro-pixhawk6X.html" target="_blank">ArduPilot: Holybro Pixhawk 6X</a></li>
+
+</ol>
+
+<p style="font-size:13px;color:#666;margin-top:20px"><em>Companion documents:</em></p>
+<ul style="font-size:13px;color:#666;margin-left:20px">
+<li><strong>Nest_SW_Cloud_Architecture.html</strong> — Detailed software and cloud architecture specifications</li>
+<li><strong>Nest_Business_Operations.html</strong> — Business plan, financial analysis, market opportunity, and operational details</li>
+</ul>
+
+<div class="back-toc"><a href="#toc">↑ Table of Contents</a></div>
+
+
+<!-- ==================== CHANGE LOG ==================== -->
+<h1 id="clog">Change Log</h1>
+<p style="font-size:13px;color:#666;margin-bottom:16px"><em>This document was separated from the master Hummingbird Nest Platform v9 document. Change log below documents only changes made during separation and specialization.</em></p>
+
+<div class="changelog">
+
+<h3>11 March 2026 &mdash; Source Error Corrections</h3>
+<ul>
+<li><strong>FIXED <a href="#s6-2e">Section 2.2 Power &amp; Endurance table</a></strong> &mdash; Table previously contained mixed primary/scout drone values (779g battery with 30 min endurance and 2.02:1 T/W, matching neither variant). Split into two-column table showing correct values for both HB-18 Primary (1,043g / 240 Wh / ~23 min / 1.93:1) and HB-12 Scout (779g / 179 Wh / ~29 min / 1.89:1)</li>
+<li><strong>FIXED <a href="#src-20">Source [20]</a></strong> &mdash; Corrected attribution of 94% ducted fan thrust augmentation figure. Previously attributed to "Wikipedia, citing NASA research"; actual source is Pereira (2008) PhD dissertation at University of Maryland (DTIC: ADA595716). Updated citation with correct source and links</li>
+<li><strong>FIXED <a href="#s7-1jt">Section 3.1.2 Jetson Orin Nano power modes</a></strong> &mdash; Clarified that 25W mode requires JetPack 6.2+ "Super Mode" software update; native power modes are 7W and 15W only. Updated AI performance row to note 67 TOPS requires Super Mode</li>
+<li><strong>UPDATED <a href="#s7-1px">Section 3.1.1 Pixhawk 6X IMU</a></strong> &mdash; Added specific IMU sensor model: 3× ICM-45686 with BalancedGyro™ technology (Rev 8+ hardware). Previous description listed only "triple redundant" without sensor part number</li>
+<li><strong>UPDATED <a href="#s7-1jt">Section 3.1.2 Jetson Orin Nano GPU</a></strong> &mdash; Clarified ambiguous GPU description from "1024 CUDA + Tensor Cores" to "1024 CUDA cores and 32 Tensor Cores"</li>
+<li><strong>ADDED <a href="#sources-section">Sources &amp; References</a></strong> &mdash; Added 4 new source citations: Holybro Pixhawk 6X technical specs [P1], NVIDIA Jetson Orin Nano datasheet and JetPack 6.2 Super Mode announcement [J1], Molicel P42A datasheet [M1], ArduPilot Pixhawk 6X support. Document previously had only 1 citation</li>
+<li><strong>ANNOTATED</strong> Pixhawk ~2W power draw and Jetson ~50g weight as engineering estimates (no manufacturer specs available)</li>
+<li><strong>ANNOTATED <a href="#s7-1pw">Section 3.1.4 Compute Power Impact table</a></strong> &mdash; Labeled as using HB-12 Scout configuration values for clarity</li>
+</ul>
+
+<h3>February 2026 &mdash; TAK-Native Interface &amp; Mission Planning Expansion</h3>
+<ul>
+<li><strong>UPDATED <a href="#s8-5">Section 4.5: Mission Planning Interface</a></strong> &mdash; Expanded to explicitly describe the Nest interface as a TAK-class situational awareness and command platform. Added TAK-class core capabilities subsection (COP, BFT, collaborative mapping, live video, multi-platform, CoT protocol integration). Added Hummingbird-specific capabilities subsection (swarm orchestration, multi-drone sensor fusion overlay, multi-tier manual control, rotation lifecycle dashboard, swarm health management). Added cross-reference to Software &amp; Cloud Architecture Section 1.4 for full TAK integration details</li>
+</ul>
+
+<h3>February 2026 &mdash; Containerized Platform, MOSA, All-Weather &amp; Operational Readiness</h3>
+<ul>
+<li><strong>UPDATED <a href="#exec">Executive Overview</a></strong> &mdash; Reframed Nest as fundamentally containerized system; PHEV is one deployment configuration. Added single-operator capability, containerized modular platform, flexible power, dormant-to-active readiness, day/night and all-weather operations, operator-on/in-the-loop modes, DDIL resilience, MOSA-aligned open architecture with TAK compatibility, and standardized payload bays to technical highlights</li>
+<li><strong>UPDATED <a href="#s6-1">Section 2.1: Nest Containerized Platform</a></strong> (renamed from &ldquo;Nest Mobile Platform&rdquo;) &mdash; Complete rewrite to describe Nest as a self-contained containerized system. Added deployment configurations table (PHEV truck, flatbed, stationary, maritime, air transport), power flexibility section (external, PHEV, solar, generator), dormant state and remote activation capability with automated battery maintenance cycling, and modular/stackable form factor description</li>
+</ul>
+
+<h3>February 2026 &mdash; GPS-Denied Navigation &amp; Denied Environment Operations</h3>
+<ul>
+<li><strong>NEW <a href="#s7-3b">Section 3.4: GPS-Denied &amp; Degraded Navigation</a></strong> &mdash; Comprehensive multi-modal navigation stack for GPS-denied operations including Inertial Navigation System (INS), Visual-Inertial Odometry (VIO), and depth SLAM. Covers condition-adaptive sensor fusion with dynamic health-metric-based weighting, GPS spoofing detection at module level with proportional response, cooperative localization via shared error covariance matrices across the swarm mesh, RF-based relative ranging using WiFi signal strength, and fully onboard processing on the main computer (Jetson Orin Nano)</li>
+<li><strong>NEW <a href="#s8-3b">Section 4.3.1: Swarm Operations in Denied Environments</a></strong> &mdash; Detailed swarm behavior in GPS-denied and communication-denied environments. Covers GPS-denied swarm coordination with cooperative localization, mission-dependent communication-denied behavior (autonomous mission completion for reconnaissance, partial continuation, and return-to-home), store-and-forward data model for comms-denied operations, and five-level degradation hierarchy table from full capability to total denial</li>
+<li><strong>UPDATED <a href="#exec">Executive Overview</a></strong> &mdash; Technical highlights updated to reflect GPS-denied navigation capability and cooperative swarm localization</li>
+<li><strong>UPDATED <a href="#s6-perf">Section 2.2.6 Performance Specifications</a></strong> &mdash; Navigation row in comparison table expanded to include GPS-denied capability and cooperative swarm localization</li>
+<li><strong>UPDATED Table of Contents</strong> &mdash; Expanded with new Sections 3.4 and 4.3.1; Section 3.4 (Proximity Guidance) renumbered to 3.5</li>
+</ul>
+
+<h3>Document Separation — Mechanical & Electronics Architecture (February 2026)</h3>
+<ul>
+<li><strong>Document Created:</strong> Separated from Hummingbird Nest Platform v9 master document into domain-specific document under git version control</li>
+<li><strong>Title Updated:</strong> "Hummingbird Technologies — Nest Platform: Mechanical & Electronics Architecture"</li>
+<li><strong>Sections Included:</strong>
+<ul>
+<li><strong>Executive Overview</strong> — Systems-level technical summary with emphasis on mechanical and electronics integration (derived from v9 lines ~180-207, reframed with technical focus)</li>
+<li><strong>Section 1: Prototype & Development Roadmap</strong> — Complete roadmap (from v9 lines ~715-834) with all phase cards (P1, P2, P3, GA, Future) and Feature-to-Prototype Map table</li>
+<li><strong>Section 2: Mechanical Architecture</strong> — ALL subsections (from v9 lines ~837-1110):
+<ul>
+<li>2.1 Nest Mobile Platform (vehicle requirements, all specs)</li>
+<li>2.2 Hummingbird Drone Design (form factor, propulsion system, propulsion performance table, power & endurance table, weight budget table, battery upgrade path table, two-tier drone system with tier cards, performance specifications summary with spec grid and comparison tables)</li>
+<li>2.3 Robotic Retrieval System (all specs)</li>
+<li>2.4 Launch Mechanism (full launch sequence)</li>
+<li>2.5 Electromagnetic Capture & Proximity Landing (magnetic coupling, capture dynamics, capture sequence with P1/P2 staging)</li>
+<li>2.6 Charging System (full charging architecture)</li>
+</ul></li>
+<li><strong>Section 3: Electronics Architecture</strong> — ALL subsections (from v9 lines ~1113-1248):
+<ul>
+<li>3.1 Dual-Computer Architecture (Pixhawk 6X specs table + responsibilities, Jetson Orin Nano specs table + responsibilities, Pixhawk-Jetson Interface flow, Compute Power Impact table)</li>
+<li>3.2 Communication Systems (ALL 5 subsections: LTE, Mesh WiFi, 900 MHz, IR LED, Shared Layer table)</li>
+<li>3.3 RTK GPS Navigation (all bullet points)</li>
+<li>3.4 Proximity Guidance Sensor Stack (table + fusion strategy note)</li>
+</ul></li>
+<li><strong>Section 4: Software Architecture</strong> — ALL subsections (from v9 lines ~1251-1357):
+<ul>
+<li>4.1 Distributed Manager Architecture (Mission Manager, Swarm Manager, Ground Manager + Communication Flow diagram)</li>
+<li>4.2 Drone Flight Controllers</li>
+<li>4.3 Autonomous Swarm Coordination (Continuous Coverage Model)</li>
+<li>4.4 Proximity Landing Protocol (full sequence)</li>
+<li>4.5 Mission Planning Interface (all features)</li>
+<li>4.6 Post-Mission Processing</li>
+</ul></li>
+<li><strong>Section 5: Next Steps</strong> — ALL priority areas for P1 (from v9 lines ~1400-1418)</li>
+<li><strong>Sources & References</strong> — Cross-reference to v9 source [20] (Ducted fan) included; note references to companion documents for software and business content</li>
+</ul></li>
+<li><strong>CSS Styling:</strong> Full style block copied from v9 document, including all CSS classes (.note, .warn-note, .flow-box, .spec-grid, .tier-box, .rc, .pv, .cite, and all responsive/print styles)</li>
+<li><strong>Internal Cross-References:</strong> All anchor IDs preserved (id="s6", id="s7-1px", etc.) to maintain cross-reference compatibility within this document and with companion documents</li>
+<li><strong>All Tables Preserved:</strong> Every table and specification grid reproduced EXACTLY as it appears in v9 (no summarization, no abbreviation)</li>
+<li><strong>All Content Preserved:</strong> No information removed, summarized, or condensed. All technical specifications, notes, warnings, and design rationales included verbatim from v9</li>
+<li><strong>Navigation:</strong> Added "Back to Table of Contents" links after each major section for easy navigation within document</li>
+<li><strong>Table of Contents:</strong> Rebuilt to reflect new document structure with 5 primary sections and subsections linked to section IDs</li>
+<li><strong>Version Numbering:</strong> No version number in filename; document tracked via git version control (replaces v9 versioning system)</li>
+<li><strong>NEW Change Log Entry:</strong> First entry documents this separation and specialization</li>
+</ul>
+
+<h3>Change Log From Master v9 (Included for Historical Reference)</h3>
+<p style="font-size:13px;color:#666">The following entries reflect changes to the master document from which this Mechanical & Electronics document was separated. See Nest_Business_Operations.html and Nest_SW_Cloud_Architecture.html for complete history of those domains.</p>
+
+<h3>Document v9 (Original Master) — Technology & IP Risk Assessment</h3>
+<ul>
+<li><strong>NEW <a href="#s11">Section 11: Technology & IP Risk Assessment</a></strong> [in master document] — Comprehensive analysis of patent landscape risks</li>
+<li><strong>UPDATED Version badge system</strong> [in master document] — Removed document-version badges; retained only prototype phase badges (P1, P2, P3)</li>
+<li><strong>UPDATED <a href="#sources-section">Sources & References</a></strong> [in master document] — 20 numbered source citations added and verified</li>
+<li><strong>UPDATED Table of Contents</strong> [in master document] — Expanded for new Section 11 with five subsections</li>
+</ul>
+
+<h3>Document v8 (Original Master) — Use Cases, Vehicle-Agnostic Platform & Versioning</h3>
+<ul>
+<li><strong>NEW Section 3: Operational Use Cases & Competitive Advantages</strong> [in master document] — Two detailed use case scenarios with comparison tables</li>
+<li><strong>UPDATED Vehicle references</strong> [in master document] — All Ford F-150-specific references replaced with generic PHEV platform description</li>
+<li><strong>UPDATED Prototype Roadmap</strong> [in master document] — Added milestone terminology table and GA milestone card</li>
+<li><strong>UPDATED Section numbering</strong> [in master document] — All sections renumbered as Use Cases inserted</li>
+</ul>
+
+<h3>Document v7 (Original Master) — Hummingbird Technologies Branding & Business Pitch</h3>
+<ul>
+<li><strong>MAJOR: Hummingbird Technologies branding</strong> [in master document] — Company, drone, and platform names finalized</li>
+<li><strong>MAJOR: Restructured as business pitch</strong> [in master document] — Executive Overview + business sections now precede technical architecture</li>
+</ul>
+
+<h3>Document v6 (Original Master) — Financial Analysis & Business Plan</h3>
+<ul>
+<li><strong>NEW Section 4: Financial Analysis & Business Plan</strong> [in master document] — Complete financial modeling with 8 subsections</li>
+</ul>
+
+<h3>Document v5 (Original Master) — 18' Primary Drone & Market Analysis</h3>
+<ul>
+<li><strong>MAJOR UPDATE: Primary drone specs</strong> [in master document] — Upgraded to 18'/6' props with 2207-class motors</li>
+<li><strong>NEW Section 2.2.5: Two-Tier Drone System</strong> — Primary 18' + Scout 12' tier cards introduced</li>
+<li><strong>NEW Market Analysis</strong> [in master document] — Competitive landscape and positioning matrix added</li>
+</ul>
+
+<h3>Document v4 (Original Master) — Electronics & Prototype Roadmap</h3>
+<ul>
+<li><strong>NEW Section 6: Electronics Architecture</strong> [in original master, now Section 3 here] — Dual-computer system, quad-channel comms, proximity capture</li>
+<li><strong>NEW Section 5: Prototype Roadmap</strong> [in original master, now Section 1 here] — P1, P2, P3, Future phases defined</li>
+</ul>
+
+<h3>Document v3 (Original Master) — Propulsion, Power & Three-Manager Architecture</h3>
+<ul>
+<li><strong>NEW Section 5.2: Propulsion System</strong> — Ducted coaxial quad-rotor specifications and advantages documented</li>
+<li><strong>NEW Section 8.1: Distributed Manager Architecture</strong> — Three-manager ROS architecture (Mission, Swarm, Ground managers) introduced</li>
+<li><strong>NEW Section 8.3: Continuous Coverage Model</strong> — Automated drone rotation strategy defined</li>
+</ul>
+
+<h3>Document v2 (Original Master) — Expanded Architecture</h3>
+<ul>
+<li>Mechanical, software, operations, and marketing sections expanded</li>
+</ul>
+
+<h3>Document v1 (Original Master) — Initial Concept</h3>
+<ul>
+<li>Vehicle platform, 30-drone cassette storage, swarm coordination concept, target markets initially proposed</li>
+</ul>
+</div>
+
+<div class="back-toc" style="text-align:center;margin-top:40px"><a href="#toc">↑ Back to Table of Contents</a></div>
+
+</body>
+</html>

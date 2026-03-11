@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hummingbird Technologies — Critical Review & Viability Assessment</title>
+<style>
+:root {
+  --red: #c0392b;
+  --amber: #e67e22;
+  --green: #27ae60;
+  --blue: #2980b9;
+  --dark: #1a1a2e;
+  --darker: #0f0f1a;
+  --card: #222240;
+  --text: #e0e0e8;
+  --muted: #9090a8;
+  --border: #333355;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: var(--darker); color: var(--text); line-height: 1.7; }
+.container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+h1 { font-size: 2.2rem; color: #fff; margin-bottom: 0.3rem; }
+h2 { font-size: 1.6rem; color: #fff; margin: 2.5rem 0 1rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
+h3 { font-size: 1.2rem; color: #ddd; margin: 1.5rem 0 0.7rem; }
+h4 { font-size: 1rem; color: var(--muted); margin: 1rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+p, li { margin-bottom: 0.6rem; }
+ul { padding-left: 1.5rem; }
+a { color: var(--blue); }
+.subtitle { color: var(--muted); font-size: 1.1rem; margin-bottom: 2rem; }
+.verdict { background: linear-gradient(135deg, #1a1a3a, #2a1a1a); border-left: 4px solid var(--amber); padding: 1.5rem 2rem; border-radius: 8px; margin: 1.5rem 0; }
+.verdict-green { border-left-color: var(--green); background: linear-gradient(135deg, #1a1a3a, #1a2a1a); }
+.verdict-red { border-left-color: var(--red); background: linear-gradient(135deg, #1a1a3a, #2a1515); }
+.card { background: var(--card); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+th { background: var(--dark); color: #fff; text-align: left; padding: 0.7rem; border: 1px solid var(--border); }
+td { padding: 0.7rem; border: 1px solid var(--border); }
+tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+.tag { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 3px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+.tag-red { background: var(--red); color: #fff; }
+.tag-amber { background: var(--amber); color: #fff; }
+.tag-green { background: var(--green); color: #fff; }
+details { margin: 1rem 0; }
+summary { cursor: pointer; font-weight: 600; color: var(--blue); padding: 0.5rem 0; }
+summary:hover { color: #5dade2; }
+.toc { background: var(--card); border-radius: 8px; padding: 1.5rem 2rem; margin: 1.5rem 0; border: 1px solid var(--border); }
+.toc ol { padding-left: 1.5rem; }
+.toc li { margin: 0.3rem 0; }
+.toc a { color: var(--text); text-decoration: none; }
+.toc a:hover { color: var(--blue); }
+.source { font-size: 0.8rem; color: var(--muted); }
+.highlight { background: rgba(231, 76, 60, 0.15); border-left: 3px solid var(--red); padding: 0.8rem 1.2rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+.highlight-amber { background: rgba(230, 126, 34, 0.15); border-left-color: var(--amber); }
+.highlight-green { background: rgba(39, 174, 96, 0.15); border-left-color: var(--green); }
+.score { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1.1rem; font-weight: 700; }
+.meter { width: 120px; height: 8px; background: #333; border-radius: 4px; display: inline-block; overflow: hidden; }
+.meter-fill { height: 100%; border-radius: 4px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+.disclaimer { font-size: 0.8rem; color: var(--muted); font-style: italic; margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>🔍 Hummingbird Technologies — Critical Review</h1>
+<p class="subtitle">Mentor Assessment &amp; Viability Analysis · March 2026 · Prepared for Marin (Founder)</p>
+<p class="source">This report uses live market data as of March 2026. All factual claims are sourced. All financial projections are independently calculated.</p>
+
+<div class="toc">
+<strong>Table of Contents</strong>
+<ol>
+<li><a href="#exec">Executive Summary</a></li>
+<li><a href="#biz">Business Viability Analysis</a></li>
+<li><a href="#comp">Competitive Landscape</a></li>
+<li><a href="#tech">Technical Assessment</a></li>
+<li><a href="#gtm">Go-to-Market Critique</a></li>
+<li><a href="#risk">Risk Assessment</a></li>
+<li><a href="#rec">Recommendations</a></li>
+</ol>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="exec">1. Executive Summary</h2>
+
+<div class="verdict">
+<p><strong>Verdict: Promising concept, extremely challenging execution. Proceed with caution.</strong></p>
+<p>Hummingbird Technologies is attempting to build a genuinely novel product — a mobile, containerized, multi-drone swarm system for law enforcement and public safety. The concept fills a real market gap, and the timing is favorable (NDAA tailwinds, FAA Part 108 BVLOS rules coming, Trump's "Unleashing Drone Dominance" EO). However, the project is <strong>pre-prototype with a solo founder</strong>, attempting one of the most complex systems integration challenges in the commercial drone space. The technical plan is thoughtful and well-documented — unusually so for this stage — but the business plan contains significant optimism bias. The ~$350-450K price point faces a brutal reality: the agencies that need this most can't afford it, and the agencies that can afford it (federal/DoD) have existing vendors with billion-dollar head starts. The battery energy density error (~14-18% real-world penalty) is manageable but reveals a pattern of optimistic assumptions that permeates the financial model. <strong>The path to viability exists but is narrower than the documents suggest, requires $15-25M+ in capital, and hinges on FAA regulatory outcomes that are genuinely uncertain for swarm operations.</strong></p>
+</div>
+
+<div class="grid-2">
+<div class="card">
+<h4>Strengths</h4>
+<ul>
+<li>Genuinely novel system integration — no direct competitor</li>
+<li>Excellent technical documentation quality</li>
+<li>NDAA-first strategy is strategically sound</li>
+<li>TAK-native interface is the right choice for target market</li>
+<li>Favorable regulatory winds (Part 108, EO 14307)</li>
+<li>Use cases are compelling and real</li>
+</ul>
+</div>
+<div class="card">
+<h4>Weaknesses</h4>
+<ul>
+<li>Solo founder, pre-prototype — extremely early</li>
+<li>No hardware built yet; complexity is enormous</li>
+<li>Financial projections contain optimism bias</li>
+<li>Target customers (LE agencies) budget in $100K-300K, not $350-450K</li>
+<li>FAA swarm waiver is unprecedented and uncertain</li>
+<li>Competing against companies with $732M-6B+ in funding</li>
+</ul>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="biz">2. Business Viability Analysis</h2>
+
+<h3>2.1 TAM/SAM/SOM — My Numbers vs. Yours</h3>
+
+<div class="highlight-amber">
+<strong>⚠️ Your TAM numbers are correct-ish at the macro level but your SOM is fantasy.</strong> You claim "2-5% capture" of addressable segments by Year 5 yielding $5-15M. The math doesn't hold when you account for the actual number of agencies that can (a) afford $400K+ and (b) clear procurement in your timeline.
+</div>
+
+<table>
+<tr><th>Metric</th><th>Your Docs</th><th>My Analysis</th><th>Variance</th></tr>
+<tr><td>Global commercial drone TAM</td><td>$30B (2024)</td><td>~$30B (confirmed by Grand View, Mordor Intelligence)</td><td>✅ Aligned</td></tr>
+<tr><td>N. America drone market</td><td>$9.4B (2024)</td><td>$14.3B (2025, Mordor Intelligence)</td><td>Your figure is stale</td></tr>
+<tr><td>LE/Public Safety drone market</td><td>$1.2B (2024)</td><td>~$1.5-2B (2025) — growing fast</td><td>Roughly aligned</td></tr>
+<tr><td>Addressable LE agencies (US, large)</td><td>~200</td><td>~200-300 with 50+ officers</td><td>✅ Reasonable</td></tr>
+<tr><td>Agencies that can budget $350K+ for drones</td><td>Not stated</td><td><strong>~20-40</strong> (top-tier metro PDs, well-funded sheriffs)</td><td>🔴 Critical gap</td></tr>
+<tr><td>Year 5 Revenue (your conservative)</td><td>$5-15M ARR</td><td>$2-6M (realistic with all delays)</td><td>🟡 Optimistic 2-3x</td></tr>
+</table>
+
+<p class="source">Sources: Mordor Intelligence N. America Drone Market (mordorintelligence.com); LAPD drone program data (lapdonline.org); Police1 DFR cost analysis (police1.com, Oct 2025)</p>
+
+<details>
+<summary>📊 My TAM/SAM/SOM Calculation</summary>
+<div class="card">
+<p><strong>TAM (Total Addressable Market):</strong> All US agencies that could theoretically benefit from persistent multi-drone aerial coverage. I count ~1,500 agencies with active drone programs (per <a href="https://dronelife.com/2025/12/11/skydio-public-safety-drones-1000-agencies/">industry estimates</a>; Skydio alone reports 1,000+ public safety agencies as of Dec 2025) × average potential annual spend of $50K-200K on drone capability = $75M-$300M annual TAM for "advanced drone systems" in US LE. Your $105-310M Year 5 figure is actually TAM, not addressable revenue.</p>
+<p><strong>SAM (Serviceable):</strong> Agencies that (a) have 50+ officers, (b) operate in areas where persistent coverage adds value, (c) have budget authority for $100K+ equipment purchases. ~200-300 agencies, at an average deal of $200K (blended across system sales + DaaS) = $40-60M SAM.</p>
+<p><strong>SOM (Obtainable, Year 5):</strong> You are a pre-prototype startup selling a $350-450K novel system into government procurement. Realistically, by Year 5 (2031): 5-15 system sales + 3-8 DaaS contracts = <strong>$2-6M</strong> revenue. Government procurement takes 12-24 months from first contact to PO, you'll spend Years 1-3 building, and Years 4-5 are your actual selling window.</p>
+</div>
+</details>
+
+<h3>2.2 Revenue Model Assessment</h3>
+
+<table>
+<tr><th>Stream</th><th>Your Price</th><th>My Assessment</th><th>Reality Check</th></tr>
+<tr><td>System Sale</td><td>$350K-$450K</td><td><span class="tag tag-amber">Aspirational</span></td><td>Most PDs budget $100K-300K for drone programs total (per Police1). $350K+ is federal/DoD territory. You'll likely need to offer a smaller config (10-drone) at $180-250K to get traction.</td></tr>
+<tr><td>SaaS</td><td>$48K-72K/yr</td><td><span class="tag tag-amber">High</span></td><td>$4-6K/month for software on a $400K system is steep. Skydio's software subscriptions are ~$3-5K/yr per dock. Target $24-36K/yr to start.</td></tr>
+<tr><td>DaaS</td><td>$800-1,500/hr</td><td><span class="tag tag-green">Viable</span></td><td>This is your best near-term revenue path. Compares favorably to helicopter ($1-3K/hr) and you control the operation. Start here.</td></tr>
+</table>
+
+<h3>2.3 Unit Economics — My Numbers</h3>
+
+<div class="card">
+<table>
+<tr><th>Item</th><th>Your Estimate (Production)</th><th>My Estimate (NDAA-compliant)</th><th>Notes</th></tr>
+<tr><td>Per-drone BOM (HB-18)</td><td>$1,521</td><td><strong>$5,790</strong></td><td>Your own NDAA audit shows this! The doc BOM and NDAA audit contradict each other badly. Doodle Labs radio alone is $1,450. (ARK Jetson PAB corrected to $700 standalone; bundle $1,100 minus ARKV6X $400 = $700. <a href="https://arkelectron.com/product/ark-jetson-pab-carrier-arkv6x-bundle/">Source</a>)</td></tr>
+<tr><td>20-drone fleet</td><td>$30,420</td><td><strong>$115,800</strong></td><td>~3.8x your published number with NDAA parts</td></tr>
+<tr><td>Vehicle + ground system</td><td>$99,500</td><td>$99,500-$120,000</td><td>Reasonable, may increase with NDAA sensors</td></tr>
+<tr><td><strong>Total system COGS</strong></td><td><strong>$129,920</strong></td><td><strong>$218,000-$240,000</strong></td><td>NDAA compliance nearly doubles COGS</td></tr>
+<tr><td>ASP at $400K</td><td>67% gross margin</td><td><strong>40-45% gross margin</strong></td><td>Still decent — but nowhere near 67%</td></tr>
+</table>
+</div>
+
+<div class="highlight">
+<strong>🚨 Critical Issue: Your business plan BOM ($1,521/drone) and your NDAA audit BOM ($5,790/drone) are wildly inconsistent.</strong> Since Marin decided NDAA-first for P1, the $5,790 figure is the real one (recalculated with corrected ARK Jetson PAB at $700). This fundamentally changes your unit economics. At $240K COGS, you need to sell systems at $400K+ just to get 40% gross margin. The financial projections in the business plan need complete recalculation.
+</div>
+
+<h3>2.4 Path to Profitability — Recalculated</h3>
+
+<table>
+<tr><th></th><th>Year 1</th><th>Year 2</th><th>Year 3</th><th>Year 4</th><th>Year 5</th></tr>
+<tr><td><strong>Your Projections</strong></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>Revenue</td><td>$0</td><td>$1.01M</td><td>$4.28M</td><td>$11.0M</td><td>$22.6M</td></tr>
+<tr><td>EBITDA</td><td>($2.4M)</td><td>($3.01M)</td><td>($2.5M)</td><td>$750K</td><td>$7.6M</td></tr>
+<tr><th colspan="6">My Recalculated Projections (NDAA-compliant, realistic timing)</th></tr>
+<tr><td>Revenue</td><td>$0</td><td>$0</td><td>$500K-$1M (DaaS/pilots)</td><td>$2-3M (2-4 systems + DaaS)</td><td>$4-8M (6-12 systems + DaaS + SaaS)</td></tr>
+<tr><td>COGS</td><td>$0</td><td>$0</td><td>$200K</td><td>$900K-$1.4M</td><td>$2-3.5M</td></tr>
+<tr><td>OpEx</td><td>$2.0M</td><td>$3.0M</td><td>$4.0M</td><td>$5.5M</td><td>$7M</td></tr>
+<tr><td>EBITDA</td><td>($2.0M)</td><td>($3.0M)</td><td>($3.2M)</td><td>($4.4M) to ($3.9M)</td><td>($1.5M) to ($2.5M)</td></tr>
+<tr><td>Cumulative Cash Burned</td><td>$2.0M</td><td>$5.0M</td><td>$8.2M</td><td>$12.6M</td><td>$15-17M</td></tr>
+</table>
+
+<div class="highlight-amber">
+<strong>Key difference: I project zero revenue in Year 2.</strong> Your plan has 2 system sales in Year 2 at $400K each. This assumes you complete P2 (full 30-drone swarm) by Month 24 AND close government deals in the same year. Government procurement cycles are 12-24 months from first meaningful engagement. You won't have a sellable product until Month 24-30 at the earliest, and sales won't close until Month 30-42. Break-even pushes to Year 6-7, not Year 3.5-4.
+</div>
+
+<h3>2.5 Capital Requirements</h3>
+
+<table>
+<tr><th>Stage</th><th>Your Estimate</th><th>My Estimate</th><th>Gap Analysis</th></tr>
+<tr><td>Through P1 (Mo 1-12)</td><td>$1.8-2.4M</td><td>$2.0-2.8M</td><td>NDAA parts increase hardware costs</td></tr>
+<tr><td>Through P2 (Mo 12-24)</td><td>$4.6-6.2M</td><td>$5.5-8.0M</td><td>More iteration cycles likely needed</td></tr>
+<tr><td>Through P3 (Mo 24-36)</td><td>$8.1-11.2M</td><td>$10-15M</td><td>Field testing always costs more</td></tr>
+<tr><td>To positive cash flow</td><td>$25-45M</td><td><strong>$20-30M</strong></td><td>I'm actually slightly more optimistic here because I think you should stay leaner and focus on DaaS</td></tr>
+</table>
+
+<h3>2.6 Competitive Moat Assessment</h3>
+
+<table>
+<tr><th>Claimed Differentiator</th><th>Defensibility</th><th>Assessment</th></tr>
+<tr><td>Mobile containerized swarm platform</td><td><span class="tag tag-green">Strong</span></td><td>Genuinely novel integration. Hard to replicate quickly. Patentable.</td></tr>
+<tr><td>30-drone simultaneous operations</td><td><span class="tag tag-amber">Medium</span></td><td>Novel for commercial, but military systems (Shield AI, Anduril) do similar things. They could pivot down-market.</td></tr>
+<tr><td>Automated launch/capture with robotic arm</td><td><span class="tag tag-green">Strong</span></td><td>This is genuinely hard engineering. IP-protectable.</td></tr>
+<tr><td>Continuous rotation / 100% uptime</td><td><span class="tag tag-amber">Medium</span></td><td>Clever but derivative of the container + charging + swarm combination. Not independently defensible.</td></tr>
+<tr><td>TAK-native interface</td><td><span class="tag tag-red">Weak</span></td><td>TAK integration is table stakes — Skydio, Brinc, and most NDAA drones already support it.</td></tr>
+<tr><td>NDAA compliance</td><td><span class="tag tag-red">Weak</span></td><td>Every serious US competitor is already NDAA-compliant. This is a minimum requirement, not a differentiator.</td></tr>
+<tr><td>Ducted coaxial propulsion</td><td><span class="tag tag-amber">Medium</span></td><td>Interesting for safety/noise, but proven by others. Adds engineering complexity.</td></tr>
+<tr><td>Single-operator system</td><td><span class="tag tag-green">Strong</span></td><td>Major value proposition for budget-constrained agencies. Hard to achieve at this scale.</td></tr>
+</table>
+
+<div class="verdict-green">
+<strong>Bottom line on moat:</strong> Your real moat is the <em>systems integration</em> — the combination of mobile platform + automated launch/capture + swarm rotation + single operator. No single piece is unassailable, but the full package is genuinely hard to replicate and probably represents 3+ years of engineering. That's a real moat, just not an infinite one.
+</div>
+
+<!-- ============================================================ -->
+<h2 id="comp">3. Competitive Landscape (March 2026)</h2>
+
+<h3>3.1 The Competitors You Should Worry About</h3>
+
+<div class="card">
+<h4>🟥 Skydio — Your Biggest Threat</h4>
+<ul>
+<li><strong>Status (Mar 2026):</strong> Raised $230M Series E (<a href="https://techcrunch.com/2023/02/27/skydio-soars-to-a-2-2-billion-valuation-after-raising-230m-series-e/">Feb 2023</a>), plus $170M extension (<a href="https://techcrunch.com/2024/11/15/drone-manufacturer-skydio-raises-170-million-extension-round/">Nov 2024</a>), <strong>$732M total funding</strong>, $2.2B+ valuation</li>
+<li><strong>Revenue:</strong> ~$295M (2025 est.), 80% YoY growth — per Hummingbird's own competitive analysis</li>
+<li><strong>Key contracts:</strong> $74M State Department IDIQ (Jun 2025); $7.9M Army SRR Tranche 2 (Oct 2025); $4M LAPD deal (Feb 2026)</li>
+<li><strong>DFR Market:</strong> ~1,000+ US police departments using Skydio drones</li>
+<li><strong>Why it matters:</strong> Skydio owns the LE drone relationship. When agencies want to scale up, Skydio is the incumbent. They could easily build a multi-dock system. Their autonomy software is years ahead.</li>
+</ul>
+<p class="source">Sources: <a href="https://www.skydio.com/blog/skydio-raises-230-million-series-e-funding-round">Skydio Series E</a>; <a href="https://www.prnewswire.com/news-releases/skydio-awarded-74m-idiq-to-supply-advanced-american-made-drone-technology-to-state-department-302479914.html">Skydio State Dept contract</a>; <a href="https://dronedj.com/2026/02/18/skydio-drone-dock-lapd-police/">LAPD deal</a></p>
+</div>
+
+<div class="card">
+<h4>🟥 Brinc + Motorola — The Distribution Play</h4>
+<ul>
+<li><strong>Status (Mar 2026):</strong> $75M funding (Apr 2025), strategic alliance with Motorola Solutions</li>
+<li><strong>Reach:</strong> 700+ public safety agencies, 10%+ of US SWAT teams</li>
+<li><strong>Why it matters:</strong> Motorola owns the comms infrastructure in virtually every PD in America. The Brinc+Motorola alliance creates a distribution moat that is nearly impossible to penetrate. They integrate directly into CAD/dispatch. This is the most dangerous competitive development for you.</li>
+</ul>
+<p class="source">Sources: <a href="https://www.geekwire.com/2025/public-safety-drone-maker-brinc-raises-75m-forms-strategic-alliance-with-motorola/">GeekWire — Brinc $75M raise</a>; <a href="https://www.netnewsledger.com/2026/02/11/blake-resnicks-vision-comes-full-circle-how-brinc-drones-helped-catch-14-child-predators/">NetNewsLedger — 700+ agencies</a></p>
+</div>
+
+<div class="card">
+<h4>🟡 Shield AI — Could Pivot Down-Market</h4>
+<ul>
+<li><strong>Status (Mar 2026):</strong> $5.6B valuation (Series F extended, 2025 per Fortune), in talks for $1B raise at $12B valuation (Feb 2026 Bloomberg)</li>
+<li><strong>Revenue:</strong> ~$300M FY ending Mar 2025, targeting $1B by FY Mar 2028</li>
+<li><strong>Why it matters:</strong> Hivemind is the most advanced swarm AI platform in existence. Currently military-only, but a commercial/LE product line is trivially conceivable if the market materializes. They have the software you aspire to build.</li>
+</ul>
+<p class="source">Sources: <a href="https://www.bloomberg.com/news/articles/2026-02-13/shield-ai-in-talks-to-raise-1-billion-at-12-billion-valuation">Bloomberg — Shield AI $12B talks</a>; <a href="https://fortune.com/2025/12/21/shield-ai-ukraine-defense-tech-gary-steele/">Fortune — Shield AI revenue</a></p>
+</div>
+
+<div class="card">
+<h4>🟡 Anduril — The 800-Pound Gorilla</h4>
+<ul>
+<li><strong>Status (Mar 2026):</strong> $30.5B valuation (Jun 2025), <a href="https://tracxn.com/d/companies/anduril">$6.26B total funding</a>, ~<a href="https://fnex.com/anduril-secures-2-5b-in-funding-doubling-valuation-to-30-5b/">$1B revenue (2024)</a></li>
+<li><strong>Reality check:</strong> Altius drone crashes during Air Force tests (Nov 2025), Ghost drone failures in Ukraine. Even $30B companies struggle with drone reliability.</li>
+<li><strong>Why it matters:</strong> Lattice is the C2 platform the DoD is standardizing on. If you want federal contracts, you'll eventually need Lattice integration. Anduril isn't a direct competitor in LE, but they define the defense technology ecosystem you'd need to enter.</li>
+</ul>
+<p class="source">Sources: <a href="https://www.reuters.com/business/aerospace-defense/us-defense-firm-anduril-faces-setbacks-drone-crashes-2025-11-27/">Reuters — Anduril drone crashes</a></p>
+</div>
+
+<div class="card">
+<h4>🟢 Red Cat / Teal Drones — SRR Competitor</h4>
+<ul>
+<li><strong>Status (Mar 2026):</strong> Black Widow / Golden Eagle drones, Army SRR Tranche 2 contract, NATO NSPA catalogue approved</li>
+<li><strong>Why it matters:</strong> They're taking the "small NDAA drone for military" lane. Not a direct competitor, but they're absorbing the DoD budget you'd want.</li>
+</ul>
+<p class="source">Sources: <a href="https://www.shephardmedia.com/news/air-warfare/idex-2025-teal-drones-set-to-sign-for-us-army-production/">Shephard — Teal Army contract</a></p>
+</div>
+
+<h3>3.2 Honest Differentiation Assessment</h3>
+
+<table>
+<tr><th>Hummingbird Claim</th><th>Reality</th></tr>
+<tr><td>"No one else combines mobile deployment + multi-drone swarm + automated launch/capture"</td><td><span class="tag tag-green">TRUE</span> — as of March 2026, this specific combination does not exist commercially. But Shield AI's Hivemind could power a similar system in 12-18 months if they chose to build one.</td></tr>
+<tr><td>"Category of one"</td><td><span class="tag tag-amber">PARTIALLY TRUE</span> — correct that no product exists today, but incorrect that no one could build one. Skydio, with $732M in funding and existing LE relationships, could build a multi-dock containerized system faster than Hummingbird can reach market.</td></tr>
+<tr><td>"Orders of magnitude more capability than Skydio Dock"</td><td><span class="tag tag-green">TRUE</span> — 20-30 drones vs 1 is genuinely a different class of capability. But you also need to ask: do agencies actually need 20-30 simultaneous drones, or is that overkill for 95% of use cases?</td></tr>
+<tr><td>"NDAA-favorable architecture"</td><td><span class="tag tag-red">TABLE STAKES</span> — Every serious US competitor is NDAA compliant. Skydio, Brinc, Teal, Draganfly all advertise NDAA compliance.</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2 id="tech">4. Technical Assessment</h2>
+
+<h3>4.1 Engineering Realism Scorecard</h3>
+
+<table>
+<tr><th>Subsystem</th><th>Feasibility</th><th>Difficulty</th><th>Assessment</th></tr>
+<tr><td>Ducted coaxial quad propulsion</td><td><span class="tag tag-green">Proven</span></td><td>Medium</td><td>Well-understood physics. Custom motor mixing for ArduPilot is the main work. 6-12 months.</td></tr>
+<tr><td>Pixhawk + Jetson dual-compute</td><td><span class="tag tag-green">Proven</span></td><td>Medium</td><td>Both are COTS components with good documentation. ARK carrier board helps. Integration is straightforward.</td></tr>
+<tr><td>Robotic arm launch/capture (stationary)</td><td><span class="tag tag-amber">Challenging</span></td><td>High</td><td>6-DOF arm + electromagnetic coupling + 2" tolerance is achievable but requires significant iteration. This is your hardest P1 challenge.</td></tr>
+<tr><td>Robotic arm capture (moving vehicle)</td><td><span class="tag tag-red">Very Hard</span></td><td>Very High</td><td>Velocity matching + vibration + tilt compensation on a moving truck with 2" tolerance? This could take 12+ months of dedicated effort and may require relaxing tolerances significantly.</td></tr>
+<tr><td>30-drone simultaneous swarm</td><td><span class="tag tag-amber">Challenging</span></td><td>High</td><td>Mesh networking, airspace deconfliction, and power management at scale are all solvable but require extensive testing.</td></tr>
+<tr><td>GPS-denied navigation</td><td><span class="tag tag-amber">Challenging</span></td><td>High</td><td>VIO + SLAM on Jetson Orin Nano is feasible but cooperative localization across a swarm is research-grade work.</td></tr>
+<tr><td>Three-manager software architecture</td><td><span class="tag tag-green">Sound</span></td><td>Medium-High</td><td>ROS 2 is the right choice. Architecture is well-designed. Implementation is 2-3 person-years of software work.</td></tr>
+<tr><td>WiFi mesh relay / "WiFi rope"</td><td><span class="tag tag-amber">Unproven</span></td><td>High</td><td>Multi-hop WiFi mesh with seamless rotation handoff is theoretically sound but practically very hard. Bandwidth degradation may be worse than modeled.</td></tr>
+</table>
+
+<h3>4.2 Battery Reality Check</h3>
+
+<div class="highlight">
+<strong>🔋 The battery energy density error is real but less catastrophic than feared.</strong>
+</div>
+
+<p>Your docs originally used 230 Wh/kg (custom Molicel 21700 packs). Real commercial LiPo packs deliver 160-174 Wh/kg. Your own recalculation document (battery_energy_density_recalculation.md) correctly identifies that the actual flight time penalty is <strong>~14-18%, not ~40%</strong>, because the battery is only ~25% of AUW.</p>
+
+<table>
+<tr><th>Metric</th><th>Original (230 Wh/kg)</th><th>Realistic (CNHL 5000mAh, 174 Wh/kg)</th><th>Delta</th></tr>
+<tr><td>Flight time (1kg payload)</td><td>15.1 min</td><td>13.0 min</td><td>-14%</td></tr>
+<tr><td>Flight time (no payload)</td><td>32.4 min</td><td>27.6 min</td><td>-15%</td></tr>
+<tr><td>Airborne from 30 (1kg)</td><td>12.2 drones</td><td>10.5 drones</td><td>-14%</td></tr>
+<tr><td>Operational radius (1kg)</td><td>2.9 km</td><td>2.4 km</td><td>-17%</td></tr>
+</table>
+
+<div class="verdict-green">
+<strong>My assessment:</strong> 13 minutes flight with 1kg payload and 27+ minutes without payload is operationally viable. The CNHL 5000mAh 6S 70C recommendation is excellent — the 3C charge capability is more valuable than raw capacity for continuous rotation operations. The battery issue is a documentation/credibility problem, not a show-stopper.
+</div>
+
+<h3>4.3 BOM Cost Reality</h3>
+
+<p>The NDAA-compliant BOM at $5,790/drone is a serious cost challenge. The major cost drivers:</p>
+
+<table>
+<tr><th>Component</th><th>Non-NDAA</th><th>NDAA</th><th>Impact</th></tr>
+<tr><td>Doodle Labs Mesh Rider radio</td><td>$30 (SiK)</td><td>$1,450</td><td>+$1,420 — this alone is 48× the original cost</td></tr>
+<tr><td>ARK V6X FC + Carrier</td><td>$336</td><td>~$700 (PAB standalone, from <a href="https://arkelectron.com/product/ark-jetson-pab-carrier-arkv6x-bundle/">bundle pricing</a>: $1,100 − ARKV6X $400)</td><td>+$364</td></tr>
+<tr><td>GPS → ARK RTK GPS</td><td>$297</td><td>~$700</td><td>+$403</td></tr>
+<tr><td>Cameras → NDAA alternatives</td><td>$45</td><td>~$150</td><td>+$105</td></tr>
+<tr><td><strong>Total NDAA premium per drone</strong></td><td colspan="2"></td><td><strong>~$2,670</strong></td></tr>
+</table>
+
+<div class="highlight-amber">
+<strong>Question for Marin:</strong> Is the Doodle Labs at $1,450/unit really necessary for every drone? Could you use a cheaper mesh radio ($200-400) for the majority and reserve Doodle Labs for relay/edge drones only? That single decision could save $20,000+ across a 20-drone fleet.
+</div>
+
+<h3>4.4 Hardest Unsolved Engineering Challenges (Ranked)</h3>
+
+<ol>
+<li><strong>Moving vehicle capture (P2)</strong> — Electromagnetic coupling at 2" tolerance on a vibrating, moving truck. This may require a fundamentally different approach (e.g., net capture, wider funnel, or stationary-only for years).</li>
+<li><strong>30-drone mesh networking at scale</strong> — Managing interference, handoff, and bandwidth allocation across 30 simultaneous drones in urban RF environments.</li>
+<li><strong>Robotic arm reliability in field conditions</strong> — Dust, rain, vibration, temperature extremes. Industrial arms struggle in these conditions; you need MIL-spec reliability at commercial prices.</li>
+<li><strong>Automated charging at scale</strong> — 30 concurrent charge sessions with thermal management, power balancing, and battery health monitoring. Each connection must be perfectly reliable.</li>
+<li><strong>GPS-denied cooperative localization</strong> — Sharing error covariance matrices across a mesh network and computing swarm-level position estimates in real-time is computationally and algorithmically challenging.</li>
+</ol>
+
+<!-- ============================================================ -->
+<h2 id="gtm">5. Go-to-Market Critique</h2>
+
+<h3>5.1 Is LE/Public Safety the Right Beachhead?</h3>
+
+<div class="verdict">
+<strong>Verdict: Right market, wrong entry point.</strong> Law enforcement is the right ultimate market, but a $350K+ system sale is the wrong first product for LE agencies. You should lead with DaaS (Drone-as-a-Service) deployments.
+</div>
+
+<p><strong>Why LE is right:</strong></p>
+<ul>
+<li>~1,500 US agencies have active drone programs (<a href="https://dronelife.com/2025/12/11/skydio-public-safety-drones-1000-agencies/">industry estimates</a>; Skydio alone serves 1,000+ public safety agencies)</li>
+<li>DFR programs went mainstream in 2025 (<a href="https://www.police1.com/drones/2025-the-year-drone-as-first-responder-programs-went-mainstream">Police1</a>)</li>
+<li>FAA simplified waiver process for DFR programs in 2025</li>
+<li>Trump's EO 14307 "Unleashing Drone Dominance" (Jun 2025) is a massive tailwind</li>
+<li>DRONE Act of 2025 proposes federal grants for agency drone programs</li>
+<li>The persistent coverage gap is real — agencies want it</li>
+</ul>
+
+<p><strong>Why the entry strategy is wrong:</strong></p>
+<ul>
+<li>Typical PD drone program budget: "a few hundred thousand dollars annually" (Police1, Oct 2025). That's the TOTAL budget, not per-system.</li>
+<li>LAPD's $4M Skydio deal (Feb 2026) required a <em>private donation</em> — they couldn't fund it from the regular budget</li>
+<li>Government procurement cycle: 12-24 months from budget approval to PO. You're looking at Year 4-5 for meaningful system sales.</li>
+<li>You're asking agencies to adopt an entirely new category from an unproven startup. That's a 3-5 year trust-building exercise.</li>
+</ul>
+
+<h3>5.2 FAA Regulatory Reality</h3>
+
+<div class="highlight-amber">
+<strong>Good news / bad news on FAA:</strong>
+<br>✅ Part 108 BVLOS NPRM published Aug 2025, comments closed Oct 2025, final rule expected early-to-mid 2026. This is hugely favorable.
+<br>❌ Part 108 addresses BVLOS for <em>individual</em> drones. There is NO precedent for a 30-drone simultaneous swarm waiver in commercial airspace. The FAA's simplified DFR COW process allows technology-based visual observer replacement — for single drones.
+<br>❌ You will need a novel Certificate of Waiver for multi-drone simultaneous operations. This is genuinely unprecedented and could take 2-4 years.
+</div>
+
+<p class="source">Sources: <a href="https://www.federalregister.gov/documents/2025/08/07/2025-14992/normalizing-unmanned-aircraft-systems-beyond-visual-line-of-sight-operations">Federal Register — Part 108 NPRM</a>; <a href="https://dronetrust.com/blogs/articles/new-faa-drone-rules-2026">DroneTrust — 2026 rules</a>; <a href="https://www.police1.com/drones/2025-the-year-drone-as-first-responder-programs-went-mainstream">Police1 — DFR COW process</a></p>
+
+<h3>5.3 Marketing Plan Assessment</h3>
+
+<table>
+<tr><th>Element</th><th>Rating</th><th>Notes</th></tr>
+<tr><td>Use case storytelling</td><td><span class="tag tag-green">Excellent</span></td><td>The event security, fire response, and WiFi rope use cases are genuinely compelling and well-articulated.</td></tr>
+<tr><td>Competitive positioning</td><td><span class="tag tag-amber">Overconfident</span></td><td>Claims like "category of one" underestimate competitors' ability to pivot. Skydio could announce a multi-dock system tomorrow.</td></tr>
+<tr><td>Pricing strategy</td><td><span class="tag tag-red">Needs rework</span></td><td>$350-450K excludes 90%+ of addressable agencies. Need a tiered approach starting at $150-200K.</td></tr>
+<tr><td>Sales channel strategy</td><td><span class="tag tag-red">Missing</span></td><td>No mention of distribution partners, channel strategy, or how you'll actually get in front of 200 agencies. Brinc has Motorola. Who do you have?</td></tr>
+<tr><td>Content/awareness plan</td><td><span class="tag tag-red">Missing</span></td><td>No social media, PR, trade show, or thought leadership strategy documented.</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2 id="risk">6. Risk Assessment</h2>
+
+<h3>Top 10 Risks — Ranked by Impact × Probability</h3>
+
+<table>
+<tr><th>#</th><th>Risk</th><th>Impact</th><th>Probability</th><th>Severity</th></tr>
+<tr><td>1</td><td><strong>FAA swarm waiver denied or delayed 3+ years</strong> — No precedent for 30-drone commercial swarm. Could limit you to 5-drone demos indefinitely.</td><td>🔴 Critical</td><td>Medium-High</td><td><span class="tag tag-red">EXISTENTIAL</span></td></tr>
+<tr><td>2</td><td><strong>Funding gap</strong> — Solo founder, pre-prototype, hardware startup. This is the hardest fundraising profile. Seed rounds for hardware are $1-3M; you need $10M+ before revenue.</td><td>🔴 Critical</td><td>Medium-High</td><td><span class="tag tag-red">EXISTENTIAL</span></td></tr>
+<tr><td>3</td><td><strong>Skydio launches multi-dock product</strong> — They have the engineering team, the customer relationships, and $732M+ in funding. A "Skydio Swarm Dock" announcement would gut your pitch.</td><td>🔴 Critical</td><td>Medium</td><td><span class="tag tag-red">SEVERE</span></td></tr>
+<tr><td>4</td><td><strong>Moving capture doesn't work</strong> — 2" tolerance on a moving, vibrating vehicle may be physically impractical. Could require fundamental redesign.</td><td>High</td><td>Medium</td><td><span class="tag tag-amber">HIGH</span></td></tr>
+<tr><td>5</td><td><strong>Customer acquisition slower than projected</strong> — Government sales cycles + unproven technology + high price = 18-36 month sales cycles.</td><td>High</td><td>High</td><td><span class="tag tag-amber">HIGH</span></td></tr>
+<tr><td>6</td><td><strong>Key person risk</strong> — Single founder with AI assistant. If Marin is unavailable, the entire company stops.</td><td>🔴 Critical</td><td>Low-Medium</td><td><span class="tag tag-amber">HIGH</span></td></tr>
+<tr><td>7</td><td><strong>NDAA cost inflation kills margins</strong> — At $5,790/drone, you're ~3.8x the non-NDAA BOM. Volume discounts may not materialize at startup quantities.</td><td>High</td><td>Medium</td><td><span class="tag tag-amber">HIGH</span></td></tr>
+<tr><td>8</td><td><strong>Robotic arm reliability in field conditions</strong> — Dust, temperature, vibration causing capture failures during demos or customer deployments.</td><td>Medium-High</td><td>Medium</td><td><span class="tag tag-amber">MEDIUM</span></td></tr>
+<tr><td>9</td><td><strong>Brinc + Motorola lock up LE distribution</strong> — If Motorola becomes the default "drone integration partner" for agencies, you're shut out of the sales conversation.</td><td>Medium-High</td><td>Medium</td><td><span class="tag tag-amber">MEDIUM</span></td></tr>
+<tr><td>10</td><td><strong>Battery technology stagnation</strong> — If you're stuck at 160-174 Wh/kg for years, 13-minute flight times with payload limit operational value.</td><td>Medium</td><td>Low</td><td><span class="tag tag-green">LOW</span></td></tr>
+</table>
+
+<h3>What Could Kill This Company</h3>
+
+<div class="card">
+<ol>
+<li><strong>Can't raise Series A.</strong> Hardware startups need $5-10M to get through P2. If you can't demonstrate a working 5-10 drone system in P1 that's impressive enough to raise Series A, the company dies at the prototype stage.</li>
+<li><strong>FAA says no to swarms.</strong> If the FAA creates a regulatory framework that effectively limits commercial operations to 1-3 drones per operator, your entire value proposition collapses.</li>
+<li><strong>Skydio announces "Skydio Fleet."</strong> With 1,000+ agency relationships and $732M+ in funding, Skydio could build a multi-dock system in 18-24 months and instantly own the market you're trying to create.</li>
+</ol>
+</div>
+
+<h3>The "Oh Shit" Scenario</h3>
+
+<div class="highlight">
+<strong>Month 18: You've spent $5M, built a working 10-drone demo that impresses everyone. Then Skydio announces "Skydio Swarm" — a 5-dock networked system that coordinates 5 X10 drones from a single interface. It's not 30 drones, but it's 5 autonomous drones with proven reliability, existing FAA approvals, TAK integration, and relationships with 1,000 agencies. Price: $150K. Every agency that was interested in Hummingbird now says "let's wait for Skydio Swarm." Your Series A round fails because VCs say the market is "too competitive." Game over.</strong>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="rec">7. Recommendations</h2>
+
+<h3>7.1 What to Do FIRST (Next 90 Days)</h3>
+
+<div class="card">
+<ol>
+<li><strong>Build ONE flying drone.</strong> Not 30. Not 10. One ducted coaxial drone with Pixhawk + Jetson that flies autonomously. Video it. This is your fundraising proof point.</li>
+<li><strong>Find a co-founder or CTO.</strong> A solo founder building complex hardware/software is a red flag for investors. You need a technical co-founder with a track record. (Tejash may fill this role, but the relationship needs to solidify.)</li>
+<li><strong>Start talking to agencies NOW.</strong> Don't wait for a prototype. Get 5-10 LOIs (Letters of Intent) or even informal "we'd be interested" letters from police chiefs. This is the #1 thing VCs want to see for hardware startups.</li>
+<li><strong>File provisional patents.</strong> The containerized swarm platform, the cassette/arm capture system, and the continuous rotation method are all patentable. Do this before publishing anything publicly.</li>
+<li><strong>Fix your financial model.</strong> Reconcile the NDAA BOM with the business plan. The current documents contradict each other and that will kill investor confidence.</li>
+</ol>
+</div>
+
+<h3>7.2 What to STOP Doing</h3>
+
+<div class="card">
+<ol>
+<li><strong>Stop planning for 30 drones in P1.</strong> Build for 5 drones. Prove the concept small, then scale. 30 drones introduces combinatorial complexity that will bury you in P1.</li>
+<li><strong>Stop including "WiFi rope" and GPS-denied operations in near-term materials.</strong> They're cool features but they're Phase 3+ at best. Mentioning them now dilutes your focus and makes the project sound like vaporware.</li>
+<li><strong>Stop comparing to Shield AI and Anduril.</strong> Those are defense primes with billions in funding. Comparing yourself to them makes you look naive, not ambitious. Compare to Skydio Dock and helicopter operations.</li>
+<li><strong>Stop claiming 23-30 minute flight times.</strong> Your own analysis shows 13 minutes with payload. Use honest numbers. Credibility is more valuable than impressive-sounding specs.</li>
+<li><strong>Stop assuming 2 system sales in Year 2.</strong> Plan for zero revenue until Year 3, with DaaS revenue starting in Year 2-3. Build your cash model accordingly.</li>
+</ol>
+</div>
+
+<h3>7.3 What's Missing From Your Plan</h3>
+
+<table>
+<tr><th>Gap</th><th>Importance</th><th>Recommendation</th></tr>
+<tr><td>Distribution / channel strategy</td><td>🔴 Critical</td><td>Identify 2-3 potential distribution partners (e.g., Axon, FLIR/Teledyne, L3Harris). You need someone who already sells to your customers.</td></tr>
+<tr><td>Customer validation / LOIs</td><td>🔴 Critical</td><td>Talk to 10+ agencies in the next 60 days. Get feedback. Get LOIs. Adjust product to what they'll actually buy.</td></tr>
+<tr><td>Tiered product strategy</td><td>🔴 Critical</td><td>Build a "Nest Lite" (5-10 drones, $150-200K) alongside the full system. Match the market's budget reality.</td></tr>
+<tr><td>Hiring plan with specific roles</td><td>High</td><td>First 4 hires: (1) Robotics/mechanical engineer, (2) Embedded software engineer, (3) ROS/swarm engineer, (4) Business development/govt sales. In that order.</td></tr>
+<tr><td>Counter-competitive strategy</td><td>High</td><td>What's your plan when Skydio announces multi-dock? Have a pre-written response. Focus on capabilities they can't easily replicate (continuous rotation, scale).</td></tr>
+<tr><td>Regulatory engagement plan</td><td>High</td><td>Engage FAA proactively. Join DRONERESPONDERS DFR Working Group. File for experimental certificates early. Build the waiver case incrementally.</td></tr>
+<tr><td>Content marketing / thought leadership</td><td>Medium</td><td>Start publishing about multi-drone ops, persistent coverage, swarm economics. Build the narrative before the product ships.</td></tr>
+</table>
+
+<h3>7.4 Suggested 12-Month Priorities</h3>
+
+<table>
+<tr><th>Month</th><th>Priority</th><th>Milestone</th></tr>
+<tr><td>1-2</td><td>Single drone flight + patent filings</td><td>One ducted coaxial drone hovering autonomously. Provisional patents filed.</td></tr>
+<tr><td>2-4</td><td>Co-founder / team + fundraising prep</td><td>2-3 person core team. Pitch deck. Seed round opens.</td></tr>
+<tr><td>3-6</td><td>Robotic arm prototype + customer conversations</td><td>Basic arm with EM capture demo (benchtop). 10+ agency conversations. 3+ LOIs.</td></tr>
+<tr><td>4-8</td><td>Seed round closes ($1.5-2.5M)</td><td>Funded. Team of 4-6. Full P1 development starts.</td></tr>
+<tr><td>6-10</td><td>3-5 drone system integration</td><td>Multiple drones launching, flying missions, and auto-capturing from stationary vehicle.</td></tr>
+<tr><td>8-12</td><td>First live demo for agencies</td><td>5-drone demo at a police training facility. Video content. Press coverage. Series A prep.</td></tr>
+</table>
+
+<h3>7.5 The One Thing That Would Change Everything</h3>
+
+<div class="verdict-green">
+<p><strong>Get a strategic investor/partner.</strong> If Axon, Motorola Solutions, L3Harris, or even Skydio's competitor (say, Teledyne FLIR) invested $2-5M and provided distribution access, the entire risk profile changes. You go from "solo founder, pre-prototype" to "strategic partner-backed, market-validated." This should be priority #1 alongside building the first drone.</p>
+<p>Specifically: <strong>Axon</strong> is the most natural fit. They invest in LE technology (they invested in Skydio's Series E), they sell to every police department in America, and a swarm platform complements their body camera / evidence management ecosystem. If you could get an Axon meeting in the next 6 months, take it.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2>Final Grade</h2>
+
+<div class="grid-2">
+<div class="card">
+<h4>Concept / Vision</h4>
+<div class="score"><span style="color: var(--green);">A-</span> <span class="meter"><span class="meter-fill" style="width:85%; background: var(--green);"></span></span></div>
+<p>Genuinely novel, addresses a real gap, good timing.</p>
+</div>
+<div class="card">
+<h4>Technical Architecture</h4>
+<div class="score"><span style="color: var(--green);">B+</span> <span class="meter"><span class="meter-fill" style="width:78%; background: var(--green);"></span></span></div>
+<p>Sound design choices. ROS 2, Pixhawk+Jetson, TAK — all correct. Over-ambitious on scope.</p>
+</div>
+<div class="card">
+<h4>Business Plan</h4>
+<div class="score"><span style="color: var(--amber);">C+</span> <span class="meter"><span class="meter-fill" style="width:55%; background: var(--amber);"></span></span></div>
+<p>Optimism bias throughout. BOM inconsistency. Revenue timeline unrealistic. Good structure though.</p>
+</div>
+<div class="card">
+<h4>Execution Readiness</h4>
+<div class="score"><span style="color: var(--red);">D+</span> <span class="meter"><span class="meter-fill" style="width:35%; background: var(--red);"></span></span></div>
+<p>Solo founder, pre-prototype, no customer validation, no funding. Lot of work before this is investable.</p>
+</div>
+</div>
+
+<div class="verdict">
+<p><strong>Overall: The vision is A-tier, the execution readiness is D-tier. The gap between them is where startups die.</strong> Marin, you've done remarkable documentation work — better than 95% of startups I've seen at this stage. The concept is genuinely novel and the timing is right. But you need to close the gap between paper and reality. Build ONE drone. Find ONE co-founder. Get ONE LOI. Then raise money. In that order. Everything else is noise until those three things happen.</p>
+</div>
+
+<div class="card" style="margin-top: 2rem; border-left: 3px solid var(--amber);">
+<h4>📋 Changelog</h4>
+<p><strong>2026-03-11</strong> — Source error corrections:</p>
+<ul>
+<li>Skydio Series E date: "May 2025" → Feb 27, 2023 (page republished May 2025; original round was Feb 2023). Added $170M extension round (Nov 2024).</li>
+<li>Skydio total funding: $562M → <strong>$732M</strong> (includes $170M extension, per <a href="https://www.ctol.digital/news/skydio-170m-funding-defense-enterprise-growth/">CTOL Digital</a>; Tracxn reports $715M across 7 rounds).</li>
+<li>All "$500M+" Skydio funding references updated to "$732M+".</li>
+<li>ARK Jetson PAB: $800 → <strong>$700</strong> (standalone price derived from bundle: $1,100 − ARKV6X $400).</li>
+<li>Per-drone NDAA BOM: $5,917 → <strong>$5,790</strong> (recalculated with corrected PAB price).</li>
+<li>Anduril total funding: $6.3B → <strong>$6.26B</strong> (per <a href="https://tracxn.com/d/companies/anduril">Tracxn</a>).</li>
+<li>Anduril ~$1B revenue: added source (<a href="https://fnex.com/anduril-secures-2-5b-in-funding-doubling-valuation-to-30-5b/">FNEX</a>, Yahoo Finance confirm ~$1B in 2024).</li>
+<li>~1,500 agencies claim: sourced to industry estimates; Skydio reports 1,000+ public safety agencies (Dec 2025).</li>
+</ul>
+</div>
+
+<div class="disclaimer">
+<p><strong>Disclaimer:</strong> This assessment is based on documentation review, live market research, and independent financial analysis as of March 2026. Market conditions, competitor actions, and regulatory environments change rapidly. This is an honest critical assessment intended to help, not discourage. The author believes the concept has genuine merit — the criticism is intended to strengthen the execution plan, not to suggest abandoning it.</p>
+</div>
+
+</div>
+</body>
+</html>

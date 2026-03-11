@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hummingbird Nest &mdash; Software &amp; Cloud Architecture</title>
+<style>
+:root{--navy:#1a1a2e;--dark:#2c3e50;--mid:#34495e;--accent:#2980b9;--green:#27ae60;--light:#ecf0f1;--warn:#e67e22;--purple:#8e44ad;--bg:#fafbfc;--divider:#e0e4e8;--red:#e74c3c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Arial,sans-serif;font-size:15px;line-height:1.65;color:#333;max-width:960px;margin:0 auto;padding:40px 30px;background:var(--bg)}
+
+.title-block{text-align:center;margin:40px 0 50px;padding:40px 20px 30px;border-bottom:3px solid var(--accent);position:relative}
+.title-block::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:60px;height:4px;background:var(--navy);border-radius:2px}
+.title-block h1{font-size:2.2em;color:var(--navy);margin-bottom:10px;letter-spacing:-0.5px}
+.title-block .subtitle{font-size:1.2em;color:#555;margin-bottom:8px}
+.title-block .date{font-size:1.05em;color:#888;margin-bottom:20px}
+.title-block .confidential{color:#cc0000;font-weight:bold;letter-spacing:2px;font-size:0.85em}
+
+h1{font-size:1.7em;color:var(--navy);border-bottom:3px solid var(--accent);padding-bottom:6px;margin:50px 0 16px}
+h2{font-size:1.35em;color:var(--dark);margin:30px 0 12px}
+h3{font-size:1.1em;color:var(--mid);margin:20px 0 10px}
+h4{font-size:1em;color:var(--mid);margin:16px 0 8px;font-style:italic}
+p{margin-bottom:12px}ul,ol{margin:8px 0 16px 28px}li{margin-bottom:5px}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+strong{color:#222}
+code{background:#eef;padding:1px 5px;border-radius:3px;font-size:13px}
+
+table{width:100%;border-collapse:collapse;margin:14px 0 18px;font-size:14px;border-radius:4px;overflow:hidden}
+th{background:var(--dark);color:#fff;padding:8px 12px;text-align:left;font-weight:600}
+td{padding:7px 12px;border:1px solid #d5d9dd}tr:nth-child(even) td{background:#f4f6f8}
+
+.note{background:#eaf4fc;border-left:4px solid var(--accent);padding:12px 16px;margin:14px 0;font-size:14px;border-radius:0 4px 4px 0}
+.note strong{color:var(--accent)}
+.warn-note{background:#fef9e7;border-left:4px solid var(--warn);padding:12px 16px;margin:14px 0;font-size:14px;border-radius:0 4px 4px 0}
+.warn-note strong{color:var(--warn)}
+.critical-note{background:#fdecea;border-left:4px solid var(--red);padding:12px 16px;margin:14px 0;font-size:14px;border-radius:0 4px 4px 0}
+.critical-note strong{color:var(--red)}
+
+.flow-box{background:#f4f6f7;border:1px solid #ddd;border-radius:6px;padding:16px 20px;margin:14px 0;font-size:14px}
+.flow-box p{margin-bottom:6px}.flow-box .arrow{color:var(--accent);font-weight:bold}
+
+.arch-box{border:2px solid #ddd;border-radius:8px;padding:18px 22px;margin:12px 0;background:#fff}
+.arch-box.edge{border-color:var(--green);background:#f0fff4}
+.arch-box.cloud{border-color:var(--accent);background:#f0f7ff}
+.arch-box.drone{border-color:var(--purple);background:#faf0ff}
+.arch-box.user{border-color:var(--warn);background:#fffaf0}
+.arch-box h3{margin-top:0}
+.arch-box .tag{display:inline-block;color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:3px;margin-bottom:8px}
+.arch-box.edge .tag{background:var(--green)}
+.arch-box.cloud .tag{background:var(--accent)}
+.arch-box.drone .tag{background:var(--purple)}
+.arch-box.user .tag{background:var(--warn)}
+
+.latency-table td:last-child{font-weight:600}
+.latency-good{color:var(--green)}
+.latency-ok{color:var(--warn)}
+.latency-bad{color:var(--red)}
+
+.toc{background:#fff;border:1px solid var(--divider);border-radius:8px;padding:24px 30px;margin:20px 0 40px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.toc h2{margin:0 0 14px;color:var(--navy);border:none;font-size:1.3em}
+.toc ul{list-style:none;margin:0;padding:0}
+.toc>ul>li{margin-bottom:6px}.toc>ul>li>a{font-weight:600;font-size:15px}
+.toc ul ul{margin:4px 0 4px 20px}.toc ul ul li{margin-bottom:3px}
+.toc ul ul li a{font-weight:400;font-size:14px;color:#555}
+
+.back-toc{text-align:right;margin:10px 0 0;font-size:13px}
+.back-toc a{color:#888;text-decoration:none}.back-toc a:hover{color:var(--accent);text-decoration:underline}
+
+/* Document navigation bar */
+.doc-nav{display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:var(--navy);border-radius:6px;margin-bottom:10px}
+.doc-nav a{color:#fff;text-decoration:none;font-size:13px;font-weight:500;transition:color 0.2s}
+.doc-nav a:hover{color:#00d4ff;text-decoration:none}
+.doc-nav .nav-left{display:flex;align-items:center;gap:8px}
+.doc-nav .nav-left img{height:28px;width:auto}
+.doc-nav .nav-right a{opacity:0.75}.doc-nav .nav-right a:hover{opacity:1}
+.title-logo{height:80px;width:auto;margin-bottom:16px}
+
+@media print{body{font-size:12px;padding:20px;background:#fff}h1{page-break-before:always}table{page-break-inside:avoid}.back-toc{display:none}.doc-nav{display:none}}
+.changelog{background:#fdf6ec;border:1px solid #e8d5b7;border-radius:8px;padding:20px 24px;margin:20px 0}
+.changelog h3{color:var(--warn);margin-top:14px;margin-bottom:6px}.changelog h3:first-child{margin-top:0}
+.changelog ul{margin:4px 0 10px 24px;font-size:14px}.changelog li{margin-bottom:3px}
+</style>
+</head>
+<body>
+
+<div class="doc-nav">
+<div class="nav-left">
+<a href="Nest_Document_Index.html"><img src="logo/logo-icon.png" alt="Hummingbird Technologies"> &larr; Document Suite Index</a>
+</div>
+<div class="nav-right">
+<a href="https://hummingbirdtech.ai" target="_blank">hummingbirdtech.ai &rarr;</a>
+</div>
+</div>
+
+<div class="title-block">
+<img src="logo/logo-icon.png" alt="" class="title-logo">
+<h1>Hummingbird Technologies</h1>
+<div class="subtitle">Nest Platform &mdash; Software &amp; Cloud Architecture</div>
+<div class="date">February 2026</div>
+<div class="confidential">CONFIDENTIAL</div>
+</div>
+
+<!-- ==================== TABLE OF CONTENTS ==================== -->
+<div class="toc" id="toc">
+<h2>Table of Contents</h2>
+<ul>
+<li><a href="#s1">1. Architecture Overview &amp; Design Philosophy</a>
+  <ul>
+    <li><a href="#s1-1">1.1 The Fundamental Question: Cloud vs Edge</a></li>
+    <li><a href="#s1-2">1.2 Hybrid Edge-Cloud Architecture (Decision)</a></li>
+    <li><a href="#s1-3">1.3 Guiding Principles</a></li>
+    <li><a href="#s1-4">1.4 TAK-Native Interface &amp; C2 Integration</a></li>
+  </ul>
+</li>
+<li><a href="#s2">2. System Layers</a>
+  <ul>
+    <li><a href="#s2-1">2.1 User Interface Layer (Web Client)</a></li>
+    <li><a href="#s2-2">2.2 Cloud Services Layer</a></li>
+    <li><a href="#s2-3">2.3 Edge Layer (Nest Onboard Computer)</a></li>
+    <li><a href="#s2-4">2.4 Drone Layer</a></li>
+  </ul>
+</li>
+<li><a href="#s3">3. User Access &amp; Authentication</a>
+  <ul>
+    <li><a href="#s3-1">3.1 Authentication Flow</a></li>
+    <li><a href="#s3-2">3.2 Role-Based Access Control (RBAC)</a></li>
+    <li><a href="#s3-3">3.3 Connection Modes</a></li>
+  </ul>
+</li>
+<li><a href="#s4">4. Communication Architecture &amp; Latency</a>
+  <ul>
+    <li><a href="#s4-1">4.1 Latency Budget Analysis</a></li>
+    <li><a href="#s4-2">4.2 Local Connection Path (On-Site)</a></li>
+    <li><a href="#s4-3">4.3 Remote Connection Path</a></li>
+    <li><a href="#s4-4">4.4 Manual Control Tiers &amp; Latency Tolerance</a></li>
+    <li><a href="#s4-5">4.5 Protocol Selection</a></li>
+  </ul>
+</li>
+<li><a href="#s5">5. Beyond Line of Sight (BVLOS) Operations</a>
+  <ul>
+    <li><a href="#s5-1">5.1 The BVLOS Latency Problem</a></li>
+    <li><a href="#s5-2">5.2 Solution 1: Predictive / Assisted Manual Control</a></li>
+    <li><a href="#s5-3">5.3 Solution 2: Mesh Relay Drones</a></li>
+    <li><a href="#s5-4">5.4 Solution 3: Private 5G / CBRS</a></li>
+    <li><a href="#s5-5">5.5 Solution 4: Multi-Access Edge Computing (MEC)</a></li>
+    <li><a href="#s5-6">5.6 Recommended BVLOS Architecture</a></li>
+    <li><a href="#s5-7">5.7 BVLOS Communication Fallback Chain</a></li>
+    <li><a href="#s5-8">5.8 Mission Application: Emergency Communications Relay</a></li>
+    <li><a href="#s5-9">5.9 GPS-Denied &amp; Communication-Denied Operations</a></li>
+  </ul>
+</li>
+<li><a href="#s6">6. Multi-Nest Operations</a>
+  <ul>
+    <li><a href="#s6-1">6.1 Unified Drone Pool Abstraction</a></li>
+    <li><a href="#s6-2">6.2 Multi-Nest Coordination Architecture</a></li>
+    <li><a href="#s6-3">6.3 Mission Partitioning &amp; Drone Assignment</a></li>
+    <li><a href="#s6-4">6.4 Travel Time Modeling</a></li>
+    <li><a href="#s6-5">6.5 Failure &amp; Degradation Handling</a></li>
+  </ul>
+</li>
+<li><a href="#s7">7. Video &amp; Telemetry Streaming</a>
+  <ul>
+    <li><a href="#s7-1">7.1 Video Pipeline Architecture</a></li>
+    <li><a href="#s7-2">7.2 Multi-Viewer Access</a></li>
+    <li><a href="#s7-3">7.3 Stream Quality &amp; Bandwidth</a></li>
+  </ul>
+</li>
+<li><a href="#s8">8. Security Architecture</a>
+  <ul>
+    <li><a href="#s8-1">8.1 Encryption In Transit</a></li>
+    <li><a href="#s8-2">8.2 Encryption At Rest</a></li>
+    <li><a href="#s8-3">8.3 Zero-Trust Network Model</a></li>
+    <li><a href="#s8-4">8.4 Drone-to-Nest Security</a></li>
+  </ul>
+</li>
+<li><a href="#s9">9. Cloud Services Detail</a>
+  <ul>
+    <li><a href="#s9-1">9.1 Service Decomposition</a></li>
+    <li><a href="#s9-2">9.2 Infrastructure &amp; Deployment</a></li>
+    <li><a href="#s9-3">9.3 Data Storage &amp; Retention</a></li>
+  </ul>
+</li>
+<li><a href="#s10">10. Nest Onboard Software Detail</a>
+  <ul>
+    <li><a href="#s10-1">10.1 ROS 2 Node Architecture</a></li>
+    <li><a href="#s10-2">10.2 Local Autonomy &amp; Offline Operation</a></li>
+    <li><a href="#s10-3">10.3 Edge Compute Specifications</a></li>
+  </ul>
+</li>
+<li><a href="#s11">11. Deployment Topology &amp; Network Diagrams</a></li>
+<li><a href="#s12">12. Open Questions &amp; Next Steps</a></li>
+<li><a href="#clog">Change Log</a></li>
+</ul>
+</div>
+
+
+<!-- ==================== SECTION 1 ==================== -->
+<h1 id="s1">1. Architecture Overview &amp; Design Philosophy</h1>
+
+<p>This document defines the software and cloud architecture for the Hummingbird Nest platform at a level of detail sufficient for engineering implementation. It extends the three-manager architecture described in the <em>Hummingbird Nest Platform Product &amp; Business Plan v9</em> (Section 8) and addresses the full stack: how users connect, how missions are created and executed, how multiple Nests coordinate, how video and telemetry flow, and how all of it is secured.</p>
+
+<h2 id="s1-1">1.1 The Fundamental Question: Cloud vs Edge</h2>
+
+<p>The central architectural question is: <strong>where does the intelligence live?</strong></p>
+
+<p>There are three possible architectures:</p>
+
+<table>
+<tr><th>Architecture</th><th>Latency</th><th>Multi-Nest</th><th>Offline</th><th>Complexity</th></tr>
+<tr><td><strong>Cloud-Centric</strong><br>All coordination in the cloud</td><td class="latency-bad">50&ndash;200ms+</td><td>Easy</td><td>No</td><td>Low</td></tr>
+<tr><td><strong>Edge-Only</strong><br>Everything runs on each Nest</td><td class="latency-good">&lt;10ms</td><td>Hard</td><td>Yes</td><td>High</td></tr>
+<tr><td><strong>Hybrid Edge-Cloud</strong><br>Real-time at edge, coordination in cloud</td><td class="latency-good">&lt;10ms local</td><td>Yes</td><td>Degraded mode</td><td>Medium</td></tr>
+</table>
+
+<h2 id="s1-2">1.2 Hybrid Edge-Cloud Architecture (Decision)</h2>
+
+<div class="note">
+<strong>Architecture Decision:</strong> The Hummingbird Nest platform uses a <strong>Hybrid Edge-Cloud</strong> architecture. Real-time drone control and autonomy run at the edge (on each Nest's onboard computer). The cloud provides authentication, multi-Nest coordination, mission persistence, data recording, and remote access. The system is designed to operate fully autonomously at the edge if cloud connectivity is lost.
+</div>
+
+<p><strong>Why not cloud-centric?</strong> A round-trip to even the nearest cloud region adds 30&ndash;100ms of network latency before any processing. For manual drone control where we need &lt;30ms total latency, the cloud cannot be in the control loop. Additionally, public safety operations frequently occur in areas with degraded cellular connectivity. The system <em>must</em> function without the cloud.</p>
+
+<p><strong>Why not pure edge?</strong> Multi-Nest coordination requires a common coordination point. Without a central service, each Nest would need to discover and communicate directly with every other Nest &mdash; creating an O(n&sup2;) mesh that is fragile and complex. A lightweight cloud coordination layer makes multi-Nest operations vastly simpler and more reliable.</p>
+
+<p><strong>The hybrid approach gives us:</strong></p>
+<ul>
+  <li><strong>Sub-10ms local latency</strong> for drone control (edge)</li>
+  <li><strong>Full offline capability</strong> for single-Nest missions (edge)</li>
+  <li><strong>Scalable multi-Nest coordination</strong> (cloud)</li>
+  <li><strong>Secure remote access</strong> from any device (cloud)</li>
+  <li><strong>Persistent storage</strong> for mission data, video, and analytics (cloud)</li>
+</ul>
+
+<h2 id="s1-3">1.3 Guiding Principles</h2>
+
+<ol>
+  <li><strong>Edge-first:</strong> Every real-time decision is made at the edge. The cloud is never in the critical control path.</li>
+  <li><strong>Graceful degradation:</strong> Cloud loss = reduced features (no multi-Nest, no remote access), but single-Nest operations continue uninterrupted.</li>
+  <li><strong>Drone-source agnostic:</strong> The Mission Manager allocates drones from a unified pool. It does not know or care which physical Nest a drone belongs to. Travel time is the only differentiator.</li>
+  <li><strong>Zero-trust security:</strong> Every connection is authenticated and encrypted. No implicit trust between any components.</li>
+  <li><strong>Latency-aware routing:</strong> The system dynamically selects the lowest-latency path for each operation type.</li>
+  <li><strong>Open architecture (MOSA-aligned):</strong> The system is built on open, industry-standard protocols and interfaces aligned with the Department of Defense <strong>Modular Open Systems Approach (MOSA)</strong>. All major interfaces use non-proprietary standards: ROS 2 (middleware), DDS (inter-process communication, OMG standard), MAVLink (drone communication, open protocol), WebRTC (video streaming, W3C standard), MQTT (cloud messaging, OASIS standard), and REST/WebSocket APIs (external integration). This ensures interoperability, avoids vendor lock-in, and enables integration with government-directed C2 architectures.</li>
+  <li><strong>Operator-on-the-loop / operator-in-the-loop:</strong> The system supports both autonomous execution with operator oversight (on-the-loop) and direct manual control of individual drones (in-the-loop). Operators can seamlessly transition any drone between these modes during a mission &mdash; taking manual control for a closer look, then releasing the drone back to autonomous swarm operation.</li>
+</ol>
+
+<h2 id="s1-4">1.4 TAK-Native Interface &amp; C2 Integration</h2>
+
+<h3>1.4.1 The Nest Interface as a TAK-Class System</h3>
+
+<p>The Hummingbird Nest's native mission interface is fundamentally a <strong>TAK-class situational awareness and command platform</strong>. The interface shares the same core design philosophy as the Team Awareness Kit (TAK) ecosystem &mdash; the DoD's premier tool for real-time tactical situational awareness, used by over 500,000 military, law enforcement, and emergency response operators worldwide <sup>[<a href="https://breakingdefense.com/2025/11/evolution-and-future-of-the-tactical-assault-kit-for-soldiers-and-special-operators/">Breaking Defense, Nov 2025</a>]</sup>. Operators familiar with ATAK (Android), WinTAK (Windows), iTAK (iOS), or WebTAK will find the Nest interface immediately recognizable.</p>
+
+<p>The Nest interface provides all of the foundational capabilities expected of a TAK-class system:</p>
+
+<table>
+<tr><th>TAK Core Capability</th><th>Nest Native Implementation</th></tr>
+<tr><td><strong>Map-centric common operating picture (COP)</strong></td><td>Real-time geospatial map view with online and offline mapping; all drone positions, mission zones, and sensor data displayed on a shared, georeferenced operational picture</td></tr>
+<tr><td><strong>Blue force tracking (BFT)</strong></td><td>Real-time tracking of all assets: every drone in the swarm, the Nest vehicle/container itself, and operator positions displayed with status indicators (active, returning, charging, queued)</td></tr>
+<tr><td><strong>Collaborative mapping &amp; overlays</strong></td><td>Area selection tools (polygons, rectangles, freeform boundaries), mission zone overlays, coverage cone visualization, sensor overlay display (thermal, visual, environmental data mapped geographically)</td></tr>
+<tr><td><strong>Real-time video streaming</strong></td><td>Live video feeds from any drone in the swarm, selectable per drone; multi-viewer access; picture-in-picture and full-screen modes</td></tr>
+<tr><td><strong>Multi-platform access</strong></td><td>Progressive web application (PWA) accessible on tablets, laptops, desktops, and phones; mobile client mode for responding field units (view-only access)</td></tr>
+<tr><td><strong>Chat &amp; messaging</strong></td><td>Operator-to-operator messaging and mission alerts</td></tr>
+<tr><td><strong>Cursor on Target (CoT) data model</strong></td><td>Drone positions, sensor events, and mission data structured for CoT-compatible export (see TAK Server integration below)</td></tr>
+<tr><td><strong>Remote and local operation</strong></td><td>On-site via Nest WiFi or remote via cloud; secure authenticated connections with role-based access control</td></tr>
+</table>
+
+<h3>1.4.2 Hummingbird-Specific Capabilities Beyond Standard TAK</h3>
+
+<p>While the Nest interface provides a TAK-familiar operational experience, it extends beyond standard TAK with capabilities specific to autonomous swarm management that no existing TAK client or plugin currently offers:</p>
+
+<ul>
+<li><strong>Autonomous swarm orchestration:</strong> Click-to-command mission planning with automated coverage analysis &mdash; the operator draws a boundary and the system automatically identifies optimal drone positions, coverage cones, and rotation schedules. This level of automated multi-asset coordination goes significantly beyond TAK's UAS plugin capabilities, which are designed for single-drone observation</li>
+<li><strong>Drone rotation visualization:</strong> Real-time dashboard showing the full lifecycle of every drone in the swarm &mdash; active on mission, returning to base, in capture sequence, charging, queued for relaunch. No TAK client provides this level of fleet lifecycle visibility</li>
+<li><strong>Multi-tier manual control integration:</strong> Seamless transition between autonomous swarm operation (operator-on-the-loop) and direct manual stick control of any individual drone (operator-in-the-loop), with <a href="#s4">latency-adaptive control tier selection</a>. The operator can take over a drone for a closer look, then release it back to the swarm &mdash; all within the same interface</li>
+<li><strong>Automated launch &amp; capture monitoring:</strong> Live camera feeds of the robotic arm capture sequence, launch status, and charging bay status &mdash; the physical drone lifecycle is visible alongside the tactical picture</li>
+<li><strong>Swarm health management:</strong> Aggregate fleet health metrics (battery distribution, communication link quality per drone, sensor health, rotation efficiency) displayed as an operational overlay</li>
+<li><strong>Sensor fusion display:</strong> Multi-drone sensor data (thermal, visual, environmental) composited into a single unified geographic overlay, providing simultaneous multi-angle situational awareness that a single-drone TAK UAS feed cannot match</li>
+<li><strong>3D scene reconstruction:</strong> Post-mission cloud-based photogrammetric 3D reconstruction from multi-drone imagery, enabling operators to explore the operational area in three dimensions after the mission &mdash; conceptually aligned with VR-TAK (VTAK) style 3D visualization</li>
+</ul>
+
+<div class="note"><strong>Design philosophy:</strong> The Nest interface is designed so that any operator trained on TAK can sit down and immediately understand the operational picture. The additional swarm-specific capabilities are layered on top of the familiar TAK-class foundation rather than replacing it. This minimizes the learning curve for military and public safety operators who already use TAK daily.</div>
+
+<h3>1.4.3 TAK Server Integration (Cursor on Target Protocol)</h3>
+
+<p>The Nest provides <strong>full interoperability with the TAK ecosystem</strong> through native Cursor on Target (CoT) protocol support. The Nest can connect to any standard TAK Server and exchange data bidirectionally with ATAK, WinTAK, iTAK, WebTAK, and TAKX clients:</p>
+
+<table>
+<tr><th>Data Type</th><th>Nest &rarr; TAK (Published)</th><th>TAK &rarr; Nest (Consumed)</th></tr>
+<tr><td><strong>Asset positions</strong></td><td>All drone positions as CoT events (real-time BFT); Nest container position</td><td>Friendly force positions for display on Nest map</td></tr>
+<tr><td><strong>Sensor events</strong></td><td>Alerts, detections, and sensor readings as CoT markers</td><td>External sensor data for mission awareness</td></tr>
+<tr><td><strong>Video feeds</strong></td><td>Drone video streams published as TAK video service endpoints</td><td>&mdash;</td></tr>
+<tr><td><strong>Mission data</strong></td><td>Coverage zones, mission boundaries, waypoints as overlays</td><td>Mission directives, areas of interest, boundaries from higher command</td></tr>
+<tr><td><strong>Chat / messaging</strong></td><td>Nest operator messages to TAK chat channels</td><td>Messages from TAK users to Nest operator</td></tr>
+<tr><td><strong>Data packages</strong></td><td>Mission reports, imagery, telemetry logs</td><td>Reference data, maps, overlays from TAK server</td></tr>
+</table>
+
+<p><strong>Protocol implementation:</strong> CoT events are generated using the TAK Protocol Version 1 (Protobuf) format for efficient bandwidth usage over constrained links, with XML CoT fallback for legacy TAK server compatibility. Connection to the TAK Server uses TLS-encrypted channels with certificate-based authentication, consistent with standard TAK security practices.</p>
+
+<p>This integration means that a commander using ATAK on a phone, a command post running WinTAK, and field units on iTAK can all see the Hummingbird drone swarm positions and video feeds on their existing TAK maps &mdash; without installing any additional software. The drones appear as standard CoT tracks within the established tactical common operating picture.</p>
+
+<h3>1.4.4 General C2 API Layer</h3>
+
+<p>Beyond TAK-specific integration, the Nest provides a general-purpose <strong>REST and WebSocket API layer</strong> for integration with any external C2 system. Third-party systems can connect to the Nest (locally on the Nest WiFi network or remotely via the cloud) to:</p>
+
+<ul>
+<li>Subscribe to real-time telemetry, drone positions, and mission status via WebSocket streams</li>
+<li>Issue mission commands and directives via REST API</li>
+<li>Access video streams via standard WebRTC or RTSP endpoints</li>
+<li>Receive sensor alerts and event notifications</li>
+<li>Query mission history, telemetry archives, and recorded video</li>
+</ul>
+
+<p>Data is available in standard formats (JSON, GeoJSON, CoT/XML). The API is documented via OpenAPI specification, enabling straightforward integration by any development team without proprietary SDKs or specialized tooling.</p>
+
+<div class="back-toc"><a href="#toc">&uarr; Table of Contents</a></div>
+
+
+<!-- ==================== SECTION 2 ==================== -->
+<h1 id="s2">2. System Layers</h1>
+
+<p>The architecture is organized into four layers, each with clearly defined responsibilities and interfaces.</p>
+
+<div class="arch-box user">
+<span class="tag">USER INTERFACE</span>
+<h3 id="s2-1">2.1 User Interface Layer (Web Client)</h3>
+<p>A progressive web application (PWA) that runs in any modern browser on tablets, laptops, or phones. This is the operator's window into the system.</p>
+<ul>
+  <li><strong>Mission Planning:</strong> Map-based interface for defining coverage zones, mission types, and parameters</li>
+  <li><strong>Live Dashboard:</strong> Real-time telemetry, drone positions, battery states, mission progress</li>
+  <li><strong>Video Viewer:</strong> Live drone camera feeds via WebRTC with stream switching</li>
+  <li><strong>Manual Control:</strong> Direct flight control with gamepad or on-screen controls (requires local connection)</li>
+  <li><strong>Fleet Overview:</strong> Multi-Nest status when multiple platforms are deployed</li>
+  <li><strong>Post-Mission:</strong> Review recorded data, video playback, generated reports</li>
+</ul>
+<p><strong>Technology:</strong> React or similar SPA framework, WebRTC for video, WebSocket for real-time telemetry, Progressive Web App for offline support and installability.</p>
+</div>
+
+<div class="arch-box cloud">
+<span class="tag">CLOUD SERVICES</span>
+<h3 id="s2-2">2.2 Cloud Services Layer</h3>
+<p>Lightweight cloud services for coordination, persistence, and remote access. <em>Never</em> in the real-time control loop.</p>
+<ul>
+  <li><strong>Auth Service:</strong> User authentication (OAuth 2.0 / OpenID Connect), JWT token issuance, RBAC</li>
+  <li><strong>Mission Coordination Service:</strong> Multi-Nest mission creation, drone pool aggregation, mission partitioning</li>
+  <li><strong>Telemetry Ingestion:</strong> Time-series storage for telemetry, audit logs, operational history</li>
+  <li><strong>Video Relay &amp; Recording:</strong> TURN relay for remote video access, long-term video storage</li>
+  <li><strong>Nest Registry:</strong> Tracks all Nests, their status, connectivity, and assigned missions</li>
+  <li><strong>Notification Service:</strong> Alerts, mission status updates, system health notifications</li>
+</ul>
+<p><strong>Technology:</strong> Containerized microservices (Kubernetes), PostgreSQL, TimescaleDB for telemetry, S3-compatible object storage for video, NATS or MQTT for pub/sub messaging.</p>
+</div>
+
+<div class="arch-box edge">
+<span class="tag">EDGE / NEST</span>
+<h3 id="s2-3">2.3 Edge Layer (Nest Onboard Computer)</h3>
+<p>The ruggedized onboard computer in each Nest vehicle. This is where real-time intelligence lives.</p>
+<ul>
+  <li><strong>Mission Manager:</strong> Translates operator intent into Swarm Manager directives (per v9 8.1.1)</li>
+  <li><strong>Swarm Manager:</strong> Real-time drone assignment, rotation, and coordination (per v9 8.1.2)</li>
+  <li><strong>Ground Manager:</strong> Physical operations &mdash; arm, launch, capture, charging (per v9 8.1.3)</li>
+  <li><strong>Local Web Server:</strong> Serves the operator UI directly over local WiFi (no internet needed)</li>
+  <li><strong>WebRTC Origin:</strong> Receives video from drones, serves to connected clients</li>
+  <li><strong>Cloud Sync Agent:</strong> Maintains connection to cloud, syncs state bidirectionally</li>
+  <li><strong>WiFi Access Point:</strong> Provides dedicated operator WiFi network</li>
+</ul>
+<p><strong>Technology:</strong> ROS 2 (Humble+) on Ubuntu, DDS for inter-node communication, Nginx for local web serving, GStreamer for video pipeline, custom Cloud Sync Agent.</p>
+</div>
+
+<div class="arch-box drone">
+<span class="tag">DRONE</span>
+<h3 id="s2-4">2.4 Drone Layer</h3>
+<p>Each drone's dual-computer system (Pixhawk + Jetson) as defined in v9 Sections 7 and 8.</p>
+<ul>
+  <li><strong>Pixhawk:</strong> Flight control, safety, 900 MHz capture mode</li>
+  <li><strong>Jetson:</strong> AI/CV processing, ROS 2 node, LTE/mesh communication, video encoding</li>
+  <li><strong>Communication:</strong> LTE (primary), WiFi mesh (backup), 900 MHz (capture), Ethernet (inter-board)</li>
+</ul>
+<p>Drones communicate exclusively with their home Nest's onboard computer. They have no direct connection to the cloud or to other Nests.</p>
+</div>
+
+<div class="back-toc"><a href="#toc">&uarr; Table of Contents</a></div>
+
+
+<!-- ==================== SECTION 3 ==================== -->
+<h1 id="s3">3. User Access &amp; Authentication</h1>
+
+<h2 id="s3-1">3.1 Authentication Flow</h2>
+
+<p>A user on any web-capable device (tablet, laptop, phone) can access the system through two paths:</p>
+
+<h3>Path A: On-Site (Local WiFi)</h3>
+<div class="flow-box">
+<p>1. Operator connects device to Nest WiFi access point (WPA3-Enterprise)</p>
+<p>2. Opens browser &rarr; navigates to <code>https://nest-local.hummingbird</code> (mDNS / local hostname)</p>
+<p>3. Nest serves the PWA directly from its onboard web server</p>
+<p>4. Login screen &rarr; credentials validated against <strong>locally cached user database</strong></p>
+<p>5. JWT token issued by Nest &rarr; stored in browser session</p>
+<p>6. Full access to mission control, video, and manual flight mode</p>
+</div>
+
+<div class="note">
+<strong>Key design:</strong> The Nest caches an encrypted copy of the user database synced from the cloud. This enables authentication <em>even when the Nest has no internet connectivity</em>. The cache is refreshed whenever cloud connectivity is available.
+</div>
+
+<h3>Path B: Remote (Via Cloud)</h3>
+<div class="flow-box">
+<p>1. User opens browser &rarr; navigates to <code>https://app.hummingbirdtech.ai</code></p>
+<p>2. Cloud Auth Service authenticates via OAuth 2.0 (username/password or SSO)</p>
+<p>3. JWT token issued with user roles and authorized Nest IDs</p>
+<p>4. User selects active mission/Nest from dashboard</p>
+<p>5. Cloud establishes secure tunnel to target Nest</p>
+<p>6. Telemetry streams via WebSocket through cloud relay</p>
+<p>7. Video streams via WebRTC (TURN relay if P2P not possible)</p>
+<p>8. Manual flight control <strong>only available</strong> if measured latency &lt; 30ms (typically requires on-site)</p>
+</div>
+
+<h2 id="s3-2">3.2 Role-Based Access Control (RBAC)</h2>
+
+<table>
+<tr><th>Role</th><th>Mission Plan</th><th>Launch</th><th>View Stream</th><th>Manual Control</th><th>Fleet Config</th><th>User Admin</th></tr>
+<tr><td><strong>Commander</strong></td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+<tr><td><strong>Operator</strong></td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>No</td><td>No</td></tr>
+<tr><td><strong>Viewer</strong></td><td>No</td><td>No</td><td>Yes</td><td>No</td><td>No</td><td>No</td></tr>
+<tr><td><strong>Field Unit</strong></td><td>No</td><td>No</td><td>Yes (assigned)</td><td>No</td><td>No</td><td>No</td></tr>
+</table>
+
+<p><strong>Commander:</strong> Incident commander / agency admin. Full access to all capabilities and system configuration.</p>
+<p><strong>Operator:</strong> Trained Nest operator. Can plan and execute missions, fly drones manually, view all streams.</p>
+<p><strong>Viewer:</strong> Command staff or remote stakeholders. View-only access to live streams, telemetry, and mission status.</p>
+<p><strong>Field Unit:</strong> First responders in the field (e.g., fire crew, patrol officers). Receive assigned camera feeds relevant to their operation on their mobile device.</p>
+
+<h2 id="s3-3">3.3 Connection Modes</h2>
+
+<table>
+<tr><th>Mode</th><th>Connection</th><th>Latency</th><th>Capabilities</th><th>Manual Control</th></tr>
+<tr><td><strong>On-Site Direct</strong></td><td>Nest WiFi AP</td><td>&lt;5ms</td><td>Full</td><td>Yes</td></tr>
+<tr><td><strong>On-Site LTE</strong></td><td>LTE &rarr; Cloud &rarr; Nest</td><td>20&ndash;60ms</td><td>Full</td><td>Conditional*</td></tr>
+<tr><td><strong>Remote</strong></td><td>Internet &rarr; Cloud &rarr; Nest</td><td>40&ndash;150ms</td><td>No manual control</td><td>No</td></tr>
+<tr><td><strong>Offline Local</strong></td><td>Nest WiFi AP (no cloud)</td><td>&lt;5ms</td><td>Single-Nest only</td><td>Yes</td></tr>
+</table>
+
+<p>*Manual control is latency-gated: the system continuously measures round-trip latency and only enables manual flight mode when RTT is confirmed below 30ms.</p>
+
+<div class="back-toc"><a href="#toc">&uarr; Table of Contents</a></div>
+
+
+<!-- ==================== SECTION 4 ==================== -->
+<h1 id="s4">4. Communication Architecture &amp; Latency</h1>
+
+<h2 id="s4-1">4.1 Latency Budget Analysis</h2>
+
+<p>The <strong>most latency-critical operation</strong> is manual drone control. The total loop from operator input to drone response must be under 30ms.</p>
+
+<h3>Manual Control Latency Budget (On-Site Direct)</h3>
+<table class="latency-table">
+<tr><th>Segment</th><th>Path</th><th>Target</th></tr>
+<tr><td>Operator input &rarr; Browser</td><td>Gamepad HID &rarr; JS event</td><td class="latency-good">&lt;2ms</td></tr>
+<tr><td>Browser &rarr; Nest computer</td><td>WiFi AP (local network)</td><td class="latency-good">&lt;3ms</td></tr>
+<tr><td>Nest processing</td><td>Command validation, translation</td><td class="latency-good">&lt;2ms</td></tr>
+<tr><td>Nest &rarr; Drone (Jetson)</td><td>LTE or WiFi mesh</td><td class="latency-ok">5&ndash;15ms</td></tr>
+<tr><td>Jetson &rarr; Pixhawk</td><td>Ethernet / serial</td><td class="latency-good">&lt;1ms</td></tr>
+<tr><td>Pixhawk motor response</td><td>Flight controller loop</td><td class="latency-good">&lt;5ms</td></tr>
+<tr><td colspan="2"><strong>Total end-to-end</strong></td><td><strong class="latency-good">18&ndash;28ms</strong></td></tr>
+</table>
+
+<div class="critical-note">
+<strong>Critical constraint:</strong> For manual control, the command path is <strong>Operator &rarr; Nest WiFi &rarr; Nest Computer &rarr; Drone</strong>. The cloud is <em>never</em> in this path. If the command were routed through the cloud, a minimum of 30&ndash;100ms of network latency would be added, making responsive manual control impossible.
+</div>
+
+<h2 id="s4-2">4.2 Local Connection Path (On-Site)</h2>
+
+<div class="flow-box">
+<p><strong>Operator Tablet</strong></p>
+<p><span class="arrow">&darr;</span> WiFi 6 (5 GHz, dedicated AP on Nest)</p>
+<p><strong>Nest Onboard Computer</strong></p>
+<p><span class="arrow">&darr;</span> LTE cellular or WiFi mesh (to each drone)</p>
+<p><strong>Drone Jetson</strong> <span class="arrow">&rarr;</span> <strong>Pixhawk</strong></p>
+</div>
+
+<p>The Nest vehicle runs a dedicated WiFi 6 access point (5 GHz, 802.11ax) for operator devices. This is a separate network from the drone communication links. The Nest onboard computer bridges between the operator network and the drone communication channels.</p>
+
+<h2 id="s4-3">4.3 Remote Connection Path</h2>
+
+<div class="flow-box">
+<p><strong>Remote User (Browser)</strong></p>
+<p><span class="arrow">&darr;</span> TLS 1.3 over Internet</p>
+<p><strong>Cloud Services</strong> (WebSocket relay, TURN server)</p>
+<p><span class="arrow">&darr;</span> TLS 1.3 over LTE/Internet (persistent tunnel)</p>
+<p><strong>Nest Onboard Computer</strong></p>
+<p><span class="arrow">&darr;</span> LTE / WiFi mesh</p>
+<p><strong>Drone</strong></p>
+</div>
+
+<p>For remote access, the cloud acts as a secure relay. The Nest maintains a persistent outbound WebSocket connection to the cloud (avoiding NAT/firewall issues). Remote users connect to the cloud, which multiplexes their requests through the appropriate Nest tunnel.</p>
+
+<h2 id="s4-4">4.4 Manual Control Tiers &amp; Latency Tolerance</h2>
+
+<p>Not all manual control is equal. Different control modes have vastly different latency tolerances. The system offers <strong>four tiers of manual control</strong>, and the UI automatically enables or restricts tiers based on measured round-trip latency:</p>
+
+<table>
+<tr><th>Tier</th><th>Control Mode</th><th>What Operator Controls</th><th>Max Latency</th><th>Typical Use</th></tr>
+<tr><td><strong>Tier 1</strong><br><em>Direct Stick</em></td><td>Rate / Acro mode</td><td>Angular rates and throttle directly. No stabilization assist.</td><td class="latency-good">&lt;30ms</td><td>Precision maneuvering in tight spaces, aggressive repositioning</td></tr>
+<tr><td><strong>Tier 2</strong><br><em>Stabilized Manual</em></td><td>Attitude / Angle mode</td><td>Desired pitch/roll/yaw angles. Flight controller stabilizes. Release sticks = level hover.</td><td class="latency-ok">&lt;80ms</td><td>General manual flying, inspection, tracking</td></tr>
+<tr><td><strong>Tier 3</strong><br><em>Velocity Command</em></td><td>Position-hold / Velocity mode</td><td>Desired velocity vector (direction + speed). Drone holds position when sticks centered. GPS-assisted.</td><td class="latency-ok">&lt;150ms</td><td>BVLOS manual, slow repositioning, safe exploration</td></tr>
+<tr><td><strong>Tier 4</strong><br><em>Point &amp; Go</em></td><td>Waypoint nudge</td><td>Tap on map to set target. Drone flies autonomously to new position. Operator sets altitude and heading.</td><td>Any (seconds OK)</td><td>Remote operation, satellite link, degraded comms</td></tr>
+</table>
+
+<div class="note">
+<strong>Key insight:</strong> The system continuously measures round-trip time to each drone. The UI dynamically enables available control tiers and clearly indicates which tiers are available. If latency degrades during Tier 1 control, the system automatically transitions to Tier 2 or 3 with an audible/visual warning &mdash; it never allows the operator to maintain a control mode that the link can't support.
+</div>
+
+<h3>Safety rules across all tiers:</h3>
+<ul>
+  <li><strong>Single operator lock:</strong> Only one operator can have manual control of a drone at a time. Acquiring control requires explicit confirmation.</li>
+  <li><strong>Heartbeat:</strong> Control commands include a heartbeat. If the Nest stops receiving heartbeats for 500ms, the drone transitions to autonomous hover, then RTH after 10 seconds.</li>
+  <li><strong>Geofence enforcement:</strong> The Pixhawk enforces hard geofence boundaries <em>regardless</em> of operator commands. Manual control cannot fly a drone outside the mission geofence.</li>
+  <li><strong>Altitude floor/ceiling:</strong> Hard limits enforced at the flight controller level.</li>
+  <li><strong>Automatic tier downgrade:</strong> If latency spikes above the current tier's threshold for &gt;500ms, the system automatically transitions down one tier and alerts the operator.</li>
+  <li><strong>Input protocol:</strong> Tiers 1&ndash;3 use WebSocket binary frames at 50Hz. Tier 4 uses standard REST/WebSocket commands.</li>
+</ul>
+
+<h2 id="s4-5">4.5 Protocol Selection</h2>
+
+<table>
+<tr><th>Data Type</th><th>Protocol</th><th>Why</th></tr>
+<tr><td>Manual control input</td><td>WebSocket (binary frames)</td><td>Lowest overhead, persistent connection, sub-ms framing</td></tr>
+<tr><td>Telemetry (drone &rarr; UI)</td><td>WebSocket (JSON)</td><td>Real-time, bidirectional, firewall-friendly</td></tr>
+<tr><td>Video streams</td><td>WebRTC (H.264/H.265)</td><td>Lowest-latency browser video, P2P capable, SRTP encryption built-in</td></tr>
+<tr><td>Mission commands</td><td>HTTPS REST + WebSocket events</td><td>REST for CRUD operations, WebSocket for real-time updates</td></tr>
+<tr><td>Nest &harr; Cloud sync</td><td>MQTT over TLS</td><td>Lightweight pub/sub, handles intermittent connectivity, QoS levels</td></tr>
+<tr><td>Nest &harr; Drone</td><td>ROS 2 DDS (over LTE/mesh)</td><td>Native ROS integration, configurable QoS, multicast capable</td></tr>
+<tr><td>Ground Mgr &harr; Drone</td><td>MAVLink over 900 MHz</td><td>Direct Pixhawk control for capture (per v9)</td></tr>
+</table>
+
+<div class="back-toc"><a href="#toc">&uarr; Table of Contents</a></div>
+
+
+<!-- ==================== SECTION 5: BVLOS ==================== -->
+<h1 id="s5">5. Beyond Line of Sight (BVLOS) Operations</h1>
+
+<p>Autonomous swarm missions are inherently BVLOS &mdash; drones will routinely operate kilometers from the Nest. The autonomy stack handles this without issue: the Swarm Manager coordinates via LTE, and drones fly their waypoints independently. The challenge arises when an operator wants to <strong>manually control a drone at BVLOS range</strong>.</p>
+
+<h2 id="s5-1">5.1 The BVLOS Latency Problem</h2>
+
+<p>At BVLOS range, the Nest's WiFi (100&ndash;300m range) and 900 MHz link (1&ndash;2 km, capture only) are unavailable. The only communication path is <strong>LTE cellular</strong>. Here's the reality of LTE latency:</p>
+
+<table>
+<tr><th>Network</th><th>Typical RTT</th><th>Best Case RTT</th><th>Worst Case RTT</th></tr>
+<tr><td>4G LTE</td><td>30&ndash;60ms</td><td>20ms</td><td>100ms+</td></tr>
+<tr><td>5G Sub-6 GHz</td><td>10&ndash;30ms</td><td>8ms</td><td>50ms</td></tr>
+<tr><td>5G mmWave</td><td>5&ndash;10ms</td><td>~5ms</td><td>15ms</td></tr>
+<tr><td>5G URLLC</td><td>1&ndash;4ms</td><td>~1ms (theoretical; sub-ms not demonstrated in real-world deployments)</td><td>5ms</td></tr>
+</table>
+
+<p>The full latency chain for BVLOS manual control over LTE:</p>
+
+<table class="latency-table">
+<tr><th>Segment</th><th>Path</th><th>Latency</th></tr>
+<tr><td>Operator &rarr; Nest</td><td>WiFi to Nest computer (on-site)</td><td class="latency-good">3ms</td></tr>
+<tr><td>Nest &rarr; Cell tower</td><td>Nest LTE modem uplink</td><td class="latency-ok">10&ndash;30ms</td></tr>
+<tr><td>Cell tower &rarr; Core network &rarr; Cell tower</td><td>Carrier backbone</td><td class="latency-ok">5&ndash;20ms</td></tr>
+<tr><td>Cell tower &rarr; Drone</td><td>Drone LTE modem downlink</td><td class="latency-ok">10&ndash;30ms</td></tr>
+<tr><td>Drone processing + Pixhawk</td><td>Jetson &rarr; Pixhawk &rarr; motors</td><td class="latency-good">5ms</td></tr>
+<tr><td colspan="2"><strong>Total (4G LTE)</strong></td><td><strong class="latency-bad">33&ndash;88ms</strong></td></tr>
+<tr><td colspan="2"><strong>Total (5G Sub-6)</strong></td><td><strong class="latency-ok">23&ndash;58ms</strong></td></tr>
+</table>
+
+<div class="critical-note">
+<strong>The honest assessment:</strong> Over 4G LTE, Tier 1 (direct stick) control at &lt;30ms is <em>not achievable</em>. Tier 2 (stabilized, &lt;80ms) is marginal and unreliable. Tier 3 (velocity command, &lt;150ms) works well. Over 5G, Tier 2 becomes reliable and Tier 1 may be possible in ideal conditions. <strong>100ms is fast enough for Tier 3 velocity-command control</strong>, which is the appropriate mode for BVLOS operation. Direct stick control at BVLOS range is unsafe regardless of latency due to lack of situational awareness.
+</div>
+
+<p>This is not a limitation unique to our system &mdash; it is a physics and infrastructure constraint. The solutions below address how to provide the best possible operator experience within these realities, and how to push latency lower when the mission demands it.</p>
+
+<h2 id="s5-2">5.2 Solution 1: Predictive / Assisted Manual Control (Primary)</h2>
+
+<p>This is the <strong>most important solution</strong> and the one that applies to all BVLOS scenarios regardless of radio technology. The core idea: <strong>the drone's onboard Jetson handles real-time flight, while the operator provides intent.</strong></p>
+
+<h3>How it works:</h3>
+
+<div class="flow-box">
+<p><strong>Operator:</strong> Pushes stick forward (intent: &ldquo;fly north at 5 m/s&rdquo;)</p>
+<p><span class="arrow">&darr;</span> 50&ndash;100ms over LTE</p>
+<p><strong>Jetson (onboard drone):</strong> Receives velocity command</p>
+<p>&bull; Immediately begins executing: fly north at 5 m/s</p>
+<p>&bull; Locally handles obstacle avoidance (LiDAR, stereo vision) at <strong>&lt;5ms loop</strong></p>
+<p>&bull; Locally maintains altitude, attitude, stability at <strong>&lt;5ms loop</strong></p>
+<p>&bull; If obstacle detected: autonomously avoids, then resumes operator's velocity vector</p>
+<p>&bull; If comms lost: holds position, waits, then RTH</p>
+<p><span class="arrow">&darr;</span></p>
+<p><strong>Result:</strong> Drone responds to the environment in real-time (&lt;5ms). Operator commands arrive at 50&ndash;100ms but the drone is <em>always safe</em> because local intelligence fills the gaps.</p>
+</div>
+
+<div class="note">
+<strong>Military precedent:</strong> This is exactly how MQ-9 Reaper and similar military drones operate over satellite links with 1&ndash;2 seconds of latency. The operator provides heading, speed, and altitude commands. The onboard autopilot executes in real-time. The Hummingbird system does this at 10&ndash;100x lower latency, with AI-powered obstacle avoidance that military platforms lack.
+</div>
+
+<h3>Predictive display:</h3>
+<p>The operator's UI shows a <strong>predicted drone position</strong> based on the last command, compensating for latency. When the operator pushes the stick, the UI immediately shows where the drone <em>will be</em>, not where it <em>was</em> 100ms ago. The Jetson confirms actual position, and the UI reconciles smoothly. This eliminates the &ldquo;flying through molasses&rdquo; feeling of high-latency control.</p>
+
+<h3>Latency-adaptive behavior:</h3>
+<ul>
+  <li><strong>&lt;30ms:</strong> Full Tier 1 direct control available. Jetson passes commands directly to Pixhawk.</li>
+  <li><strong>30&ndash;80ms:</strong> Tier 2 stabilized. Jetson adds local stabilization layer.</li>
+  <li><strong>80&ndash;150ms:</strong> Tier 3 velocity-command with full local obstacle avoidance. Primary BVLOS mode.</li>
+  <li><strong>150&ndash;500ms:</strong> Tier 3 with increased local autonomy (wider avoidance margins, slower max speed).</li>
+  <li><strong>500ms+:</strong> Automatic transition to Tier 4 (point-and-go only). Warning to operator.</li>
+</ul>
+
+<h2 id="s5-3">5.3 Solution 2: Mesh Relay Drones</h2>
+
+<p>The Hummingbird system has a unique advantage: <strong>it has dozens of drones available</strong>. One or more drones can be dedicated as airborne communication relays, extending the Nest's WiFi range by kilometers.</p>
+
+<h3>Architecture:</h3>
+<div class="flow-box">
+<p><strong>Nest</strong> (WiFi AP, 5 GHz)</p>
+<p><span class="arrow">&darr;</span> WiFi 6, ~300m</p>
+<p><strong>Relay Drone 1</strong> (hovering at altitude, WiFi mesh node)</p>
+<p><span class="arrow">&darr;</span> WiFi 6, ~300m (air-to-air, better propagation at altitude = 500m+ effective)</p>
+<p><strong>Relay Drone 2</strong> (optional, for extended range)</p>
+<p><span class="arrow">&darr;</span> WiFi 6, ~500m</p>
+<p><strong>Target Drone</strong> (the drone being manually controlled)</p>
+</div>
+
+<table class="latency-table">
+<tr><th>Hops</th><th>Range</th><th>Added Latency</th><th>Total RTT (with Nest WiFi)</th></tr>
+<tr><td>1 relay</td><td>~1 km</td><td>+3&ndash;5ms per hop</td><td class="latency-good">~12&ndash;18ms</td></tr>
+<tr><td>2 relays</td><td>~2 km</td><td>+6&ndash;10ms</td><td class="latency-good">~18&ndash;25ms</td></tr>
+<tr><td>3 relays</td><td>~3 km</td><td>+9&ndash;15ms</td><td class="latency-ok">~25&ndash;35ms</td></tr>
+</table>
+
+<div class="note">
+<strong>Key advantage:</strong> With just 2&ndash;3 relay drones, we achieve Tier 1 (&lt;30ms) manual control at 2+ km range, entirely bypassing LTE. The relay drones hover at altitude for optimal line-of-sight propagation. The Swarm Manager can autonomously position relay drones to form optimal communication chains.
+</div>
+
+<h3>Relay drone requirements:</h3>
+<ul>
+  <li>Standard Hummingbird drone with WiFi mesh firmware mode enabled</li>
+  <li>No special hardware &mdash; any drone in the swarm can serve as a relay</li>
+  <li>Dual-band WiFi: one radio for uplink (toward Nest), one for downlink (toward target)</li>
+  <li>Relay drones participate in normal rotation &mdash; when one returns for charging, another takes its relay position</li>
+  <li>The Swarm Manager automatically positions relays along the optimal path between Nest and mission area</li>
+</ul>
+
+<h3>Tradeoff:</h3>
+<p>Each relay drone is one fewer drone available for the mission. For a 30-drone swarm, dedicating 2&ndash;3 to relay duty reduces mission capacity by ~10%. This is an acceptable cost when low-latency manual control at range is required. The Mission Manager factors relay drones into its capacity planning.</p>
+
+<h2 id="s5-4">5.4 Solution 3: Private 5G / CBRS</h2>
+
+<p>For agencies requiring guaranteed low-latency at range without sacrificing drones for relay duty, the Nest can deploy a <strong>private 5G cell</strong> using CBRS (Citizens Broadband Radio Service, 3.5 GHz band).</p>
+
+<table>
+<tr><th>Aspect</th><th>Detail</th></tr>
+<tr><td>Spectrum</td><td>CBRS Band 48 (3550&ndash;3700 MHz) &mdash; no license required for GAA tier, or priority access via PAL</td></tr>
+<tr><td>Equipment</td><td>Small-cell base station mounted on Nest vehicle or deployable mast</td></tr>
+<tr><td>Range</td><td>1&ndash;5 km depending on power (GAA: up to 1W EIRP) and terrain</td></tr>
+<tr><td>Latency</td><td><strong>5&ndash;15ms RTT</strong> (no carrier backbone traversal &mdash; all traffic stays local)</td></tr>
+<tr><td>Bandwidth</td><td>50&ndash;200 Mbps (supports multiple 4K video streams)</td></tr>
+</table>
+
+<div class="flow-box">
+<p><strong>Nest Vehicle</strong></p>
+<p>[CBRS Small Cell] &rarr; direct radio to all drones within 1&ndash;5 km</p>
+<p>Latency: <strong class="latency-good">5&ndash;15ms</strong> (local loop, no carrier network)</p>
+<p>Enables: Tier 1 and Tier 2 manual control at BVLOS range</p>
+</div>
+
+<div class="warn-note">
+<strong>Considerations:</strong> CBRS requires a Spectrum Access System (SAS) registration (automated, but needs internet for initial setup). The small-cell hardware adds cost (~$2,000&ndash;$8,000) and power draw. Best suited for agencies with frequent BVLOS manual control needs. Not required for standard autonomous swarm operations.
+</div>
+
+<h2 id="s5-5">5.5 Solution 4: Multi-Access Edge Computing (MEC)</h2>
+
+<p>When using commercial LTE/5G, latency can be reduced by keeping traffic at the cellular network edge rather than routing through the carrier's core network and out to the internet.</p>
+
+<ul>
+  <li><strong>AWS Wavelength:</strong> Compute instances deployed at carrier edge (Verizon, Vodafone). Traffic from the drone's LTE modem reaches compute in &lt;10ms.</li>
+  <li><strong>Azure Edge Zones:</strong> Similar concept with AT&amp;T partnership.</li>
+  <li><strong>Concept:</strong> A lightweight relay/proxy at the cell edge can forward drone traffic directly to the Nest's LTE connection on the same carrier, avoiding the round-trip to the cloud.</li>
+</ul>
+
+<table class="latency-table">
+<tr><th>Path</th><th>Without MEC</th><th>With MEC</th></tr>
+<tr><td>Drone LTE &rarr; Nest LTE</td><td>30&ndash;80ms (via carrier core + internet)</td><td class="latency-good">10&ndash;25ms (stays at edge)</td></tr>
+</table>
+
+<div class="warn-note">
+<strong>Limitation:</strong> MEC only helps when both the drone and the Nest are on the same carrier and in the same cell region. It's also dependent on carrier MEC availability, which is not universal. Treat as an optimization, not a primary strategy.
+</div>
+
+<h2 id="s5-6">5.6 Recommended BVLOS Architecture</h2>
+
+<p>The solutions are not mutually exclusive. The recommended approach is a <strong>layered strategy</strong> that automatically selects the best available path:</p>
+
+<table>
+<tr><th>Priority</th><th>Solution</th><th>Range</th><th>Latency</th><th>Control Tiers</th></tr>
+<tr><td>1 (best)</td><td>Direct WiFi (on-site)</td><td>&lt;300m</td><td class="latency-good">&lt;5ms</td><td>All (Tier 1&ndash;4)</td></tr>
+<tr><td>2</td><td>Mesh relay drones</td><td>0.3&ndash;3+ km</td><td class="latency-good">12&ndash;35ms</td><td>Tier 1&ndash;4</td></tr>
+<tr><td>3</td><td>Private 5G / CBRS</td><td>1&ndash;5 km</td><td class="latency-good">5&ndash;15ms</td><td>Tier 1&ndash;4</td></tr>
+<tr><td>4</td><td>Commercial 5G</td><td>Unlimited</td><td class="latency-ok">15&ndash;50ms</td><td>Tier 2&ndash;4</td></tr>
+<tr><td>5</td><td>Commercial 4G LTE</td><td>Unlimited</td><td class="latency-ok">30&ndash;80ms</td><td>Tier 3&ndash;4</td></tr>
+<tr><td>6 (fallback)</td><td>LTE + Assisted control</td><td>Unlimited</td><td class="latency-bad">80&ndash;200ms</td><td>Tier 3&ndash;4 (predictive display)</td></tr>
+</table>
+
+<div class="note">
+<strong>The critical enabler across all paths:</strong> <a href="#s5-2">Predictive/Assisted Manual Control</a> (Solution 1). Regardless of which radio link is used, the drone's onboard Jetson provides real-time obstacle avoidance and stabilization. This means even at 100&ndash;150ms latency, the operator can safely control the drone at Tier 3 &mdash; the drone will never hit anything because local AI prevents it. The latency affects operator <em>responsiveness</em>, not drone <em>safety</em>.
+</div>
+
+<h2 id="s5-7">5.7 BVLOS Communication Fallback Chain</h2>
+
+<p>The Nest and each drone continuously evaluate all available communication links and automatically select the best one. If the primary link degrades, the system falls back instantly:</p>
+
+<div class="flow-box">
+<p><strong>Link priority (Nest &rarr; Drone):</strong></p>
+<p>1. <strong>WiFi direct</strong> (lowest latency) <span class="arrow">&rarr;</span> if out of range:</p>
+<p>2. <strong>WiFi mesh via relay drones</strong> <span class="arrow">&rarr;</span> if no relay chain available:</p>
+<p>3. <strong>Private 5G / CBRS</strong> (if equipped) <span class="arrow">&rarr;</span> if out of range:</p>
+<p>4. <strong>Commercial 5G</strong> <span class="arrow">&rarr;</span> if unavailable:</p>
+<p>5. <strong>Commercial 4G LTE</strong> <span class="arrow">&rarr;</span> if unavailable:</p>
+<p>6. <strong>900 MHz</strong> (limited bandwidth, capture commands only) <span class="arrow">&rarr;</span> if all links lost:</p>
+<p>7. <strong>Autonomous mode:</strong> Drone holds position for configurable timeout, then RTH</p>
+</div>
+
+<p>The UI displays the active link type and current measured latency for each drone. The operator always knows what connectivity is available and what control tiers are enabled. If a manual control session is in progress and the link degrades, the system transitions control tiers smoothly with clear warnings.</p>
+
+<h2 id="s5-8">5.8 Mission Application: Emergency Communications Relay</h2>
+
+<p>The mesh relay architecture described in <a href="#s5-3">Section 5.3</a> is designed primarily for extending low-latency BVLOS control links. However, the same WiFi mesh infrastructure supports a distinct and high-value mission capability: <strong>delivering internet connectivity to areas where terrestrial communications infrastructure has been destroyed or is unavailable</strong>.</p>
+
+<h3>Architecture: Internet Relay Chain</h3>
+<div class="flow-box">
+<p><strong>Internet Source</strong> (Starlink terminal on Nest/drone, hardline, or LTE backhaul)</p>
+<p><span class="arrow">&darr;</span> WiFi 6, ~300m</p>
+<p><strong>Relay Drone 1</strong> (mesh node + local WiFi AP for ground users)</p>
+<p><span class="arrow">&darr;</span> WiFi 6, ~300m</p>
+<p><strong>Relay Drone 2</strong> (mesh node + local WiFi AP for ground users)</p>
+<p><span class="arrow">&darr;</span> WiFi 6, ~300m</p>
+<p><strong>...</strong> (chain continues as needed)</p>
+<p><span class="arrow">&darr;</span> WiFi 6, ~300m</p>
+<p><strong>Endpoint Drone N</strong> (mesh node + local WiFi AP for ground users)</p>
+<p style="margin-top:10px;font-style:italic;color:#555">&uarr; Every drone in the chain broadcasts a WiFi AP &mdash; ground coverage along entire path</p>
+</div>
+
+<h3>Key Differences from BVLOS Relay</h3>
+<table>
+<tr><th>Aspect</th><th>BVLOS Control Relay (<a href="#s5-3">5.3</a>)</th><th>Internet Delivery Relay (5.8)</th></tr>
+<tr><td>Purpose</td><td>Low-latency drone control link</td><td>Internet access for ground users</td></tr>
+<tr><td>Traffic direction</td><td>Nest &harr; target drone (bidirectional control)</td><td>Internet source &harr; ground user devices (bidirectional data)</td></tr>
+<tr><td>Each drone broadcasts WiFi AP</td><td>Not required (mesh-only)</td><td><strong>Required</strong> &mdash; each drone serves local ground users</td></tr>
+<tr><td>Chain length</td><td>Typically 2&ndash;3 relays</td><td>May be 5&ndash;15+ relays for longer distances</td></tr>
+<tr><td>Bandwidth priority</td><td>Low-latency control packets</td><td>Throughput for user data (web, voice, messaging)</td></tr>
+<tr><td>Internet source</td><td>Not applicable (Nest-to-drone link)</td><td>Starlink, hardline, or LTE backhaul</td></tr>
+</table>
+
+<h3>Firmware Modes</h3>
+<p>Each drone&rsquo;s WiFi 6 radio supports two mesh firmware modes, selectable per-mission by the Swarm Manager:</p>
+<ul>
+  <li><strong>Relay-only mode</strong> (default for BVLOS): Drone participates in mesh routing between Nest and mission drones. No local AP broadcast. Optimized for low-latency control traffic.</li>
+  <li><strong>Relay + AP mode</strong> (internet delivery): Drone participates in mesh routing <em>and</em> broadcasts a local WiFi access point on a separate channel or SSID. Ground users connect to this AP; traffic is routed upstream through the mesh chain to the internet source. QoS rules prioritize emergency service traffic and deprioritize bulk downloads.</li>
+</ul>
+
+<h3>Internet Source Integration</h3>
+<p>The internet delivery mission requires an upstream internet connection to relay. Three integration paths are supported:</p>
+<ul>
+  <li><strong>Starlink on Nest vehicle:</strong> A Starlink terminal mounted on the Nest vehicle roof or deployable mast connects to the Nest&rsquo;s onboard computer, which bridges the satellite internet connection into the WiFi mesh network. Provides 50&ndash;400 Mbps downlink depending on Starlink plan tier: Lite (50&ndash;100 Mbps), Residential (100&ndash;200 Mbps), or Max (200&ndash;400 Mbps) <sup>[<a href="https://www.cabletv.com/starlink/plans">CableTV.com, 2026</a>]</sup>.</li>
+  <li><strong>Starlink on a drone:</strong> A Starlink Mini or equivalent compact terminal mounted as a drone payload. The drone hovers at altitude for optimal sky visibility and serves as the origin node of the relay chain. This approach is advantageous when the Nest is positioned in an obstructed location (urban canyon, tree cover) where satellite visibility is limited.</li>
+  <li><strong>Hardline / LTE from Nest:</strong> The Nest vehicle connects to a functioning internet source (e.g., fiber drop at an emergency operations center, or its own LTE modem) and bridges that connection into the drone mesh. LTE bandwidth (10&ndash;50 Mbps typical) is lower than Starlink but requires no additional hardware. Note: the drone fleet&rsquo;s own LTE modems are reserved for command-and-control traffic and should not be used as the primary internet source for ground user delivery.</li>
+</ul>
+
+<h3>Bandwidth Degradation Model</h3>
+<p>WiFi mesh relay inherently reduces throughput with each hop due to shared-medium contention and half-duplex forwarding. Approximate throughput model for WiFi 6 in open-air conditions with a Starlink source (~150 Mbps at origin):</p>
+
+<table class="latency-table">
+<tr><th>Chain Length</th><th>Approx. Far-End Throughput</th><th>Added Latency</th><th>Usable For</th></tr>
+<tr><td>3 drones (~750m)</td><td>40&ndash;70 Mbps</td><td class="latency-good">+9&ndash;15ms</td><td>Video calls, web, file transfer, streaming</td></tr>
+<tr><td>5 drones (~1.25 km)</td><td>20&ndash;40 Mbps</td><td class="latency-good">+15&ndash;25ms</td><td>Video calls, web browsing, emergency portals</td></tr>
+<tr><td>8 drones (~2 km)</td><td>8&ndash;20 Mbps</td><td class="latency-ok">+24&ndash;40ms</td><td>Voice, messaging, low-bandwidth web, FEMA portals</td></tr>
+<tr><td>12 drones (~3 km)</td><td>3&ndash;10 Mbps</td><td class="latency-ok">+36&ndash;60ms</td><td>Voice, messaging, text-based emergency services</td></tr>
+</table>
+
+<div class="note">
+<strong>Mid-chain bandwidth is higher:</strong> These figures represent worst-case throughput at the far end of the chain. Drones closer to the internet source retain proportionally higher bandwidth. A 12-drone chain provides ~40 Mbps at drone 3, ~20 Mbps at drone 6, and ~5 Mbps at drone 12. This gradient naturally serves higher-bandwidth needs near the command post and essential connectivity at the far end.
+</div>
+
+<h3>Swarm Manager Integration</h3>
+<p>The Swarm Manager handles internet relay chains using the same rotation logic as standard missions, with the following additions:</p>
+<ul>
+  <li><strong>Chain integrity monitoring:</strong> Continuously verifies mesh link quality between all adjacent drones in the chain. If a link degrades, repositions drones to restore optimal spacing.</li>
+  <li><strong>Sequential rotation:</strong> Replaces relay drones one at a time, never removing adjacent drones simultaneously. The replacement drone establishes mesh links with both neighbors before the outgoing drone is released.</li>
+  <li><strong>Multi-chain allocation:</strong> When multiple relay chains are active, the Swarm Manager partitions the drone pool and manages rotation schedules for each chain independently, respecting fleet-wide charging capacity constraints.</li>
+  <li><strong>Concurrent mission support:</strong> Relay chain drones are flagged as <code>relay_duty</code> in the drone pool. Remaining drones remain available for surveillance, search-and-rescue, or other concurrent missions.</li>
+</ul>
+
+<div class="warn-note">
+<strong>Fleet capacity consideration:</strong> A 10-drone relay chain with continuous rotation requires approximately 15&ndash;18 drones allocated to the chain (10 airborne + 5&ndash;8 in rotation/charging). A 30-drone fleet can sustain one 10-drone chain while retaining 12&ndash;15 drones for concurrent missions. Longer chains or multiple simultaneous chains may require a larger fleet or multi-Nest coordination (<a href="#s6">Section 6</a>).
+</div>
+
+<div class="back-toc"><a href="#toc">&uarr; Table of Contents</a></div>
+
+
+<h2 id="s5-9">5.9 GPS-Denied &amp; Communication-Denied Operations</h2>
+
+<p>The BVLOS architecture described above assumes GPS availability for navigation and at least intermittent communication for mission coordination. However, the Hummingbird Nest platform is designed to operate in environments where one or both of these may be degraded or completely denied &mdash; a requirement for defense, counter-UAS, urban operations, and disaster response scenarios where GPS jamming, spoofing, or infrastructure destruction may occur.</p>
+
+<h3>5.9.1 GPS-Denied Navigation Architecture</h3>
+
+<p>Each drone maintains a <strong>multi-modal navigation stack</strong> running entirely onboard its main computer (Jetson Orin Nano). When GPS is degraded or denied, the system transitions seamlessly to alternative navigation sources without any dependency on ground station or cloud processing. The full sensor complement includes:</p>
+
+<ul>
+<li><strong>Inertial Navigation System (INS):</strong> The Pixhawk's triple-redundant IMU provides continuous position estimation through accelerometer and gyroscope integration. Immune to external interference but subject to drift accumulation over time.</li>
+<li><strong>Visual-Inertial Odometry (VIO):</strong> Camera-based motion estimation fused with IMU data. Provides drift-bounded positioning in feature-rich environments. Processed on the Jetson GPU.</li>
+<li><strong>Depth SLAM (Simultaneous Localization and Mapping):</strong> Uses depth sensors (stereo vision, and LiDAR when available in P2+) to build 3D environment maps and localize within them. Effective in GPS-denied urban and indoor-adjacent environments.</li>
+</ul>
+
+<p>The fusion algorithm dynamically weights each source based on real-time <strong>health metrics</strong> &mdash; signal quality, confidence scores, drift rates, and feature density. This condition-adaptive approach means the system automatically adjusts its navigation strategy based on environmental conditions rather than following a rigid priority hierarchy.</p>
+
+<div class="note">
+<strong>GPS spoofing detection:</strong> The GPS module provides integrity monitoring that can detect spoofing indicators (unexpected position jumps, carrier-phase inconsistencies, anomalous signal patterns). When spoofing is detected, GPS is fully excluded from the navigation solution. When GPS is merely degraded (reduced accuracy, intermittent fix), its weighting is reduced proportionally rather than discarded entirely. The response is always proportional to the severity of the detected anomaly.
+</div>
+
+<h3>5.9.2 Cooperative Swarm Localization</h3>
+
+<p>When multiple drones operate in a GPS-denied area, the swarm can achieve <strong>better positioning accuracy collectively than any individual drone alone</strong> through cooperative localization:</p>
+
+<ul>
+<li><strong>Shared error covariance:</strong> Each drone broadcasts its position estimate and error covariance matrix over the WiFi mesh network. Neighboring drones incorporate these shared estimates into their own fusion algorithm, mutually reducing position uncertainty across the swarm.</li>
+<li><strong>RF-based inter-drone ranging:</strong> WiFi signal strength measurements between mesh modules provide relative distance estimates between drones. These inter-drone distance constraints, combined with shared position estimates, produce a tighter collective position solution.</li>
+<li><strong>Additional RF frequencies:</strong> Other onboard radio modules may contribute supplementary relative ranging measurements for additional redundancy.</li>
+</ul>
+
+<p>This cooperative approach is particularly valuable in large-area operations where some drones may have partial GPS visibility (e.g., operating at the edge of a jammed zone) while others do not. Drones with better positioning data effectively &ldquo;anchor&rdquo; the swarm's position estimate, improving accuracy for all members.</p>
+
+<h3>5.9.3 Communication-Denied Mission Behavior</h3>
+
+<p>When the communication link between a drone (or the entire swarm) and the Nest is lost, drone behavior is <strong>determined by the mission profile</strong>. Each mission type includes predefined communication-loss parameters set before launch:</p>
+
+<table>
+<tr><th>Mission Type</th><th>Comms-Denied Behavior</th><th>Data Handling</th><th>Return Condition</th></tr>
+<tr><td><strong>Reconnaissance</strong></td><td>Complete full mission autonomously</td><td>All video/sensor data stored onboard</td><td>Mission complete or battery threshold</td></tr>
+<tr><td><strong>Area Survey / Mapping</strong></td><td>Complete pre-loaded survey pattern</td><td>All imagery stored onboard for post-processing</td><td>Survey complete or battery threshold</td></tr>
+<tr><td><strong>Perimeter Watch</strong></td><td>Maintain assigned position; continue recording</td><td>Store-and-forward on reconnection</td><td>Battery threshold or configurable timeout</td></tr>
+<tr><td><strong>Interactive / Operator-Directed</strong></td><td>Hold position; attempt achievable sub-objectives</td><td>Store-and-forward</td><td>Configurable timeout then RTH</td></tr>
+</table>
+
+<div class="flow-box">
+<p><strong>Store-and-forward data model:</strong></p>
+<p>1. Drone receives complete mission plan (waypoints, objectives, geofence, sensor configs) <strong>before launch</strong></p>
+<p>2. If communication is lost mid-flight, the mission plan <strong>cannot be updated</strong> &mdash; the drone executes its pre-loaded instructions</p>
+<p>3. All data (video, sensor captures, telemetry) is recorded to <strong>onboard storage</strong> throughout the mission</p>
+<p>4. Upon return to the Nest or restoration of the communication link, data is <strong>automatically transferred</strong> for processing, viewing, and archival</p>
+<p>5. When communication is available, all data streams <strong>in real time</strong> to the ground station and connected viewers</p>
+</div>
+
+<h3>5.9.4 Swarm Mesh Resilience in Denied Environments</h3>
+
+<p>The swarm's WiFi mesh network provides an additional layer of communication resilience. Even when the primary Nest-to-drone link (LTE) is unavailable:</p>
+
+<ul>
+<li><strong>Mesh-connected swarm:</strong> Drones maintain inter-drone WiFi mesh links. If any drone in the swarm still has a connection to the Nest (via any channel), it relays commands and telemetry for all mesh-connected drones.</li>
+<li><strong>Information sharing:</strong> Drones share navigation data, health status, and mission progress over the mesh, enabling continued coordinated operations even without a Nest link.</li>
+<li><strong>Graceful degradation to individual operation:</strong> If the WiFi mesh itself cannot be maintained (extreme interference or separation), each drone falls back to fully independent autonomous operation on its pre-loaded mission plan and individual INS/VIO/SLAM navigation.</li>
+</ul>
+
+<div class="warn-note">
+<strong>Architectural cross-reference:</strong> The multi-modal navigation hardware (INS, VIO sensors, depth cameras) and cooperative localization algorithms are detailed in the <em>Mechanical &amp; Electronics Architecture</em> document, <a href="Nest_Mechanical_Electronics.html#s7-3b">Section 3.4: GPS-Denied &amp; Degraded Navigation</a>. The swarm degradation hierarchy is detailed in <a href="Nest_Mechanical_Electronics.html#s8-3b">Section 4.3.1: Swarm Operations in Denied Environments</a>. This section addresses the software and communication architecture enabling these capabilities.
+</div>
+
+<div class="back-toc"><a href="#toc">&uarr; Table of Contents</a></div>
+
+
+<!-- ==================== SECTION 6 ==================== -->
+<h1 id="s6">6. Multi-Nest Operations</h1>
+
+<p>This is the critical architectural challenge: when multiple Nest vehicles deploy to the same incident, the operator should see <strong>one unified mission</strong> with a single pool of available drones &mdash; regardless of which physical Nest they belong to.</p>
+
+<h2 id="s6-1">6.1 Unified Drone Pool Abstraction</h2>
+
+<div class="note">
+<strong>Core principle:</strong> The Mission Manager works with drones, not Nests. It receives a pool of available drones (each with capabilities, position, battery state, and travel-time-to-station). It assigns drones to mission tasks. It does not know or care which Nest a drone belongs to. The Nest is an implementation detail of how that drone gets launched, recharged, and maintained.
+</div>
+
+<p>Each Nest reports its available drones to the coordination layer as a <strong>Drone Availability Manifest</strong>:</p>
+
+<table>
+<tr><th>Field</th><th>Description</th></tr>
+<tr><td><code>drone_id</code></td><td>Globally unique drone identifier</td></tr>
+<tr><td><code>nest_id</code></td><td>Home Nest (used for travel time calculation only)</td></tr>
+<tr><td><code>status</code></td><td>ready / airborne / charging / maintenance</td></tr>
+<tr><td><code>battery_pct</code></td><td>Current charge level</td></tr>
+<tr><td><code>est_ready_time</code></td><td>Estimated time until ready for launch (if charging)</td></tr>
+<tr><td><code>sensors</code></td><td>Available payload: thermal, visual, multispectral, etc.</td></tr>
+<tr><td><code>nest_position</code></td><td>GPS coordinates of the home Nest (for travel time modeling)</td></tr>
+</table>
+
+<p>The Mission Manager sees a flat list of drones with these attributes and optimizes assignment based on mission needs, drone capabilities, and travel times.</p>
+
+<h2 id="s6-2">6.2 Multi-Nest Coordination Architecture</h2>
+
+<p>The coordination architecture uses a <strong>federated model</strong>: each Nest retains full local autonomy, and the cloud provides a coordination layer on top.</p>
+
+<div class="flow-box">
+<p><strong>Cloud: Mission Coordination Service</strong></p>
+<p>&bull; Creates missions, aggregates drone pools from all participating Nests</p>
+<p>&bull; Runs the <strong>Fleet Mission Manager</strong> &mdash; strategic mission planning across multiple Nests</p>
+<p>&bull; Partitions mission into sub-missions assigned to each Nest</p>
+<p>&bull; Provides unified telemetry view to operators</p>
+<p style="margin-top:10px"><span class="arrow">&darr;</span> MQTT over TLS <span class="arrow">&darr;</span></p>
+<p style="display:flex;gap:40px;margin-top:10px">
+<span><strong>Nest A</strong><br>Local Mission Mgr<br>Swarm Mgr<br>Ground Mgr<br><em>Executes sub-mission A</em></span>
+<span><strong>Nest B</strong><br>Local Mission Mgr<br>Swarm Mgr<br>Ground Mgr<br><em>Executes sub-mission B</em></span>
+<span><strong>Nest C</strong><br>Local Mission Mgr<br>Swarm Mgr<br>Ground Mgr<br><em>Executes sub-mission C</em></span>
+</p>
+</div>
+
+<h3>How it works step by step:</h3>
+<ol>
+  <li><strong>Mission created</strong> by operator (via any connected client). Mission definition includes coverage area, mission type, sensor requirements, and priority.</li>
+  <li><strong>Nest discovery:</strong> Cloud identifies which Nests are online, in range, and available. Each Nest publishes its Drone Availability Manifest.</li>
+  <li><strong>Pool aggregation:</strong> Cloud's Fleet Mission Manager aggregates all available drones into a unified pool.</li>
+  <li><strong>Mission partitioning:</strong> Fleet Mission Manager divides the mission area into zones and assigns drones to zones based on proximity, capability, and travel time. Drones are preferentially assigned to zones closest to their home Nest to minimize transit time.</li>
+  <li><strong>Sub-mission dispatch:</strong> Each Nest receives its portion of the mission as a sub-mission: &ldquo;Your drones cover zone B with these waypoints and sensor modes.&rdquo;</li>
+  <li><strong>Local execution:</strong> Each Nest's local Mission Manager, Swarm Manager, and Ground Manager execute their sub-mission independently. All real-time drone control is local.</li>
+  <li><strong>Continuous coordination:</strong> Nests report status to cloud. Cloud adjusts assignments if drones go down, if a Nest loses connectivity, or if the mission requirements change (dynamic repartitioning).</li>
+</ol>
+
+<h2 id="s6-3">6.3 Mission Partitioning &amp; Drone Assignment</h2>
+
+<p>The Fleet Mission Manager uses the following algorithm for multi-Nest drone assignment:</p>
+
+<ol>
+  <li><strong>Zone decomposition:</strong> Mission area is divided into a grid or Voronoi tessellation based on required coverage density.</li>
+  <li><strong>Travel time calculation:</strong> For each drone&ndash;zone pair, compute estimated travel time from the drone's home Nest to the zone center.</li>
+  <li><strong>Cost function:</strong> Each assignment has a cost = <code>f(travel_time, battery_consumed_in_transit, sensor_match)</code></li>
+  <li><strong>Optimization:</strong> Hungarian algorithm or similar assignment solver minimizes total mission cost while satisfying coverage constraints.</li>
+  <li><strong>Rotation planning:</strong> Each Nest's Swarm Manager plans its own drone rotation schedule, accounting for the transit time to/from assigned zones.</li>
+</ol>
+
+<div class="warn-note">
+<strong>Important constraint:</strong> A drone always returns to its <em>home Nest</em> for recharging. Cross-docking (landing a drone at a different Nest) is not supported in v1. This simplifies Ground Manager design significantly &mdash; each Nest only manages its own drones' physical handling.
+</div>
+
+<h2 id="s6-4">6.4 Travel Time Modeling</h2>
+
+<p>Travel time is the key variable that differentiates drones from different Nests. The Mission Manager must account for:</p>
+
+<ul>
+  <li><strong>Outbound transit:</strong> Time from Nest to assigned zone (reduces effective mission time)</li>
+  <li><strong>Return transit:</strong> Time from zone back to home Nest (must be planned before battery is critical)</li>
+  <li><strong>Effective station time:</strong> <code>flight_endurance - outbound_transit - return_transit - safety_margin</code></li>
+  <li><strong>Wind compensation:</strong> Adjust transit estimates based on current wind data (headwind increases return time)</li>
+</ul>
+
+<p>For drones far from their home Nest, effective station time may be significantly reduced. The Fleet Mission Manager factors this in &mdash; preferring to assign drones to nearby zones and using distant drones only when local capacity is insufficient.</p>
+
+<h2 id="s6-5">6.5 Failure &amp; Degradation Handling</h2>
+
+<table>
+<tr><th>Failure</th><th>Impact</th><th>Response</th></tr>
+<tr><td>Cloud goes down</td><td>No multi-Nest coordination</td><td>Each Nest continues its last-known sub-mission autonomously. No new multi-Nest missions until cloud recovers.</td></tr>
+<tr><td>Nest loses cloud connection</td><td>That Nest can't coordinate</td><td>Nest continues its sub-mission. Cloud reassigns that Nest's uncovered zones to remaining Nests.</td></tr>
+<tr><td>Nest goes offline entirely</td><td>Its drones are lost to the pool</td><td>Cloud detects timeout, reassigns coverage to other Nests. Offline Nest's drones autonomously RTH.</td></tr>
+<tr><td>Single drone failure</td><td>One drone lost</td><td>Local Swarm Manager replaces from its own pool. Cloud notified, pool updated.</td></tr>
+</table>
+
+<div class="back-toc"><a href="#toc">&uarr; Table of Contents</a></div>
+
+
+<!-- ==================== SECTION 7 ==================== -->
+<h1 id="s7">7. Video &amp; Telemetry Streaming</h1>
+
+<h2 id="s7-1">7.1 Video Pipeline Architecture</h2>
+
+<div class="flow-box">
+<p><strong>Drone Camera</strong> (4K sensor)</p>
+<p><span class="arrow">&darr;</span> MIPI CSI / USB</p>
+<p><strong>Jetson (onboard)</strong> &mdash; H.264/H.265 hardware encoding, AI inference overlay</p>
+<p><span class="arrow">&darr;</span> RTP over LTE or WiFi mesh</p>
+<p><strong>Nest Onboard Computer</strong> &mdash; receives all drone streams, acts as WebRTC origin</p>
+<p><span class="arrow">&darr;</span> WebRTC (SRTP encrypted)</p>
+<p><strong>Operator Browser</strong> (local or via TURN relay for remote)</p>
+</div>
+
+<p>The Nest computer is the <strong>media hub</strong>. It receives raw RTP streams from all airborne drones and re-publishes them as WebRTC streams to connected clients. This architecture means:</p>
+<ul>
+  <li>Drones don't need to know about client devices</li>
+  <li>Multiple clients can view the same drone feed without multiplying drone bandwidth</li>
+  <li>The Nest can add telemetry overlays, switch streams, or composite multi-drone views</li>
+  <li>Recording happens at the Nest level (and syncs to cloud when bandwidth allows)</li>
+</ul>
+
+<h2 id="s7-2">7.2 Multi-Viewer Access</h2>
+
+<p>Multiple users can simultaneously view drone streams:</p>
+
+<table>
+<tr><th>Viewer</th><th>Connection</th><th>Video Path</th><th>Latency</th></tr>
+<tr><td>On-site Operator</td><td>Nest WiFi</td><td>Nest WebRTC &rarr; Browser (P2P)</td><td class="latency-good">&lt;100ms glass-to-glass</td></tr>
+<tr><td>On-site Field Unit</td><td>Nest WiFi</td><td>Same as above</td><td class="latency-good">&lt;100ms</td></tr>
+<tr><td>Remote Commander</td><td>Internet</td><td>Nest &rarr; Cloud TURN &rarr; Browser</td><td class="latency-ok">200&ndash;500ms</td></tr>
+<tr><td>Remote Viewer</td><td>Internet</td><td>Same as above</td><td class="latency-ok">200&ndash;500ms</td></tr>
+</table>
+
+<p>The Nest's WebRTC server supports multiple simultaneous peer connections. For on-site viewers, streams are delivered directly over the local WiFi. For remote viewers, streams are relayed through the cloud TURN server to traverse NATs and firewalls.</p>
+
+<h2 id="s7-3">7.3 Stream Quality &amp; Bandwidth</h2>
+
+<table>
+<tr><th>Stream</th><th>Resolution</th><th>Bitrate</th><th>Use Case</th></tr>
+<tr><td>Full quality</td><td>1080p / 4K</td><td>4&ndash;12 Mbps</td><td>On-site operator, recording</td></tr>
+<tr><td>Tactical</td><td>720p</td><td>1.5&ndash;3 Mbps</td><td>Remote viewers, multi-stream mosaic</td></tr>
+<tr><td>Thumbnail</td><td>360p</td><td>300&ndash;600 Kbps</td><td>Fleet overview, low-bandwidth connections</td></tr>
+</table>
+
+<p>The Nest performs adaptive bitrate transcoding on the fly. Each client negotiates quality based on available bandwidth. On-site clients on WiFi 6 can view multiple 1080p streams simultaneously. Remote clients on cellular receive the tactical or thumbnail streams.</p>
+
+<div class="back-toc"><a href="#toc">&uarr; Table of Contents</a></div>
+
+
+<!-- ==================== SECTION 8 ==================== -->
+<h1 id="s8">8. Security Architecture</h1>
+
+<div class="critical-note">
+<strong>Mandatory requirement:</strong> All data in transit across all system layers must be encrypted. No exceptions. This includes drone video, telemetry, control commands, operator sessions, and inter-service communication. Public safety data is sensitive by definition.
+</div>
+
+<h2 id="s8-1">8.1 Encryption In Transit</h2>
+
+<table>
+<tr><th>Link</th><th>Protocol</th><th>Encryption</th></tr>
+<tr><td>Browser &harr; Nest (local)</td><td>HTTPS / WSS</td><td>TLS 1.3 (self-signed cert, pinned in PWA)</td></tr>
+<tr><td>Browser &harr; Cloud</td><td>HTTPS / WSS</td><td>TLS 1.3 (CA-signed cert)</td></tr>
+<tr><td>Nest &harr; Cloud</td><td>MQTT / HTTPS</td><td>mTLS (mutual TLS, client cert per Nest)</td></tr>
+<tr><td>Video streams</td><td>WebRTC</td><td>SRTP (AES-128-CM mandatory per <a href="https://datatracker.ietf.org/doc/html/rfc8827">RFC 8827</a>; AES-128-GCM negotiable)</td></tr>
+<tr><td>Drone &harr; Nest (LTE)</td><td>ROS 2 DDS</td><td>DDS Security (AES-256-GCM authentication + encryption)</td></tr>
+<tr><td>Drone &harr; Nest (mesh WiFi)</td><td>ROS 2 DDS</td><td>WPA3-SAE + DDS Security</td></tr>
+<tr><td>Drone &harr; Nest (900 MHz)</td><td>MAVLink v2</td><td>MAVLink v2 signing (<a href="https://mavlink.io/en/about/faq.html">authentication only &mdash; MAVLink does not provide encryption</a>) + custom AES-128 link-layer encryption</td></tr>
+</table>
+
+<h2 id="s8-2">8.2 Encryption At Rest</h2>
+
+<ul>
+  <li><strong>Nest onboard storage:</strong> LUKS full-disk encryption (AES-256-XTS). Unlock via TPM at boot.</li>
+  <li><strong>Cloud databases:</strong> AES-256 at-rest encryption (provider-managed keys or customer-managed via KMS)</li>
+  <li><strong>Video archives:</strong> Server-side AES-256 encryption in object storage, with per-mission encryption keys</li>
+  <li><strong>User credentials:</strong> bcrypt hashed, never stored in plaintext</li>
+  <li><strong>Drone onboard:</strong> Encrypted storage on Jetson. Secure boot chain prevents firmware tampering.</li>
+</ul>
+
+<h2 id="s8-3">8.3 Zero-Trust Network Model</h2>
+
+<p>No component implicitly trusts any other component. Every request is authenticated:</p>
+
+<ul>
+  <li><strong>Users &rarr; System:</strong> JWT tokens with short expiry (15 min), refresh tokens (24 hr)</li>
+  <li><strong>Nest &rarr; Cloud:</strong> Mutual TLS with per-Nest client certificates issued during provisioning</li>
+  <li><strong>Drone &rarr; Nest:</strong> DDS security with per-drone identity certificates</li>
+  <li><strong>Service &rarr; Service:</strong> mTLS between all cloud microservices</li>
+  <li><strong>Token scope:</strong> JWTs contain the specific Nest IDs and roles the user is authorized for. A token for Nest A cannot be used to access Nest B.</li>
+</ul>
+
+<h2 id="s8-4">8.4 Drone-to-Nest Security</h2>
+
+<p>Drones are particularly sensitive because they are physically deployed in the field. Security measures include:</p>
+
+<ul>
+  <li><strong>Mutual authentication:</strong> Each drone has a unique cryptographic identity (X.509 cert stored in secure element). The Nest verifies the drone's identity before accepting commands or telemetry.</li>
+  <li><strong>Anti-spoofing:</strong> A rogue device cannot impersonate a legitimate drone. Certificates are provisioned during manufacturing.</li>
+  <li><strong>Command authentication:</strong> All commands to the Pixhawk via 900 MHz use MAVLink v2 signing with per-drone keys, preventing command injection.</li>
+  <li><strong>Geofencing enforcement:</strong> Geofence limits are stored locally on the Pixhawk. Even if the Jetson or communication is compromised, the Pixhawk enforces hard boundaries independently.</li>
+  <li><strong>Kill switch:</strong> Operator can issue an authenticated emergency shutdown command that is processed at the Pixhawk level, bypassing all software layers.</li>
+</ul>
+
+<div class="back-toc"><a href="#toc">&uarr; Table of Contents</a></div>
+
+
+<!-- ==================== SECTION 9 ==================== -->
+<h1 id="s9">9. Cloud Services Detail</h1>
+
+<h2 id="s9-1">9.1 Service Decomposition</h2>
+
+<table>
+<tr><th>Service</th><th>Responsibility</th><th>Database</th><th>Interfaces</th></tr>
+<tr><td><strong>Auth Service</strong></td><td>User login, JWT issuance, RBAC, SSO integration</td><td>PostgreSQL (users, roles, sessions)</td><td>REST API, OAuth 2.0 endpoints</td></tr>
+<tr><td><strong>Nest Registry</strong></td><td>Nest enrollment, status tracking, certificate management</td><td>PostgreSQL (nest inventory)</td><td>REST API, MQTT subscriptions</td></tr>
+<tr><td><strong>Mission Coordination</strong></td><td>Mission CRUD, multi-Nest partitioning, Fleet Mission Manager</td><td>PostgreSQL (missions, assignments)</td><td>REST API, WebSocket events, MQTT pub/sub</td></tr>
+<tr><td><strong>Telemetry Ingestion</strong></td><td>Receive &amp; store time-series telemetry from all Nests</td><td>TimescaleDB (time-series)</td><td>MQTT subscriber, REST query API</td></tr>
+<tr><td><strong>Video Relay</strong></td><td>TURN server for remote WebRTC, video recording coordinator</td><td>S3-compatible object store</td><td>TURN/STUN, REST for recording management</td></tr>
+<tr><td><strong>Notification Service</strong></td><td>Alerts, push notifications, email triggers</td><td>Redis (queue), PostgreSQL (templates)</td><td>Internal pub/sub consumer, push API</td></tr>
+<tr><td><strong>API Gateway</strong></td><td>Rate limiting, auth verification, request routing</td><td>None (stateless)</td><td>HTTPS ingress for all client requests</td></tr>
+</table>
+
+<h2 id="s9-2">9.2 Infrastructure &amp; Deployment</h2>
+
+<ul>
+  <li><strong>Container orchestration:</strong> Kubernetes (EKS, GKE, or self-hosted)</li>
+  <li><strong>Region selection:</strong> US-East and US-West initially (sub-40ms to most of continental US)</li>
+  <li><strong>Scaling:</strong> Horizontal pod autoscaling on telemetry ingestion and video relay</li>
+  <li><strong>TURN servers:</strong> Deployed at edge locations (Cloudflare, AWS Global Accelerator, or similar) to minimize relay latency</li>
+  <li><strong>CI/CD:</strong> GitOps with ArgoCD or Flux. All deployments are immutable container images.</li>
+  <li><strong>Monitoring:</strong> Prometheus + Grafana for metrics, Loki for logs, Jaeger for distributed tracing</li>
+</ul>
+
+<h2 id="s9-3">9.3 Data Storage &amp; Retention</h2>
+
+<table>
+<tr><th>Data Type</th><th>Storage</th><th>Retention</th></tr>
+<tr><td>Mission plans &amp; metadata</td><td>PostgreSQL</td><td>Indefinite</td></tr>
+<tr><td>Telemetry (real-time)</td><td>TimescaleDB</td><td>90 days hot, 2 years cold</td></tr>
+<tr><td>Video recordings</td><td>S3 object storage</td><td>Agency-configurable (default 1 year)</td></tr>
+<tr><td>Audit logs</td><td>Immutable append-only log</td><td>7 years (compliance)</td></tr>
+<tr><td>User sessions</td><td>Redis</td><td>24 hours</td></tr>
+</table>
+
+<div class="note">
+<strong>Evidence chain:</strong> For law enforcement use cases, video recordings and telemetry must maintain an unbroken chain of custody. All recordings include cryptographic hashes, timestamps, and operator identity. Any access to recordings is logged in the immutable audit trail.
+</div>
+
+<div class="back-toc"><a href="#toc">&uarr; Table of Contents</a></div>
+
+
+<!-- ==================== SECTION 10 ==================== -->
+<h1 id="s10">10. Nest Onboard Software Detail</h1>
+
+<h2 id="s10-1">10.1 ROS 2 Node Architecture</h2>
+
+<p>The Nest onboard computer runs a ROS 2 graph with the following nodes:</p>
+
+<table>
+<tr><th>Node</th><th>Responsibilities</th><th>Key Topics (pub/sub)</th></tr>
+<tr><td><code>mission_manager</code></td><td>Mission state, objective tracking, operator command processing</td><td>Pub: <code>/mission/status</code>, <code>/mission/directives</code><br>Sub: <code>/operator/commands</code>, <code>/swarm/status</code></td></tr>
+<tr><td><code>swarm_manager</code></td><td>Drone assignment, rotation scheduling, fleet health</td><td>Pub: <code>/swarm/assignments</code>, <code>/swarm/status</code><br>Sub: <code>/mission/directives</code>, <code>/drones/+/telemetry</code></td></tr>
+<tr><td><code>ground_manager</code></td><td>Arm control, launch/capture sequencing, charging</td><td>Pub: <code>/ground/status</code>, <code>/ground/slot_states</code><br>Sub: <code>/swarm/launch_requests</code>, <code>/swarm/capture_requests</code></td></tr>
+<tr><td><code>comms_bridge</code></td><td>Translates between ROS 2 DDS and drone LTE/mesh links</td><td>Bridges drone topics to/from external networks</td></tr>
+<tr><td><code>video_hub</code></td><td>Receives drone RTP, transcodes, serves WebRTC</td><td>Sub: <code>/drones/+/video_rtp</code></td></tr>
+<tr><td><code>web_server</code></td><td>Serves PWA, handles WebSocket/REST, auth</td><td>Bridges HTTP/WS to ROS topics</td></tr>
+<tr><td><code>cloud_sync</code></td><td>MQTT connection to cloud, state synchronization</td><td>Bridges cloud MQTT to local ROS topics</td></tr>
+<tr><td><code>telemetry_recorder</code></td><td>Local recording of all telemetry and video</td><td>Sub: all telemetry and video topics</td></tr>
+</table>
+
+<h2 id="s10-2">10.2 Local Autonomy &amp; Offline Operation</h2>
+
+<p>The Nest is designed to be <strong>fully operational without any cloud connectivity</strong> for single-Nest missions:</p>
+
+<table>
+<tr><th>Feature</th><th>Online (Cloud Connected)</th><th>Offline (No Cloud)</th></tr>
+<tr><td>Authentication</td><td>Cloud-verified JWT</td><td>Locally cached user DB</td></tr>
+<tr><td>Mission planning</td><td>Full (cloud-synced)</td><td>Full (local only)</td></tr>
+<tr><td>Drone control</td><td>Full</td><td>Full</td></tr>
+<tr><td>Video streaming</td><td>Local + remote viewers</td><td>Local viewers only</td></tr>
+<tr><td>Multi-Nest coordination</td><td>Yes</td><td>No</td></tr>
+<tr><td>Telemetry recording</td><td>Local + cloud sync</td><td>Local only (syncs when reconnected)</td></tr>
+<tr><td>Software updates</td><td>OTA available</td><td>No</td></tr>
+</table>
+
+<p>When cloud connectivity is restored after an offline period, the <code>cloud_sync</code> node automatically uploads buffered telemetry, mission logs, and video recordings.</p>
+
+<h3>Dormant State &amp; Remote Activation</h3>
+
+<p>The Nest supports extended <strong>pre-positioned dormant operation</strong> for scenarios where the container is deployed to a location and may remain inactive for days, weeks, or longer before being needed. During dormant mode:</p>
+
+<ul>
+<li><strong>Battery maintenance cycling:</strong> The Ground Manager runs a low-power maintenance routine, periodically cycling drone batteries through partial charge/discharge cycles to maintain optimal cell health and prevent degradation from prolonged full-charge or low-charge storage</li>
+<li><strong>Heartbeat monitoring:</strong> The <code>cloud_sync</code> node maintains a periodic heartbeat to the cloud (or a designated C2 endpoint) over the lowest-power available link, reporting system health and confirming readiness</li>
+<li><strong>Remote activation:</strong> Upon receiving a secure activation command via the cloud, LTE, or other communication link, the system powers up all subsystems and transitions to full operational status. Drones are ready for launch within minutes of activation</li>
+<li><strong>Fully remote operation:</strong> Once activated, the system can be operated entirely from a remote ground station &mdash; no on-site personnel required. One operator manages the full mission lifecycle remotely</li>
+</ul>
+
+<h2 id="s10-3">10.3 Edge Compute Specifications</h2>
+
+<p>The Nest onboard computer requirements (building on v9 Section 4.1):</p>
+
+<table>
+<tr><th>Component</th><th>Requirement</th><th>Rationale</th></tr>
+<tr><td>CPU</td><td>8+ cores, x86_64 or ARM64</td><td>ROS 2 nodes, web server, transcoding</td></tr>
+<tr><td>GPU</td><td>NVIDIA (CUDA-capable)</td><td>Video transcoding (NVENC), optional AI</td></tr>
+<tr><td>RAM</td><td>32 GB minimum</td><td>Multiple video streams, ROS graph, caching</td></tr>
+<tr><td>Storage</td><td>2 TB NVMe SSD</td><td>Local video recording buffer (~48 hrs of mission video)</td></tr>
+<tr><td>Network</td><td>WiFi 6 AP + LTE modem + Ethernet</td><td>Operator WiFi, cloud uplink, wired sensor connections</td></tr>
+<tr><td>OS</td><td>Ubuntu 22.04 LTS</td><td>ROS 2 Humble native support</td></tr>
+<tr><td>Ruggedization</td><td>MIL-STD-810G rated enclosure</td><td>Vibration, temperature, dust/water resistance</td></tr>
+</table>
+
+<div class="back-toc"><a href="#toc">&uarr; Table of Contents</a></div>
+
+
+<!-- ==================== SECTION 11 ==================== -->
+<h1 id="s11">11. Deployment Topology &amp; Network Diagrams</h1>
+
+<h2>11.1 Single-Nest Deployment (Typical)</h2>
+
+<div class="flow-box">
+<p style="text-align:center;font-size:13px">
+<strong>=== OPERATOR DEVICE ===</strong><br>
+Browser (PWA) &mdash; Mission Planning, Video, Telemetry<br>
+<br>
+<span class="arrow">&darr;</span> WiFi 6 (5GHz, WPA3) <span class="arrow">&darr;</span><br>
+<br>
+<strong>=== NEST VEHICLE ===</strong><br>
+<em>Onboard Computer</em><br>
+[Web Server] [Mission Mgr] [Swarm Mgr] [Ground Mgr]<br>
+[Video Hub] [Comms Bridge] [Cloud Sync] [Recorder]<br>
+<br>
+<span class="arrow">&darr;</span> LTE / WiFi Mesh / 900 MHz <span class="arrow">&darr;</span><br>
+<br>
+<strong>=== DRONE SWARM ===</strong><br>
+[Drone 1] [Drone 2] [Drone 3] &hellip; [Drone N]<br>
+Jetson + Pixhawk per drone<br>
+<br>
+<span class="arrow">&darr;</span> LTE (when available) <span class="arrow">&darr;</span><br>
+<br>
+<strong>=== CLOUD ===</strong><br>
+[Auth] [Nest Registry] [Telemetry] [Video Relay] [Notifications]<br>
+<br>
+<span class="arrow">&darr;</span> Internet <span class="arrow">&darr;</span><br>
+<br>
+<strong>=== REMOTE USERS ===</strong><br>
+Commander, Viewers, Field Units (browser)
+</p>
+</div>
+
+<h2>11.2 Multi-Nest Deployment</h2>
+
+<div class="flow-box">
+<p style="text-align:center;font-size:13px">
+<strong>=== OPERATOR / COMMAND POST ===</strong><br>
+Unified mission view across all Nests<br>
+<br>
+<span class="arrow">&darr;</span> Local WiFi to any Nest OR remote via cloud <span class="arrow">&darr;</span><br>
+<br>
+<strong>=== CLOUD: MISSION COORDINATION ===</strong><br>
+Fleet Mission Manager &mdash; unified drone pool &mdash; mission partitioning<br>
+<br>
+<span class="arrow">&darr;</span> MQTT over mTLS <span class="arrow">&darr;</span><br>
+<br>
+<span style="display:flex;justify-content:center;gap:60px">
+<span><strong>NEST A</strong><br>Local Managers<br>Drones 1&ndash;30<br><em>Zone Alpha</em></span>
+<span><strong>NEST B</strong><br>Local Managers<br>Drones 31&ndash;60<br><em>Zone Bravo</em></span>
+<span><strong>NEST C</strong><br>Local Managers<br>Drones 61&ndash;90<br><em>Zone Charlie</em></span>
+</span>
+<br>
+<em>Each Nest executes independently. Cloud coordinates and provides unified view.</em>
+</p>
+</div>
+
+<div class="back-toc"><a href="#toc">&uarr; Table of Contents</a></div>
+
+
+<!-- ==================== SECTION 12 ==================== -->
+<h1 id="s12">12. Open Questions &amp; Next Steps</h1>
+
+<h2>Architecture Decisions Pending</h2>
+
+<table>
+<tr><th>#</th><th>Question</th><th>Options</th><th>Impact</th></tr>
+<tr><td>1</td><td>Cloud provider selection</td><td>AWS / GCP / Azure / Multi-cloud</td><td>TURN server placement, latency, cost</td></tr>
+<tr><td>2</td><td>Cross-docking (drone lands at different Nest)</td><td>Support in v2 or defer</td><td>Significant Ground Manager complexity</td></tr>
+<tr><td>3</td><td>Mesh networking between Nests</td><td>Direct Nest-to-Nest (skip cloud) vs always via cloud</td><td>Latency for multi-Nest, offline multi-Nest capability</td></tr>
+<tr><td>4</td><td>Video codec</td><td>H.264 (universal) vs H.265 (50% bandwidth savings) vs AV1</td><td>Bandwidth, browser compatibility, GPU requirements</td></tr>
+<tr><td>5</td><td>CJIS compliance</td><td>Required for law enforcement data handling</td><td>Cloud architecture, encryption, audit requirements</td></tr>
+<tr><td>6</td><td>Manual control over LTE</td><td>Allow with warnings vs block entirely</td><td>User experience, safety implications</td></tr>
+<tr><td>7</td><td>PWA vs native app</td><td>PWA (cross-platform) vs native iOS/Android (better gamepad support)</td><td>Development effort, manual control UX</td></tr>
+<tr><td>8</td><td>BVLOS communication primary link</td><td>Mesh relay drones / Private 5G CBRS / Carrier LTE with MEC</td><td>Range, latency, infrastructure cost, regulatory</td></tr>
+<tr><td>9</td><td>CBRS spectrum licensing</td><td>GAA (shared, free) vs PAL (licensed, guaranteed)</td><td>Reliability guarantees, cost, deployment timeline</td></tr>
+<tr><td>10</td><td>Predictive control ML model</td><td>On-device inference vs Nest-side inference</td><td>Drone compute requirements, prediction accuracy</td></tr>
+<tr><td>11</td><td>FAA BVLOS waiver strategy</td><td>Part 107 waiver vs Part 108 (pending) vs shielded operations</td><td>Operational scope, timeline, compliance burden</td></tr>
+</table>
+
+<h2>Development Priorities</h2>
+
+<ol>
+  <li><strong>Phase 1 (P1):</strong> Single-Nest local operation. Operator on Nest WiFi, full mission control, video, manual flight. No cloud required.</li>
+  <li><strong>Phase 2 (P2):</strong> Cloud services: auth, remote access, telemetry storage, video relay. Single Nest with remote viewers.</li>
+  <li><strong>Phase 2.5 (P2.5):</strong> BVLOS capability: predictive/assisted manual control, mesh relay drone prototype, extended-range communication testing.</li>
+  <li><strong>Phase 3 (P3):</strong> Multi-Nest coordination. Fleet Mission Manager, unified drone pool, mission partitioning.</li>
+  <li><strong>Phase 4 (P4):</strong> Advanced BVLOS: private 5G/CBRS integration, MEC deployment partnerships, full autonomous BVLOS operations.</li>
+</ol>
+
+<div class="note">
+<strong>Phase 1 is the critical path.</strong> A single Nest with local operation is the minimum viable product. Cloud and multi-Nest capabilities are force multipliers built on top of a solid edge foundation.
+</div>
+
+<div class="back-toc"><a href="#toc">&uarr; Table of Contents</a></div>
+
+
+<!-- ==================== CHANGE LOG ==================== -->
+<h1 id="clog">Change Log</h1>
+<p style="font-size:13px;color:#666;margin-bottom:16px"><em>This log tracks document revisions. This document is maintained under git version control.</em></p>
+
+<div class="changelog">
+
+<h3>11 March 2026 &mdash; Source Error Corrections</h3>
+<ul>
+<li><strong>FIXED <a href="#s8-1">Section 8.1</a>:</strong> MAVLink v2 does not provide encryption, only message signing. Changed &ldquo;AES-128 payload encryption&rdquo; to &ldquo;custom AES-128 link-layer encryption&rdquo; and added citation to <a href="https://mavlink.io/en/about/faq.html">MAVLink FAQ</a></li>
+<li><strong>FIXED <a href="#s8-1">Section 8.1</a>:</strong> WebRTC SRTP mandatory cipher is AES-128-CM (Counter Mode), not AES-128-GCM. Corrected per <a href="https://datatracker.ietf.org/doc/html/rfc8827">RFC 8827</a>; GCM noted as negotiable</li>
+<li><strong>FIXED <a href="#s1-4">Section 1.4.1</a>:</strong> Added citation for TAK &ldquo;500,000 users&rdquo; claim (<a href="https://breakingdefense.com/2025/11/evolution-and-future-of-the-tactical-assault-kit-for-soldiers-and-special-operators/">Breaking Defense, Nov 2025</a>)</li>
+<li><strong>FIXED <a href="#s5-1">Section 5.1</a>:</strong> 5G mmWave RTT updated from &ldquo;&lt;1ms&rdquo; to &ldquo;~5ms&rdquo; best case per real-world measurements; URLLC sub-ms noted as theoretical</li>
+<li><strong>FIXED <a href="#s5-8">Section 5.8</a>:</strong> Starlink speeds updated to reflect current plan tiers: Lite 50&ndash;100, Residential 100&ndash;200, Max 200&ndash;400 Mbps (<a href="https://www.cabletv.com/starlink/plans">CableTV.com, 2026</a>)</li>
+</ul>
+
+<h3>February 2026 &mdash; TAK-Native Interface, Comprehensive C2 Integration &amp; Operational Readiness</h3>
+<ul>
+<li><strong>UPDATED <a href="#s1-3">Section 1.3: Guiding Principles</a></strong> &mdash; Added two new guiding principles: (6) Open architecture / MOSA alignment listing all open standards used (ROS 2, DDS, MAVLink, WebRTC, MQTT, REST/WebSocket); (7) Operator-on-the-loop / operator-in-the-loop support with seamless mode transitions per drone</li>
+<li><strong>NEW <a href="#s1-4">Section 1.4: TAK-Native Interface &amp; C2 Integration</a></strong> &mdash; Comprehensive TAK ecosystem integration section with four subsections:
+  <ul>
+    <li><strong>1.4.1 Nest Interface as TAK-Class System</strong> &mdash; Detailed capability comparison table mapping Nest features to TAK core capabilities (COP, BFT, collaborative mapping, video streaming, multi-platform, CoT data model, remote/local operation)</li>
+    <li><strong>1.4.2 Hummingbird-Specific Capabilities Beyond Standard TAK</strong> &mdash; Autonomous swarm orchestration, drone rotation visualization, multi-tier manual control, launch/capture monitoring, swarm health management, multi-drone sensor fusion display, 3D photogrammetric reconstruction (VR-TAK/VTAK concept alignment)</li>
+    <li><strong>1.4.3 TAK Server Integration (Cursor on Target Protocol)</strong> &mdash; Full CoT protocol support with bidirectional data exchange table (positions, sensor events, video feeds, mission data, chat, data packages); TAK Protocol Version 1 (Protobuf) with XML fallback; TLS-encrypted TAK Server connectivity; interoperability with ATAK, WinTAK, iTAK, WebTAK, and TAKX</li>
+    <li><strong>1.4.4 General C2 API Layer</strong> &mdash; REST/WebSocket/WebRTC/RTSP API layer for non-TAK C2 integration; standard data formats (JSON, GeoJSON, CoT/XML); OpenAPI specification</li>
+  </ul>
+</li>
+<li><strong>UPDATED <a href="#s10-2">Section 10.2: Local Autonomy &amp; Offline Operation</a></strong> &mdash; Added dormant state and remote activation subsection covering automated battery maintenance cycling, heartbeat monitoring, secure remote activation, and fully remote operation without on-site personnel</li>
+<li><strong>UPDATED Table of Contents</strong> &mdash; Expanded with renamed Section 1.4</li>
+</ul>
+
+<h3>February 2026 &mdash; GPS-Denied &amp; Communication-Denied Operations</h3>
+<ul>
+<li><strong>NEW <a href="#s5-9">Section 5.9: GPS-Denied &amp; Communication-Denied Operations</a></strong> &mdash; Comprehensive architecture for operating in GPS-denied and communication-denied environments. Covers GPS-denied navigation architecture with multi-modal sensor fusion (INS, VIO, depth SLAM) and condition-adaptive weighting based on real-time health metrics; GPS spoofing detection with proportional response; cooperative swarm localization via shared error covariance matrices and RF-based inter-drone ranging; mission-dependent communication-denied behavior (autonomous completion for recon, store-and-forward data model, configurable timeout and RTH); swarm mesh resilience with graceful degradation from full coordination to individual autonomous operation</li>
+<li><strong>UPDATED Table of Contents</strong> &mdash; Expanded with new Section 5.9</li>
+<li><strong>CROSS-REFERENCE</strong> Links to companion <em>Mechanical &amp; Electronics Architecture</em> document Sections 3.4 and 4.3.1 for hardware-level navigation details</li>
+</ul>
+
+<h3>February 2026 &mdash; Emergency Communications Relay Mission Profile</h3>
+<ul>
+<li><strong>NEW <a href="#s5-8">Section 5.8: Mission Application: Emergency Communications Relay</a></strong> &mdash; Detailed technical architecture for repurposing the mesh relay infrastructure to deliver internet connectivity to disaster-affected areas. Covers relay chain architecture with local WiFi AP broadcast at every node, firmware modes (relay-only vs. relay+AP), internet source integration (Starlink on Nest/drone, hardline, LTE), bandwidth degradation model with throughput estimates per chain length, Swarm Manager integration for chain integrity monitoring and sequential rotation, fleet capacity considerations, and concurrent mission support</li>
+<li><strong>UPDATED</strong> Table of Contents expanded with new Section 5.8</li>
+</ul>
+
+<h3>Document Integration — Software & Cloud Architecture (February 2026)</h3>
+<ul>
+<li><strong>INTEGRATED</strong> into Hummingbird Nest Platform documentation suite as the definitive Software & Cloud Architecture reference document</li>
+<li><strong>COMPANION DOCUMENTS:</strong> This document is part of a multi-document suite separated from the Hummingbird Nest Platform v9 master document:
+  <ul>
+    <li>Nest_Business_Operations.html — Business plan, financial analysis, market opportunity, operational architecture</li>
+    <li>Nest_Marketing.html — Marketing & market analysis, competitive positioning, product specifications</li>
+    <li>Nest_Mechanical_Electronics.html — Mechanical architecture, electronics architecture, systems-level software overview</li>
+    <li>Nest_SW_Cloud_Architecture.html (this document) — Detailed software and cloud architecture</li>
+    <li>Nest_Document_Index.html — Top-level directory and cross-document navigation</li>
+  </ul>
+</li>
+<li><strong>NOTE:</strong> The Mechanical & Electronics Architecture document contains a systems-level software architecture section (Section 8 from v9) covering the three-manager architecture, drone flight controllers, swarm coordination, and mission planning interface. This document provides the detailed implementation architecture including cloud services, authentication, BVLOS operations, multi-Nest coordination, video streaming, security, and deployment topology.</li>
+<li>Version numbers removed from filename; document now tracked via git version control</li>
+<li>Full document content preserved exactly from v1; no information removed or summarized</li>
+</ul>
+
+<h3>Document v1 — Software & Cloud Architecture (February 2026)</h3>
+<ul>
+<li><strong>NEW</strong> Complete software and cloud architecture document extending v9 Section 8</li>
+<li><strong>NEW Section 1:</strong> Architecture Overview & Design Philosophy — Hybrid Edge-Cloud decision with rationale</li>
+<li><strong>NEW Section 2:</strong> System Layers — Four-tier architecture (User Interface, Cloud Services, Edge/Nest, Drone)</li>
+<li><strong>NEW Section 3:</strong> User Access & Authentication — On-site and remote auth flows, RBAC matrix, connection modes</li>
+<li><strong>NEW Section 4:</strong> Communication Architecture & Latency — Full latency budget analysis, manual control tiers, protocol selection</li>
+<li><strong>NEW Section 5:</strong> BVLOS Operations — Four solutions (predictive control, mesh relay, private 5G/CBRS, MEC) with latency analysis and recommended architecture</li>
+<li><strong>NEW Section 6:</strong> Multi-Nest Operations — Unified drone pool abstraction, federated coordination, mission partitioning, travel time modeling</li>
+<li><strong>NEW Section 7:</strong> Video & Telemetry Streaming — Pipeline architecture, multi-viewer access, adaptive bitrate</li>
+<li><strong>NEW Section 8:</strong> Security Architecture — Encryption in transit/at rest, zero-trust model, drone security</li>
+<li><strong>NEW Section 9:</strong> Cloud Services Detail — Service decomposition, infrastructure, data retention</li>
+<li><strong>NEW Section 10:</strong> Nest Onboard Software Detail — ROS 2 node architecture, offline operation, edge compute specs</li>
+<li><strong>NEW Section 11:</strong> Deployment Topology — Single-Nest and Multi-Nest network diagrams</li>
+<li><strong>NEW Section 12:</strong> Open Questions & Next Steps — 11 architecture decisions pending, development priorities</li>
+</ul>
+</div>
+
+</body>
+</html>

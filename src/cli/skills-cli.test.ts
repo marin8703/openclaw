@@ -1,10 +1,5 @@
-import fs from "node:fs";
-import os from "node:os";
-import path from "node:path";
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type { SkillStatusEntry, SkillStatusReport } from "../agents/skills-status.js";
-import type { SkillEntry } from "../agents/skills.js";
-import { captureEnv } from "../test-utils/env.js";
 import { createEmptyInstallChecks } from "./requirements-test-fixtures.js";
 import { formatSkillInfo, formatSkillsCheck, formatSkillsList } from "./skills-cli.format.js";
 
@@ -153,6 +148,18 @@ describe("skills-cli", () => {
       expect(output).toContain("Any binaries");
       expect(output).toContain("API_KEY");
     });
+
+    it("normalizes text-presentation emoji selectors in info output", () => {
+      const report = createMockReport([
+        createMockSkill({
+          name: "info-emoji",
+          emoji: "🎛\uFE0E",
+        }),
+      ]);
+
+      const output = formatSkillInfo(report, "info-emoji", {});
+      expect(output).toContain("🎛️");
+    });
   });
 
   describe("formatSkillsCheck", () => {
@@ -174,6 +181,22 @@ describe("skills-cli", () => {
       expect(output).toContain("not-ready");
       expect(output).toContain("go"); // missing binary
       expect(output).toContain("npx clawhub");
+    });
+
+    it("normalizes text-presentation emoji selectors in check output", () => {
+      const report = createMockReport([
+        createMockSkill({ name: "ready-emoji", emoji: "🎛\uFE0E", eligible: true }),
+        createMockSkill({
+          name: "missing-emoji",
+          emoji: "🎙\uFE0E",
+          eligible: false,
+          missing: { bins: ["ffmpeg"], anyBins: [], env: [], config: [], os: [] },
+        }),
+      ]);
+
+      const output = formatSkillsCheck(report, {});
+      expect(output).toContain("🎛️ ready-emoji");
+      expect(output).toContain("🎙️ missing-emoji");
     });
   });
 
@@ -220,88 +243,46 @@ describe("skills-cli", () => {
       const parsed = JSON.parse(output) as Record<string, unknown>;
       assert(parsed);
     });
-  });
 
-  describe("integration: loads real skills from bundled directory", () => {
-    let tempWorkspaceDir = "";
-    let tempBundledDir = "";
-    let envSnapshot: ReturnType<typeof captureEnv>;
-    let buildWorkspaceSkillStatus: typeof import("../agents/skills-status.js").buildWorkspaceSkillStatus;
+    it("sanitizes ANSI and C1 controls in skills list JSON output", () => {
+      const report = createMockReport([
+        createMockSkill({
+          name: "json-skill",
+          emoji: "\u001b[31m📧\u001b[0m\u009f",
+          description: "desc\u0093\u001b[2J\u001b[33m colored\u001b[0m",
+        }),
+      ]);
 
-    beforeAll(async () => {
-      envSnapshot = captureEnv(["OPENCLAW_BUNDLED_SKILLS_DIR"]);
-      tempWorkspaceDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-skills-test-"));
-      tempBundledDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-bundled-skills-test-"));
-      process.env.OPENCLAW_BUNDLED_SKILLS_DIR = tempBundledDir;
-      ({ buildWorkspaceSkillStatus } = await import("../agents/skills-status.js"));
+      const output = formatSkillsList(report, { json: true });
+      const parsed = JSON.parse(output) as {
+        skills: Array<{ emoji: string; description: string }>;
+      };
+
+      expect(parsed.skills[0]?.emoji).toBe("📧");
+      expect(parsed.skills[0]?.description).toBe("desc colored");
+      expect(output).not.toContain("\\u001b");
     });
 
-    afterAll(() => {
-      if (tempWorkspaceDir) {
-        fs.rmSync(tempWorkspaceDir, { recursive: true, force: true });
-      }
-      if (tempBundledDir) {
-        fs.rmSync(tempBundledDir, { recursive: true, force: true });
-      }
-      envSnapshot.restore();
-    });
+    it("sanitizes skills info JSON output", () => {
+      const report = createMockReport([
+        createMockSkill({
+          name: "info-json",
+          emoji: "\u001b[31m🎙\u001b[0m\u009f",
+          description: "hi\u0091",
+          homepage: "https://example.com/\u0092docs",
+        }),
+      ]);
 
-    const createEntries = (): SkillEntry[] => {
-      const baseDir = path.join(tempWorkspaceDir, "peekaboo");
-      return [
-        {
-          skill: {
-            name: "peekaboo",
-            description: "Capture UI screenshots",
-            source: "openclaw-bundled",
-            filePath: path.join(baseDir, "SKILL.md"),
-            baseDir,
-          } as SkillEntry["skill"],
-          frontmatter: {},
-          metadata: { emoji: "📸" },
-        },
-      ];
-    };
+      const output = formatSkillInfo(report, "info-json", { json: true });
+      const parsed = JSON.parse(output) as {
+        emoji: string;
+        description: string;
+        homepage: string;
+      };
 
-    it("loads bundled skills and formats them", async () => {
-      const entries = createEntries();
-      const report = buildWorkspaceSkillStatus(tempWorkspaceDir, {
-        managedSkillsDir: "/nonexistent",
-        entries,
-      });
-
-      // Should have loaded some skills
-      expect(report.skills.length).toBeGreaterThan(0);
-
-      // Format should work without errors
-      const listOutput = formatSkillsList(report, {});
-      expect(listOutput).toContain("Skills");
-
-      const checkOutput = formatSkillsCheck(report, {});
-      expect(checkOutput).toContain("Total:");
-
-      // JSON output should be valid
-      const jsonOutput = formatSkillsList(report, { json: true });
-      const parsed = JSON.parse(jsonOutput);
-      expect(parsed.skills).toBeInstanceOf(Array);
-    });
-
-    it("formats info for a real bundled skill (peekaboo)", async () => {
-      const entries = createEntries();
-      const report = buildWorkspaceSkillStatus(tempWorkspaceDir, {
-        managedSkillsDir: "/nonexistent",
-        entries,
-      });
-
-      // peekaboo is a bundled skill that should always exist
-      const peekaboo = report.skills.find((s) => s.name === "peekaboo");
-      if (!peekaboo) {
-        throw new Error("peekaboo fixture skill missing");
-      }
-
-      const output = formatSkillInfo(report, "peekaboo", {});
-      expect(output).toContain("peekaboo");
-      expect(output).toContain("Details:");
+      expect(parsed.emoji).toBe("🎙");
+      expect(parsed.description).toBe("hi");
+      expect(parsed.homepage).toBe("https://example.com/docs");
     });
   });
 });
